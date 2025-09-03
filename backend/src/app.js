@@ -15,6 +15,11 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(morgan('dev'))
 
+// Root OK for platform health checks
+app.get('/', (_req, res) => {
+  res.json({ status: 'ok', service: 'hamro-chiya-pasal-api' })
+})
+
 app.get('/api', (_req, res) => {
   res.json({ status: 'ok', service: 'hamro-chiya-pasal-api' })
 })
