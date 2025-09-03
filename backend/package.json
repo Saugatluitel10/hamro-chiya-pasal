@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
+    "build": "echo 'no build for API'",
     "lint": "eslint .",
     "format": "prettier -w .",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -13,6 +14,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": "20.x"
+  },
   "type": "commonjs",
   "dependencies": {
     "bcryptjs": "^3.0.2",
