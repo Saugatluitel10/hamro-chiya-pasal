@@ -3,6 +3,8 @@ const morgan = require('morgan')
 const cors = require('cors')
 
 const healthRouter = require('./routes/health.route')
+const contactRouter = require('./routes/contact.route')
+const menuRouter = require('./routes/menu.route')
 const errorHandler = require('./middleware/errorHandler')
 
 const app = express()
@@ -25,6 +27,8 @@ app.get('/api', (_req, res) => {
 })
 
 app.use('/api/health', healthRouter)
+app.use('/api/contact', contactRouter)
+app.use('/api/menu', menuRouter)
 
 // Not found handler
 app.use((req, res, next) => {

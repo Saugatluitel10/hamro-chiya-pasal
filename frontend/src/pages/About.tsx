@@ -107,6 +107,7 @@ export default function About() {
         </p>
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
           {[
+            { name: 'Bajai', role: 'Traditional Knowledge Keeper', years: 30 },
             { name: 'Aama', role: 'Master Brewer', years: 20 },
             { name: 'Bhai', role: 'Sourcing Lead', years: 6 },
             { name: 'Didi', role: 'Community & Culture', years: 8 },

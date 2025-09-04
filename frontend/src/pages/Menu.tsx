@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import TeaCard from '../components/TeaCard'
 
@@ -19,7 +20,7 @@ type Category = {
   teas: Tea[]
 }
 
-const categories: Category[] = [
+const fallbackCategories: Category[] = [
   {
     key: 'traditional',
     titleNepali: 'पारम्परिक चिया',
@@ -148,6 +149,32 @@ const categories: Category[] = [
 ]
 
 export default function Menu() {
+  const [categories, setCategories] = useState<Category[]>(fallbackCategories)
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string | null>(null)
+  const apiBase = (import.meta as any).env?.VITE_API_BASE_URL || 'http://localhost:5000'
+
+  useEffect(() => {
+    let cancelled = false
+    async function load() {
+      try {
+        const res = await fetch(`${apiBase}/api/menu`)
+        const data = await res.json()
+        if (!res.ok) throw new Error(data?.message || 'Failed to fetch menu')
+        if (Array.isArray(data?.categories) && !cancelled) {
+          setCategories(data.categories)
+        }
+      } catch (e: any) {
+        if (!cancelled) setError(e?.message || 'Failed to load menu')
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+    load()
+    return () => {
+      cancelled = true
+    }
+  }, [apiBase])
   return (
     <main className="max-w-6xl mx-auto px-4 py-10">
       <header className="mb-8">
@@ -160,6 +187,14 @@ export default function Menu() {
           <span className="mr-2">Brew = Brewing difficulty</span>
           <span>Seasonal badge shows limited availability</span>
         </div>
+        {loading && (
+          <p className="mt-2 text-xs text-gray-500">Refreshing menu…</p>
+        )}
+        {error && (
+          <div className="mt-3 text-sm rounded-md px-3 py-2 bg-rose-50 text-rose-700 dark:bg-rose-900/20 dark:text-rose-200">
+            {error}
+          </div>
+        )}
       </header>
 
       {categories.map((cat) => (
