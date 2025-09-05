@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import TeaCard from '../components/TeaCard'
+import { useI18n } from '../i18n/I18nProvider'
 
 type Tea = {
   titleNepali: string
@@ -149,10 +150,13 @@ const fallbackCategories: Category[] = [
 ]
 
 export default function Menu() {
+  const { t } = useI18n()
   const [categories, setCategories] = useState<Category[]>(fallbackCategories)
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
+  const [activeKey, setActiveKey] = useState<string>('')
   const apiBase = (import.meta as any).env?.VITE_API_BASE_URL || 'http://localhost:5000'
+  const sectionId = (k: string) => `menu-${k}`
 
   useEffect(() => {
     let cancelled = false
@@ -160,12 +164,12 @@ export default function Menu() {
       try {
         const res = await fetch(`${apiBase}/api/menu`)
         const data = await res.json()
-        if (!res.ok) throw new Error(data?.message || 'Failed to fetch menu')
+        if (!res.ok) throw new Error(data?.message || t('menu.error.fetch'))
         if (Array.isArray(data?.categories) && !cancelled) {
           setCategories(data.categories)
         }
       } catch (e: any) {
-        if (!cancelled) setError(e?.message || 'Failed to load menu')
+        if (!cancelled) setError(e?.message || t('menu.error.load'))
       } finally {
         if (!cancelled) setLoading(false)
       }
@@ -174,72 +178,152 @@ export default function Menu() {
     return () => {
       cancelled = true
     }
-  }, [apiBase])
+  }, [apiBase, t])
+
+  // Scrollspy to highlight the active category in side rail and chips
+  useEffect(() => {
+    const observers: IntersectionObserver[] = []
+    const opts: IntersectionObserverInit = {
+      root: null,
+      rootMargin: '-120px 0px -70% 0px',
+      threshold: 0.1,
+    }
+    const handler = (entries: IntersectionObserverEntry[]) => {
+      const visible = entries
+        .filter((e) => e.isIntersecting)
+        .sort((a, b) => (a.boundingClientRect.top < b.boundingClientRect.top ? -1 : 1))
+      if (visible[0]?.target?.id) {
+        const id = visible[0].target.id
+        const key = id.replace(/^menu-/, '')
+        setActiveKey(key)
+      }
+    }
+    categories.forEach((cat) => {
+      const el = document.getElementById(sectionId(cat.key))
+      if (!el) return
+      const obs = new IntersectionObserver(handler, opts)
+      obs.observe(el)
+      observers.push(obs)
+    })
+    return () => {
+      observers.forEach((o) => o.disconnect())
+    }
+  }, [categories])
+
   return (
-    <main className="max-w-6xl mx-auto px-4 py-10">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">मेनु / Menu</h1>
-        <p className="text-gray-600 dark:text-gray-300 mt-1">
-          नेपाली स्वाद र आधुनिक शैली — Choose your cup!
-        </p>
+    <main className="max-w-6xl mx-auto px-4 py-10 lg:grid lg:grid-cols-12 lg:gap-8">
+      {/* Header */}
+      <header className="mb-6 lg:mb-8 lg:col-span-12">
+        <h1 className="text-3xl font-bold tracking-tight">{t('menu.title')}</h1>
+        <p className="text-gray-600 dark:text-gray-300 mt-1">{t('menu.subtitle')}</p>
         <div className="mt-3 text-xs text-gray-500">
-          <span className="mr-2">Legend:</span>
-          <span className="mr-2">Brew = Brewing difficulty</span>
-          <span>Seasonal badge shows limited availability</span>
+          <span className="mr-2">{t('menu.legend')}</span>
+          <span className="mr-2">{t('menu.legend.brew')}</span>
+          <span>{t('menu.legend.seasonal')}</span>
         </div>
-        {loading && (
-          <p className="mt-2 text-xs text-gray-500">Refreshing menu…</p>
-        )}
+        {loading && <p className="mt-2 text-xs text-gray-500">{t('menu.loading')}</p>}
         {error && (
           <div className="mt-3 text-sm rounded-md px-3 py-2 bg-rose-50 text-rose-700 dark:bg-rose-900/20 dark:text-rose-200">
             {error}
           </div>
         )}
+
+        {/* Mobile: horizontal category chips */}
+        <div className="mt-4 flex gap-2 overflow-x-auto lg:hidden">
+          {categories.map((cat) => (
+            <a
+              key={cat.key}
+              href={`#${sectionId(cat.key)}`}
+              onClick={(e) => {
+                e.preventDefault()
+                const el = document.getElementById(sectionId(cat.key))
+                el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+              }}
+              className={
+                'whitespace-nowrap rounded-full border px-3 py-1 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2 ring-offset-white dark:focus-visible:ring-offset-gray-900 ' +
+                (activeKey === cat.key
+                  ? 'border-[--color-accent] text-[--color-accent] bg-amber-50 dark:bg-amber-500/10'
+                  : 'border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:border-[--color-accent]')
+              }
+            >
+              {cat.titleNepali}
+            </a>
+          ))}
+        </div>
       </header>
 
-      {categories.map((cat) => (
-        <section key={cat.key} className="mb-10">
-          <div className="mb-4">
-            <h2 className="text-2xl font-semibold">{cat.titleNepali}</h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400">{cat.titleEnglish}</p>
-          </div>
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {cat.teas.map((t) => (
-              <TeaCard key={t.titleEnglish} {...t} />
-            ))}
-          </div>
-        </section>
-      ))}
+      {/* Desktop: sticky side rail */}
+      <aside className="hidden lg:block lg:col-span-3 self-start sticky top-24">
+        <nav className="space-y-1">
+          {categories.map((cat) => (
+            <a
+              key={cat.key}
+              href={`#${sectionId(cat.key)}`}
+              onClick={(e) => {
+                e.preventDefault()
+                const el = document.getElementById(sectionId(cat.key))
+                el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+              }}
+              className={
+                'block rounded-md px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2 ring-offset-white dark:focus-visible:ring-offset-gray-900 ' +
+                (activeKey === cat.key
+                  ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800'
+                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/60')
+              }
+            >
+              <div className="font-medium">{cat.titleNepali}</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400">{cat.titleEnglish}</div>
+            </a>
+          ))}
+        </nav>
+      </aside>
 
-      {/* Cultural brewing instructions & health notes */}
-      <section className="mt-6 grid md:grid-cols-2 gap-4">
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="rounded-lg border border-gray-200 dark:border-gray-800 p-5 bg-white dark:bg-gray-900"
-        >
-          <h3 className="font-semibold mb-2">Cultural Brewing Tips (नेपाली शैली)</h3>
-          <ul className="list-disc pl-5 text-sm text-gray-700 dark:text-gray-300 space-y-1">
-            <li>दूध चिया: पानी उमालेपछि चिया र मसला हालेर दूध मिसाउनुहोस्।</li>
-            <li>कालो चिया: 2–3 मिनेट steep, हल्का चिनी वा मधु।</li>
-            <li>अदरक/इलायची: मसला सुरुमा क्रश गरेर उमार्दा स्वाद गहिरो हुन्छ।</li>
-          </ul>
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="rounded-lg border border-gray-200 dark:border-gray-800 p-5 bg-white dark:bg-gray-900"
-        >
-          <h3 className="font-semibold mb-2">Health Benefits (स्वास्थ्य लाभ)</h3>
-          <ul className="list-disc pl-5 text-sm text-gray-700 dark:text-gray-300 space-y-1">
-            <li>ग्रीन टी: एन्टिअक्सिडेन्ट र मेटाबोलिज्म समर्थन</li>
-            <li>तुलसी/अदरक: सर्दी-खोकी र जुकाममा राहत</li>
-            <li>ब्ल्याक टी: हल्का क्याफिनले ऊर्जा दिन्छ</li>
-          </ul>
-        </motion.div>
-      </section>
+      {/* Content */}
+      <div className="lg:col-span-9">
+        {categories.map((cat) => (
+          <section key={cat.key} id={sectionId(cat.key)} className="mb-10 scroll-mt-24">
+            <div className="mb-4">
+              <h2 className="text-2xl font-semibold">{cat.titleNepali}</h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{cat.titleEnglish}</p>
+            </div>
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {cat.teas.map((t) => (
+                <TeaCard key={t.titleEnglish} {...t} />
+              ))}
+            </div>
+          </section>
+        ))}
+
+        {/* Cultural brewing instructions & health notes */}
+        <section className="mt-6 grid md:grid-cols-2 gap-4">
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="rounded-lg border border-gray-200 dark:border-gray-800 p-5 bg-white dark:bg-gray-900"
+          >
+            <h3 className="font-semibold mb-2">{t('menu.tips.title')}</h3>
+            <ul className="list-disc pl-5 text-sm text-gray-700 dark:text-gray-300 space-y-1">
+              <li>{t('menu.tips.item.dudh')}</li>
+              <li>{t('menu.tips.item.kalo')}</li>
+              <li>{t('menu.tips.item.masala')}</li>
+            </ul>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="rounded-lg border border-gray-200 dark:border-gray-800 p-5 bg-white dark:bg-gray-900"
+          >
+            <h3 className="font-semibold mb-2">{t('menu.health.title')}</h3>
+            <ul className="list-disc pl-5 text-sm text-gray-700 dark:text-gray-300 space-y-1">
+              <li>{t('menu.health.item.green')}</li>
+              <li>{t('menu.health.item.tulsi')}</li>
+              <li>{t('menu.health.item.black')}</li>
+            </ul>
+          </motion.div>
+        </section>
+      </div>
     </main>
   )
 }

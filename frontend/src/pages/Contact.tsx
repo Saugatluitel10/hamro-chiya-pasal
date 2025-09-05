@@ -1,11 +1,16 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import type React from 'react'
+import { useI18n } from '../i18n/I18nProvider'
+import IconTeaLeaf from '../components/IconTeaLeaf'
+import PatternBorder from '../components/PatternBorder'
+import PrayerFlags from '../components/PrayerFlags'
 
 type MessageType = 'inquiry' | 'feedback' | 'catering'
 type PreferredContact = 'email' | 'phone' | 'whatsapp'
 
 export default function Contact() {
+  const { t } = useI18n()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
@@ -24,7 +29,7 @@ export default function Contact() {
     setResult(null)
 
     if (!name || (!email && !phone)) {
-      setResult({ ok: false, msg: 'कृपया तपाईंको नाम र कम्तिमा एउटा सम्पर्क (इमेल वा फोन) दिनुहोस्।' })
+      setResult({ ok: false, msg: t('contact.form.validation.nameContactRequired') })
       return
     }
 
@@ -36,13 +41,13 @@ export default function Contact() {
         body: JSON.stringify({ name, email, phone, messageType, preferredContact, message, hp }),
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data?.message || 'Failed to send')
-      setResult({ ok: true, msg: data?.message || 'धन्यवाद! सन्देश प्राप्त भयो।' })
+      if (!res.ok) throw new Error(data?.message || t('contact.form.error.server'))
+      setResult({ ok: true, msg: data?.message || t('contact.form.success') })
       setName(''); setEmail(''); setPhone(''); setMessage('')
       setMessageType('inquiry'); setPreferredContact('email')
       setHp('')
     } catch (err: any) {
-      setResult({ ok: false, msg: err?.message || 'सर्भरमा समस्या आयो।' })
+      setResult({ ok: false, msg: err?.message || t('contact.form.error.server') })
     } finally {
       setSubmitting(false)
     }
@@ -50,24 +55,30 @@ export default function Contact() {
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-10">
+      {/* Subtle cultural banner */}
+      <div className="relative h-8 mb-1">
+        <div className="absolute inset-0">
+          <PrayerFlags className="opacity-70" height={36} />
+        </div>
+      </div>
       <motion.h1
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-3xl font-bold mb-4"
+        className="text-3xl font-bold mb-2 flex items-center gap-2"
       >
-        Contact & Location (सम्पर्क र ठेगाना)
+        <IconTeaLeaf className="text-[--color-secondary]" />
+        <span>{t('contact.title')}</span>
       </motion.h1>
+      <PatternBorder className="text-[--color-accent] mb-4" />
 
       <div className="grid lg:grid-cols-2 gap-8">
         {/* Left: Location + Info */}
         <section>
-          <h2 className="text-xl font-semibold mb-2">Our Location (ठेगाना)</h2>
-          <p className="text-gray-700 dark:text-gray-300 mb-3">
-            Thamel Marg, Kathmandu 44600, Nepal
-          </p>
+          <h2 className="text-xl font-semibold mb-2">{t('contact.location.title')}</h2>
+          <p className="text-gray-700 dark:text-gray-300 mb-3">{t('contact.location.addr')}</p>
           <div className="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
             <iframe
-              title="Hamro Chiya Pasal Location"
+              title={t('contact.map.title')}
               className="w-full aspect-video"
               loading="lazy"
               allowFullScreen
@@ -78,66 +89,64 @@ export default function Contact() {
 
           <div className="mt-6 grid sm:grid-cols-2 gap-4">
             <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-white dark:bg-gray-900">
-              <h3 className="font-semibold mb-1">Nearby Landmarks</h3>
+              <h3 className="font-semibold mb-1">{t('contact.landmarks.title')}</h3>
               <ul className="text-sm text-gray-700 dark:text-gray-300 list-disc pl-5 space-y-1">
-                <li>Thamel Chowk (5 min walk)</li>
-                <li>Garden of Dreams (8 min walk)</li>
-                <li>Kanti Path (10 min walk)</li>
+                <li>{t('contact.landmarks.item.thamel')}</li>
+                <li>{t('contact.landmarks.item.garden')}</li>
+                <li>{t('contact.landmarks.item.kanti')}</li>
               </ul>
             </div>
             <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-white dark:bg-gray-900">
-              <h3 className="font-semibold mb-1">Access & Parking</h3>
+              <h3 className="font-semibold mb-1">{t('contact.access.title')}</h3>
               <ul className="text-sm text-gray-700 dark:text-gray-300 list-disc pl-5 space-y-1">
-                <li>Street parking: limited (evenings better)</li>
-                <li>Public transport: Micro/Bus stop at Kanti Path</li>
-                <li>Ride-hailing: Set drop-off to Thamel Chowk</li>
+                <li>{t('contact.access.item.parking')}</li>
+                <li>{t('contact.access.item.public')}</li>
+                <li>{t('contact.access.item.ride')}</li>
               </ul>
             </div>
           </div>
 
           <div className="mt-6 rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-white dark:bg-gray-900">
-            <h3 className="font-semibold mb-1">Business Hours (खुल्ने समय)</h3>
+            <h3 className="font-semibold mb-1">{t('contact.hours.title')}</h3>
             <ul className="text-sm text-gray-700 dark:text-gray-300 grid grid-cols-2 gap-y-1">
-              <li>Sun–Thu: 7:00 AM – 8:30 PM</li>
-              <li>Fri: 7:00 AM – 9:30 PM</li>
-              <li>Sat: 8:00 AM – 9:00 PM</li>
-              <li>Holidays: 9:00 AM – 6:00 PM</li>
+              <li>{t('contact.hours.daysSunThu')}</li>
+              <li>{t('contact.hours.fri')}</li>
+              <li>{t('contact.hours.sat')}</li>
+              <li>{t('contact.hours.holidays')}</li>
             </ul>
             <p className="mt-2 text-xs text-gray-600 dark:text-gray-400">
-              Best time to visit: 10–12 AM, 4–6 PM • Rush hour: 7–9 PM (Fri/Sat)
+              {t('contact.hours.note')}
             </p>
           </div>
 
           <div className="mt-6 rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-white dark:bg-gray-900">
-            <h3 className="font-semibold mb-1">Contact Info</h3>
+            <h3 className="font-semibold mb-1">{t('contact.info.title')}</h3>
             <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-1">
-              <li>Phone: +977-9800000000</li>
-              <li>WhatsApp: +977-9800000000</li>
-              <li>Email: hello@hamro-chiya-pasal.com</li>
-              <li>Instagram: @hamro.chiya.pasal • Facebook: Hamro Chiya Pasal</li>
+              <li>{t('contact.info.phone')}</li>
+              <li>{t('contact.info.whatsapp')}</li>
+              <li>{t('contact.info.email')}</li>
+              <li>{t('contact.info.socials')}</li>
             </ul>
           </div>
         </section>
 
         {/* Right: Form */}
         <section>
-          <h2 className="text-xl font-semibold mb-2">Send us a message</h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-            Response time: within 24 hours (business days). For urgent catering, call or WhatsApp.
-          </p>
+          <h2 className="text-xl font-semibold mb-2">{t('contact.form.title')}</h2>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{t('contact.form.subtitle')}</p>
 
           <form onSubmit={handleSubmit} className="grid gap-4">
             <div className="grid sm:grid-cols-2 gap-4">
               <input
                 className="border rounded px-3 py-2 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800"
-                placeholder="Your Name *"
+                placeholder={t('contact.form.placeholder.name')}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
               <input
                 type="email"
                 className="border rounded px-3 py-2 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800"
-                placeholder="Email"
+                placeholder={t('contact.form.placeholder.email')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -145,7 +154,7 @@ export default function Contact() {
             <div className="grid sm:grid-cols-2 gap-4">
               <input
                 className="border rounded px-3 py-2 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800"
-                placeholder="Phone"
+                placeholder={t('contact.form.placeholder.phone')}
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
               />
@@ -154,9 +163,9 @@ export default function Contact() {
                 value={messageType}
                 onChange={(e) => setMessageType(e.target.value as MessageType)}
               >
-                <option value="inquiry">Inquiry (सामान्य सोधपुछ)</option>
-                <option value="feedback">Feedback (प्रतिक्रिया)</option>
-                <option value="catering">Catering (समारोह/केटरिङ)</option>
+                <option value="inquiry">{t('contact.form.type.inquiry')}</option>
+                <option value="feedback">{t('contact.form.type.feedback')}</option>
+                <option value="catering">{t('contact.form.type.catering')}</option>
               </select>
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
@@ -165,21 +174,21 @@ export default function Contact() {
                 value={preferredContact}
                 onChange={(e) => setPreferredContact(e.target.value as PreferredContact)}
               >
-                <option value="email">Preferred: Email</option>
-                <option value="phone">Preferred: Phone</option>
-                <option value="whatsapp">Preferred: WhatsApp</option>
+                <option value="email">{t('contact.form.pref.email')}</option>
+                <option value="phone">{t('contact.form.pref.phone')}</option>
+                <option value="whatsapp">{t('contact.form.pref.whatsapp')}</option>
               </select>
             </div>
             <textarea
               rows={6}
               className="border rounded px-3 py-2 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800"
-              placeholder="Your message"
+              placeholder={t('contact.form.placeholder.message')}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
             {/* Honeypot: visually hidden text field to trap bots */}
             <div aria-hidden="true" className="absolute -left-[9999px] -top-[9999px]">
-              <label htmlFor="hp" className="sr-only">Leave this field blank</label>
+              <label htmlFor="hp" className="sr-only">{t('contact.form.hpLabel')}</label>
               <input
                 id="hp"
                 name="hp"
@@ -194,11 +203,11 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="inline-flex items-center justify-center rounded-md bg-emerald-600 px-4 py-2 text-white font-medium hover:bg-emerald-700 disabled:opacity-60"
+                className="inline-flex items-center justify-center rounded-md bg-emerald-600 px-4 py-2 text-white font-medium hover:bg-emerald-700 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2 ring-offset-white dark:focus-visible:ring-offset-gray-900"
               >
-                {submitting ? 'Sending…' : 'Send Message'}
+                {submitting ? t('contact.form.submit.sending') : t('contact.form.submit.label')}
               </button>
-              <span className="text-xs text-gray-600 dark:text-gray-400">We respect your privacy and do not share details.</span>
+              <span className="text-xs text-gray-600 dark:text-gray-400">{t('contact.form.privacy')}</span>
             </div>
 
             {result && (

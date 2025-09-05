@@ -46,6 +46,13 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     }
   }, [locale])
 
+  // Keep the <html lang> attribute in sync with current locale for a11y/SEO
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('lang', locale)
+    }
+  }, [locale])
+
   const setLocale = (l: Locale) => {
     setLocaleState(l)
     localStorage.setItem('locale', l)

@@ -1,7 +1,61 @@
 @import "tailwindcss";
 
+/* Theme tokens (Tailwind v4 @theme) */
+@theme {
+  /* Colors */
+  --color-primary: #8B4513;     /* Saddle Brown - tea color */
+  --color-secondary: #228B22;   /* Forest Green - tea leaves */
+  --color-accent: #FFD700;      /* Gold - premium touch */
+  --color-background: #F5F5DC;  /* Beige - warm, welcoming */
+  --color-text: #2F4F4F;        /* Dark Slate Gray - readable */
+
+  /* Fonts */
+  --font-sans: "Hind Siliguri", "Noto Sans Devanagari", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --font-heading: "Mukta", "Noto Sans Devanagari", "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* Base styles */
+@layer base {
+  html:focus-within {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-[--color-background] text-[--color-text] antialiased;
+    font-family: var(--font-sans);
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+  }
+
+  a {
+    @apply text-[--color-primary];
+  }
+  a:hover {
+    @apply underline decoration-[--color-accent];
+  }
+}
+
 @layer base {
   :root {
     font-family: 'Poppins', 'Noto Sans Devanagari', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';
+  }
+}
+
+/* Respect reduced motion preferences */
+@layer base {
+  @media (prefers-reduced-motion: reduce) {
+    *:not([data-allow-motion]) {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+
+    html:focus-within {
+      scroll-behavior: auto;
+    }
   }
 }
