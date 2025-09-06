@@ -12,8 +12,6 @@ type I18nContextType = {
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined)
 
-const DEFAULT_LOCALE: Locale = 'ne'
-
 function detectInitialLocale(): Locale {
   const saved = localStorage.getItem('locale') as Locale | null
   if (saved === 'ne' || saved === 'en') return saved
@@ -46,6 +44,11 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     }
   }, [locale])
 
+  // Translator function derived from loaded messages
+  const t = useMemo(() => {
+    return (key: string) => messages[key] ?? key
+  }, [messages])
+
   // Keep the <html lang> attribute in sync with current locale for a11y/SEO
   useEffect(() => {
     if (typeof document !== 'undefined') {
@@ -53,20 +56,24 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     }
   }, [locale])
 
+  // Keep document title localized
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.title = t('brand')
+    }
+  }, [t, locale])
+
   const setLocale = (l: Locale) => {
     setLocaleState(l)
     localStorage.setItem('locale', l)
   }
-
-  const t = useMemo(() => {
-    return (key: string) => messages[key] ?? key
-  }, [messages])
 
   const value = useMemo(() => ({ locale, setLocale, t }), [locale, t])
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useI18n() {
   const ctx = useContext(I18nContext)
   if (!ctx) throw new Error('useI18n must be used within I18nProvider')

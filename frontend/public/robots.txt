@@ -1,0 +1,5 @@
+# robots.txt for Hamro Chiya Pasal
+User-agent: *
+Allow: /
+
+Sitemap: https://frontend-l7s6qlma7-saugats-projects-64133a90.vercel.app/sitemap.xml

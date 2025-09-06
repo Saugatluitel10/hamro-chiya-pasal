@@ -1,9 +1,16 @@
 import { Link } from 'react-router-dom'
 import { useI18n } from '../i18n/I18nProvider'
+import Meta from '../components/Meta'
 
 export default function NotFound() {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
+  const origin = typeof window !== 'undefined' ? window.location.origin : ''
+  const url = `${origin}/404`
+  const og = `${origin}/og/og-default.svg`
+  const ogLocale = locale === 'ne' ? 'ne_NP' : 'en_US'
   return (
+    <>
+    <Meta title={t('meta.notfound.title')} description={t('meta.notfound.desc')} url={url} image={og} locale={ogLocale} />
     <main className="min-h-[60vh] grid place-items-center px-4 text-center">
       <div>
         <h1 className="text-4xl font-bold mb-2">{t('notfound.title')}</h1>
@@ -16,5 +23,6 @@ export default function NotFound() {
         </Link>
       </div>
     </main>
+    </>
   )
 }

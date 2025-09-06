@@ -1,31 +1,61 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { useI18n } from '../i18n/I18nProvider'
+import Meta from '../components/Meta'
 import IconTeaLeaf from '../components/IconTeaLeaf'
 import PatternBorder from '../components/PatternBorder'
 import PrayerFlags from '../components/PrayerFlags'
+import StructuredData from '../components/StructuredData'
 
 type Region = 'Ilam' | 'Dhankuta' | 'Kaski'
 
-const regionInfo: Record<Region, { blurb: string } > = {
-  Ilam: {
-    blurb:
-      'Ilam is Nepal’s tea heartland — known for golden tips, complex aroma, and crisp mornings that shape the leaves.',
-  },
-  Dhankuta: {
-    blurb:
-      'Dhankuta’s rolling hills produce bright, balanced cups with gentle sweetness. We partner with smallholders here.',
-  },
-  Kaski: {
-    blurb:
-      'From the mid-hills around Pokhara, select gardens yield delicate greens with a refreshing finish.',
-  },
-}
+// Regions list used for toggles; all displayed copy comes from i18n keys
+const regions: Region[] = ['Ilam', 'Dhankuta', 'Kaski']
 
 export default function About() {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
+  const origin = typeof window !== 'undefined' ? window.location.origin : ''
+  const url = `${origin}/about`
+  const og = `${origin}/og/og-default.svg`
+  const ogLocale = locale === 'ne' ? 'ne_NP' : 'en_US'
   const [active, setActive] = useState<Region>('Ilam')
   return (
+    <>
+    <Meta title={t('meta.about.title')} description={t('meta.about.desc')} url={url} image={og} locale={ogLocale} />
+    <StructuredData
+      json={{
+        '@context': 'https://schema.org',
+        '@type': 'CafeOrCoffeeShop',
+        name: 'Hamro Chiya Pasal',
+        url: origin + '/',
+        image: og,
+        description: t('meta.about.desc'),
+        telephone: '+977-9800000000',
+        priceRange: 'Rs.',
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: 'Thamel Marg',
+          addressLocality: 'Kathmandu',
+          postalCode: '44600',
+          addressCountry: 'NP',
+        },
+        geo: {
+          '@type': 'GeoCoordinates',
+          latitude: 27.7172,
+          longitude: 85.3240,
+        },
+        servesCuisine: ['Tea', 'Nepali'],
+        sameAs: [
+          'https://www.instagram.com/hamro.chiya.pasal',
+          'https://www.facebook.com/HamroChiyaPasal',
+        ],
+        openingHoursSpecification: [
+          { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Sunday','Monday','Tuesday','Wednesday','Thursday'], opens: '07:00', closes: '20:30' },
+          { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Friday'], opens: '07:00', closes: '21:30' },
+          { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Saturday'], opens: '08:00', closes: '21:00' },
+        ],
+      }}
+    />
     <main className="max-w-6xl mx-auto px-4 py-10">
       {/* Business Story */}
       <section className="max-w-3xl">
@@ -57,7 +87,7 @@ export default function About() {
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{t('about.sourcing.subtitle')}</p>
 
           <div className="flex gap-2 mb-3">
-            {(Object.keys(regionInfo) as Region[]).map((r) => (
+            {regions.map((r) => (
               <button
                 key={r}
                 onClick={() => setActive(r)}
@@ -72,7 +102,7 @@ export default function About() {
             ))}
           </div>
 
-          <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-white dark:bg-gray-900">
+          <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-[--color-surface] dark:bg-gray-900">
             <p className="text-gray-700 dark:text-gray-300 text-sm">{t(`about.region.${active.toLowerCase()}.blurb`)}</p>
             <ul className="mt-3 text-sm list-disc pl-5 text-gray-700 dark:text-gray-300 space-y-1">
               <li>{t('about.sourcing.list.1')}</li>
@@ -108,22 +138,22 @@ export default function About() {
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{t('about.team.subtitle')}</p>
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
           {[
-            { name: 'Bajai', roleKey: 'traditional', years: 30 },
-            { name: 'Aama', roleKey: 'masterBrewer', years: 20 },
-            { name: 'Bhai', roleKey: 'sourcingLead', years: 6 },
-            { name: 'Didi', roleKey: 'community', years: 8 },
-            { name: 'Kaka', roleKey: 'operations', years: 12 },
-            { name: 'Sathi', roleKey: 'barista', years: 3 },
-            { name: 'Mama', roleKey: 'qualityControl', years: 10 },
+            { id: 'bajai', roleKey: 'traditional', years: 30 },
+            { id: 'aama', roleKey: 'masterBrewer', years: 20 },
+            { id: 'bhai', roleKey: 'sourcingLead', years: 6 },
+            { id: 'didi', roleKey: 'community', years: 8 },
+            { id: 'kaka', roleKey: 'operations', years: 12 },
+            { id: 'sathi', roleKey: 'barista', years: 3 },
+            { id: 'mama', roleKey: 'qualityControl', years: 10 },
           ].map((m) => (
             <motion.div
-              key={m.name}
+              key={m.id}
               initial={{ opacity: 0, y: 8 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-white dark:bg-gray-900"
+              className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-[--color-surface] dark:bg-gray-900"
             >
-              <div className="font-semibold">{m.name}</div>
+              <div className="font-semibold">{t(`about.team.member.${m.id}`)}</div>
               <div className="text-sm text-gray-600 dark:text-gray-400">{t(`about.team.role.${m.roleKey}`)}</div>
               <div className="mt-1 text-xs text-gray-500">{m.years}{t('about.team.yearsSuffix')}</div>
             </motion.div>
@@ -131,5 +161,6 @@ export default function About() {
         </div>
       </section>
     </main>
+    </>
   )
 }

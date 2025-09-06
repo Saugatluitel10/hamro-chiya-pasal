@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom'
 import { useI18n } from '../i18n/I18nProvider'
+import PatternBorder from './PatternBorder'
 
 const base = 'text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-emerald-600 dark:hover:text-emerald-400 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2 ring-offset-white dark:focus-visible:ring-offset-gray-900'
 const active = 'text-emerald-700 dark:text-emerald-300'
@@ -35,6 +36,8 @@ export default function Navbar() {
           </div>
         </div>
       </nav>
+      {/* Subtle decorative border inspired by Nepali motifs */}
+      <PatternBorder className="text-[--color-accent] opacity-80" />
     </header>
   )
 }

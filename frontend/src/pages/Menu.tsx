@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
+import Meta from '../components/Meta'
 import TeaCard from '../components/TeaCard'
 import { useI18n } from '../i18n/I18nProvider'
 
@@ -150,12 +151,60 @@ const fallbackCategories: Category[] = [
 ]
 
 export default function Menu() {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
+  const origin = typeof window !== 'undefined' ? window.location.origin : ''
+  const url = `${origin}/menu`
+  const og = `${origin}/og/og-default.svg`
+  const ogLocale = locale === 'ne' ? 'ne_NP' : 'en_US'
+  // English details for fallback data (only used when API is unavailable)
+  const fallbackEnglishDetail: Record<string, { ingredients?: string[]; healthBenefits?: string[] }> = {
+    'Dudh Chiya': {
+      ingredients: ['Milk', 'Black tea', 'Sugar'],
+      healthBenefits: ['Energy', 'Comfort'],
+    },
+    'Kalo Chiya': {
+      ingredients: ['Black tea', 'Hot water'],
+      healthBenefits: ['Antioxidants'],
+    },
+    'Adrak Chiya': {
+      ingredients: ['Ginger', 'Milk', 'Tea leaves'],
+      healthBenefits: ['Soothes throat', 'Reduces fever'],
+    },
+    'Elaichi Chiya': {
+      ingredients: ['Cardamom', 'Milk', 'Tea leaves'],
+      healthBenefits: ['Improves digestion'],
+    },
+    'Ilam Gold': {
+      ingredients: ['High-grade tea leaves'],
+      healthBenefits: ['Rich flavor', 'Aroma'],
+    },
+    'Himalayan Green': {
+      ingredients: ['Green tea'],
+      healthBenefits: ['Detox', 'Metabolism'],
+    },
+    'Silver Tips': {
+      ingredients: ['Buds only'],
+      healthBenefits: ['Light and aromatic'],
+    },
+    'Tulsi Tea': {
+      ingredients: ['Tulsi (holy basil)', 'Honey (optional)'],
+      healthBenefits: ['Relief for cold and cough'],
+    },
+    'Nettle Tea': {
+      ingredients: ['Nettle leaves'],
+      healthBenefits: ['Mineral-rich'],
+    },
+    'Lemon Grass': {
+      ingredients: ['Lemongrass', 'Honey (optional)'],
+      healthBenefits: ['Aromatic, calming'],
+    },
+  }
   const [categories, setCategories] = useState<Category[]>(fallbackCategories)
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
   const [activeKey, setActiveKey] = useState<string>('')
-  const apiBase = (import.meta as any).env?.VITE_API_BASE_URL || 'http://localhost:5000'
+  const env = (import.meta as unknown as { env?: { VITE_API_BASE_URL?: string } }).env
+  const apiBase = env?.VITE_API_BASE_URL ?? 'http://localhost:5000'
   const sectionId = (k: string) => `menu-${k}`
 
   useEffect(() => {
@@ -164,12 +213,13 @@ export default function Menu() {
       try {
         const res = await fetch(`${apiBase}/api/menu`)
         const data = await res.json()
-        if (!res.ok) throw new Error(data?.message || t('menu.error.fetch'))
+        if (!res.ok) throw new Error((data && (data as { message?: string }).message) || t('menu.error.fetch'))
         if (Array.isArray(data?.categories) && !cancelled) {
           setCategories(data.categories)
         }
-      } catch (e: any) {
-        if (!cancelled) setError(e?.message || t('menu.error.load'))
+      } catch (e: unknown) {
+        const msg = e instanceof Error ? e.message : t('menu.error.load')
+        if (!cancelled) setError(msg)
       } finally {
         if (!cancelled) setLoading(false)
       }
@@ -211,6 +261,8 @@ export default function Menu() {
   }, [categories])
 
   return (
+    <>
+    <Meta title={t('meta.menu.title')} description={t('meta.menu.desc')} url={url} image={og} locale={ogLocale} />
     <main className="max-w-6xl mx-auto px-4 py-10 lg:grid lg:grid-cols-12 lg:gap-8">
       {/* Header */}
       <header className="mb-6 lg:mb-8 lg:col-span-12">
@@ -287,9 +339,18 @@ export default function Menu() {
               <p className="text-sm text-gray-600 dark:text-gray-400">{cat.titleEnglish}</p>
             </div>
             <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {cat.teas.map((t) => (
-                <TeaCard key={t.titleEnglish} {...t} />
-              ))}
+              {cat.teas.map((t) => {
+                const titleKey = t.titleEnglish || ''
+                const override = locale === 'en' && titleKey ? fallbackEnglishDetail[titleKey] : undefined
+                return (
+                  <TeaCard
+                    key={t.titleEnglish}
+                    {...t}
+                    ingredients={override?.ingredients ?? t.ingredients}
+                    healthBenefits={override?.healthBenefits ?? t.healthBenefits}
+                  />
+                )
+              })}
             </div>
           </section>
         ))}
@@ -300,7 +361,7 @@ export default function Menu() {
             initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="rounded-lg border border-gray-200 dark:border-gray-800 p-5 bg-white dark:bg-gray-900"
+            className="rounded-lg border border-gray-200 dark:border-gray-800 p-5 bg-[--color-surface] dark:bg-gray-900"
           >
             <h3 className="font-semibold mb-2">{t('menu.tips.title')}</h3>
             <ul className="list-disc pl-5 text-sm text-gray-700 dark:text-gray-300 space-y-1">
@@ -313,7 +374,7 @@ export default function Menu() {
             initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="rounded-lg border border-gray-200 dark:border-gray-800 p-5 bg-white dark:bg-gray-900"
+            className="rounded-lg border border-gray-200 dark:border-gray-800 p-5 bg-[--color-surface] dark:bg-gray-900"
           >
             <h3 className="font-semibold mb-2">{t('menu.health.title')}</h3>
             <ul className="list-disc pl-5 text-sm text-gray-700 dark:text-gray-300 space-y-1">
@@ -325,5 +386,6 @@ export default function Menu() {
         </section>
       </div>
     </main>
+    </>
   )
 }

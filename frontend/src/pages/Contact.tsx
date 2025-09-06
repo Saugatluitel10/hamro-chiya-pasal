@@ -2,15 +2,21 @@ import { motion } from 'framer-motion'
 import { useState } from 'react'
 import type React from 'react'
 import { useI18n } from '../i18n/I18nProvider'
+import Meta from '../components/Meta'
 import IconTeaLeaf from '../components/IconTeaLeaf'
 import PatternBorder from '../components/PatternBorder'
 import PrayerFlags from '../components/PrayerFlags'
+import IconKettle from '../components/IconKettle'
 
 type MessageType = 'inquiry' | 'feedback' | 'catering'
 type PreferredContact = 'email' | 'phone' | 'whatsapp'
 
 export default function Contact() {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
+  const origin = typeof window !== 'undefined' ? window.location.origin : ''
+  const url = `${origin}/contact`
+  const og = `${origin}/og/og-default.svg`
+  const ogLocale = locale === 'ne' ? 'ne_NP' : 'en_US'
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
@@ -22,7 +28,8 @@ export default function Contact() {
   // Honeypot field (should remain empty). Bots often fill hidden inputs.
   const [hp, setHp] = useState('')
 
-  const apiBase = (import.meta as any).env?.VITE_API_BASE_URL || 'http://localhost:5000'
+  const env = (import.meta as unknown as { env?: { VITE_API_BASE_URL?: string } }).env
+  const apiBase = env?.VITE_API_BASE_URL ?? 'http://localhost:5000'
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -46,14 +53,17 @@ export default function Contact() {
       setName(''); setEmail(''); setPhone(''); setMessage('')
       setMessageType('inquiry'); setPreferredContact('email')
       setHp('')
-    } catch (err: any) {
-      setResult({ ok: false, msg: err?.message || t('contact.form.error.server') })
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : t('contact.form.error.server')
+      setResult({ ok: false, msg })
     } finally {
       setSubmitting(false)
     }
   }
 
   return (
+    <>
+    <Meta title={t('meta.contact.title')} description={t('meta.contact.desc')} url={url} image={og} locale={ogLocale} />
     <main className="max-w-6xl mx-auto px-4 py-10">
       {/* Subtle cultural banner */}
       <div className="relative h-8 mb-1">
@@ -76,19 +86,19 @@ export default function Contact() {
         <section>
           <h2 className="text-xl font-semibold mb-2">{t('contact.location.title')}</h2>
           <p className="text-gray-700 dark:text-gray-300 mb-3">{t('contact.location.addr')}</p>
-          <div className="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+          <div className="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800 bg-[--color-surface] dark:bg-gray-900">
             <iframe
               title={t('contact.map.title')}
               className="w-full aspect-video"
               loading="lazy"
               allowFullScreen
               referrerPolicy="no-referrer-when-downgrade"
-              src="https://www.google.com/maps?q=Thamel%20Marg%2C%20Kathmandu%2044600%2C%20Nepal&output=embed"
+              src={`https://www.google.com/maps?q=${encodeURIComponent(t('contact.location.addr'))}&output=embed`}
             />
           </div>
 
           <div className="mt-6 grid sm:grid-cols-2 gap-4">
-            <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-white dark:bg-gray-900">
+            <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-[--color-surface] dark:bg-gray-900">
               <h3 className="font-semibold mb-1">{t('contact.landmarks.title')}</h3>
               <ul className="text-sm text-gray-700 dark:text-gray-300 list-disc pl-5 space-y-1">
                 <li>{t('contact.landmarks.item.thamel')}</li>
@@ -96,7 +106,7 @@ export default function Contact() {
                 <li>{t('contact.landmarks.item.kanti')}</li>
               </ul>
             </div>
-            <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-white dark:bg-gray-900">
+            <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-[--color-surface] dark:bg-gray-900">
               <h3 className="font-semibold mb-1">{t('contact.access.title')}</h3>
               <ul className="text-sm text-gray-700 dark:text-gray-300 list-disc pl-5 space-y-1">
                 <li>{t('contact.access.item.parking')}</li>
@@ -106,7 +116,7 @@ export default function Contact() {
             </div>
           </div>
 
-          <div className="mt-6 rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-white dark:bg-gray-900">
+          <div className="mt-6 rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-[--color-surface] dark:bg-gray-900">
             <h3 className="font-semibold mb-1">{t('contact.hours.title')}</h3>
             <ul className="text-sm text-gray-700 dark:text-gray-300 grid grid-cols-2 gap-y-1">
               <li>{t('contact.hours.daysSunThu')}</li>
@@ -119,7 +129,7 @@ export default function Contact() {
             </p>
           </div>
 
-          <div className="mt-6 rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-white dark:bg-gray-900">
+          <div className="mt-6 rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-[--color-surface] dark:bg-gray-900">
             <h3 className="font-semibold mb-1">{t('contact.info.title')}</h3>
             <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-1">
               <li>{t('contact.info.phone')}</li>
@@ -132,20 +142,23 @@ export default function Contact() {
 
         {/* Right: Form */}
         <section>
-          <h2 className="text-xl font-semibold mb-2">{t('contact.form.title')}</h2>
+          <h2 className="text-xl font-semibold mb-2 flex items-center gap-2">
+            <IconKettle className="text-[--color-primary]" />
+            <span>{t('contact.form.title')}</span>
+          </h2>
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{t('contact.form.subtitle')}</p>
 
           <form onSubmit={handleSubmit} className="grid gap-4">
             <div className="grid sm:grid-cols-2 gap-4">
               <input
-                className="border rounded px-3 py-2 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800"
+                className="border rounded px-3 py-2 bg-[--color-surface] dark:bg-gray-900 border-gray-200 dark:border-gray-800"
                 placeholder={t('contact.form.placeholder.name')}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
               <input
                 type="email"
-                className="border rounded px-3 py-2 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800"
+                className="border rounded px-3 py-2 bg-[--color-surface] dark:bg-gray-900 border-gray-200 dark:border-gray-800"
                 placeholder={t('contact.form.placeholder.email')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -153,13 +166,13 @@ export default function Contact() {
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
               <input
-                className="border rounded px-3 py-2 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800"
+                className="border rounded px-3 py-2 bg-[--color-surface] dark:bg-gray-900 border-gray-200 dark:border-gray-800"
                 placeholder={t('contact.form.placeholder.phone')}
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
               />
               <select
-                className="border rounded px-3 py-2 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800"
+                className="border rounded px-3 py-2 bg-[--color-surface] dark:bg-gray-900 border-gray-200 dark:border-gray-800"
                 value={messageType}
                 onChange={(e) => setMessageType(e.target.value as MessageType)}
               >
@@ -170,7 +183,7 @@ export default function Contact() {
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
               <select
-                className="border rounded px-3 py-2 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800"
+                className="border rounded px-3 py-2 bg-[--color-surface] dark:bg-gray-900 border-gray-200 dark:border-gray-800"
                 value={preferredContact}
                 onChange={(e) => setPreferredContact(e.target.value as PreferredContact)}
               >
@@ -181,7 +194,7 @@ export default function Contact() {
             </div>
             <textarea
               rows={6}
-              className="border rounded px-3 py-2 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800"
+              className="border rounded px-3 py-2 bg-[--color-surface] dark:bg-gray-900 border-gray-200 dark:border-gray-800"
               placeholder={t('contact.form.placeholder.message')}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
@@ -226,5 +239,6 @@ export default function Contact() {
         </section>
       </div>
     </main>
+    </>
   )
 }

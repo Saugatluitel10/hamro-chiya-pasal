@@ -1,18 +1,6 @@
 @import "tailwindcss";
 
-/* Theme tokens (Tailwind v4 @theme) */
-@theme {
-  /* Colors */
-  --color-primary: #8B4513;     /* Saddle Brown - tea color */
-  --color-secondary: #228B22;   /* Forest Green - tea leaves */
-  --color-accent: #FFD700;      /* Gold - premium touch */
-  --color-background: #F5F5DC;  /* Beige - warm, welcoming */
-  --color-text: #2F4F4F;        /* Dark Slate Gray - readable */
-
-  /* Fonts */
-  --font-sans: "Hind Siliguri", "Noto Sans Devanagari", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  --font-heading: "Mukta", "Noto Sans Devanagari", "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-}
+/* Theme tokens (moved to :root to avoid @theme lint warnings) */
 
 /* Base styles */
 @layer base {
@@ -21,7 +9,10 @@
   }
 
   body {
-    @apply bg-[--color-background] text-[--color-text] antialiased;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     font-family: var(--font-sans);
   }
 
@@ -31,16 +22,41 @@
   }
 
   a {
-    @apply text-[--color-primary];
+    color: var(--color-primary);
   }
   a:hover {
-    @apply underline decoration-[--color-accent];
+    text-decoration: underline;
+    text-decoration-color: var(--color-accent);
+  }
+}
+
+/* Cultural textures & accents */
+@layer utilities {
+  /* Subtle woven texture for footer background */
+  .footer-texture {
+    background-color: var(--color-surface);
+    background-image:
+      linear-gradient(0deg, rgba(0,0,0,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,0.025) 1px, transparent 1px);
+    background-size: 12px 12px, 12px 12px;
   }
 }
 
 @layer base {
   :root {
-    font-family: 'Poppins', 'Noto Sans Devanagari', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';
+    /* Colors */
+    --color-primary: #B55239;      /* Terracotta / Clay Red */
+    --color-secondary: #1F5E46;    /* Deep tea garden green */
+    --color-accent: #D4A017;       /* Mustard yellow */
+    --color-background: #F8F3E7;   /* Off-white, warm */
+    --color-surface: #FCF8F3;      /* Paper-like surface */
+    --color-text: #2E2A27;         /* Deep brown for readability */
+
+    /* Fonts */
+    --font-sans: 'Inter', 'Noto Sans Devanagari', 'Hind Siliguri', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    --font-heading: 'Noto Serif Devanagari', 'Merriweather', Georgia, ui-serif, serif;
+
+    font-family: 'Inter', 'Noto Sans Devanagari', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';
   }
 }
 

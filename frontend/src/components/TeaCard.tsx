@@ -30,11 +30,10 @@ export default function TeaCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
       transition={{ duration: 0.25 }}
-      className="group overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/80 backdrop-blur shadow hover:shadow-md transition-shadow"
+      className="group overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800 bg-[--color-surface] dark:bg-gray-900 shadow hover:shadow-md transition-shadow"
     >
       {imageUrl && (
         <div className="relative h-40 w-full overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={imageUrl}
             alt={titleEnglish || titleNepali}

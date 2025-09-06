@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom'
 import TeaCard from '../components/TeaCard'
 import { useEffect, useState } from 'react'
 import { useI18n } from '../i18n/I18nProvider'
+import Meta from '../components/Meta'
 import IconTeaLeaf from '../components/IconTeaLeaf'
 import PatternBorder from '../components/PatternBorder'
 import MountainSilhouette from '../components/MountainSilhouette'
 import PrayerFlags from '../components/PrayerFlags'
+import StructuredData from '../components/StructuredData'
 
 function Counter({ to, duration = 1.2 }: { to: number; duration?: number }) {
   const count = useMotionValue(0)
@@ -28,7 +30,11 @@ function Counter({ to, duration = 1.2 }: { to: number; duration?: number }) {
 }
 
 export default function Home() {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
+  const origin = typeof window !== 'undefined' ? window.location.origin : ''
+  const url = `${origin}/`
+  const og = `${origin}/og/og-default.svg`
+  const ogLocale = locale === 'ne' ? 'ne_NP' : 'en_US'
   const prefersReduced = useReducedMotion()
   const featured = [
     {
@@ -70,7 +76,38 @@ export default function Home() {
   ]
 
   return (
-    <main className="bg-gradient-to-br from-emerald-50 to-white dark:from-gray-900 dark:to-gray-950">
+    <>
+      <Meta
+        title={t('meta.home.title')}
+        description={t('meta.home.desc')}
+        url={url}
+        image={og}
+        locale={ogLocale}
+      />
+      <StructuredData
+        json={{
+          '@context': 'https://schema.org',
+          '@type': 'ItemList',
+          itemListElement: featured.map((ft, idx) => ({
+            '@type': 'ListItem',
+            position: idx + 1,
+            item: {
+              '@type': 'Product',
+              name: locale === 'ne' ? ft.titleNepali : ft.titleEnglish,
+              image: ft.imageUrl,
+              brand: { '@type': 'Brand', name: 'Hamro Chiya Pasal' },
+              offers: {
+                '@type': 'Offer',
+                price: ft.priceNpr,
+                priceCurrency: 'NPR',
+                availability: 'https://schema.org/InStoreOnly',
+                url,
+              },
+            },
+          })),
+        }}
+      />
+      <main className="bg-gradient-to-br from-emerald-50 to-white dark:from-gray-900 dark:to-gray-950">
       {/* Hero with background image */}
       <section className="relative">
         <div
@@ -146,20 +183,20 @@ export default function Home() {
       {/* Business highlights */}
       <section className="max-w-6xl mx-auto px-4 pb-16">
         <div className="grid md:grid-cols-4 gap-4">
-          <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-6 bg-white dark:bg-gray-900 text-center">
+          <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-6 bg-[--color-surface] dark:bg-gray-900 text-center">
             <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-400"><Counter to={7} />+ </div>
             <p className="text-sm text-gray-600 dark:text-gray-300">{t('home.stats.years')}</p>
           </div>
-          <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-6 bg-white dark:bg-gray-900 text-center">
+          <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-6 bg-[--color-surface] dark:bg-gray-900 text-center">
             <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-400"><Counter to={98} />% </div>
             <p className="text-sm text-gray-600 dark:text-gray-300">{t('home.stats.satisfaction')}</p>
           </div>
-          <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-6 bg-white dark:bg-gray-900">
+          <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-6 bg-[--color-surface] dark:bg-gray-900">
             <div className="font-semibold mb-1">{t('home.stats.locationHours')}</div>
             <p className="text-sm text-gray-600 dark:text-gray-300">{t('home.location.city')}</p>
             <p className="text-sm text-gray-600 dark:text-gray-300">{t('home.hours.summary')}</p>
           </div>
-          <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-6 bg-white dark:bg-gray-900">
+          <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-6 bg-[--color-surface] dark:bg-gray-900">
             <div className="font-semibold mb-2">{t('home.stats.authenticity')}</div>
             <div className="flex flex-wrap gap-2">
               {[t('home.badges.ilamSourced'), t('home.badges.handBrewed'), t('home.badges.freshSpices')].map((b) => (
@@ -183,7 +220,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 8 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-white dark:bg-gray-900"
+              className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-[--color-surface] dark:bg-gray-900"
             >
               <p className="text-sm text-gray-700 dark:text-gray-300">“{item.quote}”</p>
               <footer className="mt-2 text-xs text-gray-500">— {item.name}</footer>
@@ -192,5 +229,6 @@ export default function Home() {
         </div>
       </section>
     </main>
+    </>
   )
 }
