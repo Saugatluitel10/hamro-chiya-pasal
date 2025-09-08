@@ -6,10 +6,16 @@ export type MetaProps = {
   url?: string
   image?: string
   locale?: string
+  // Optional explicit alternates map; if provided, overrides computed behavior
+  alternates?: Partial<Record<'ne' | 'en' | 'x-default', string>>
+  // Strategy for computing alternate URLs when alternates are not provided
+  // 'same-path': both hreflang URLs point to the same route (default)
+  // 'prefix': compute /ne and /en prefixed URLs based on current route
+  localizedUrlStrategy?: 'same-path' | 'prefix'
 }
 
 // Lightweight per-route meta manager. No external deps.
-export default function Meta({ title, description, url, image, locale }: MetaProps) {
+export default function Meta({ title, description, url, image, locale, alternates, localizedUrlStrategy = 'same-path' }: MetaProps) {
   useEffect(() => {
     if (title) document.title = title
     const ensureMeta = (selector: string, attr: 'content' | 'href', value: string) => {
@@ -31,7 +37,7 @@ export default function Meta({ title, description, url, image, locale }: MetaPro
       if (el) el.setAttribute(attr, value)
     }
 
-    const ensureHreflang = (lang: 'ne' | 'en', href: string) => {
+    const ensureHreflang = (lang: string, href: string) => {
       let el = document.head.querySelector<HTMLLinkElement>(`link[rel="alternate"][hreflang="${lang}"]`)
       if (!el) {
         el = document.createElement('link')
@@ -47,8 +53,30 @@ export default function Meta({ title, description, url, image, locale }: MetaPro
       ensureMeta('meta[property="og:url"]', 'content', url)
       ensureMeta('link[rel="canonical"]', 'href', url)
       // Provide per-route hreflang alternates
-      ensureHreflang('ne', url)
-      ensureHreflang('en', url)
+      if (alternates && (alternates.ne || alternates.en || alternates['x-default'])) {
+        if (alternates.ne) ensureHreflang('ne', alternates.ne)
+        if (alternates.en) ensureHreflang('en', alternates.en)
+        if (alternates['x-default']) ensureHreflang('x-default', alternates['x-default'])
+      } else if (localizedUrlStrategy === 'prefix') {
+        try {
+          const u = new URL(url)
+          const origin = `${u.protocol}//${u.host}`
+          const rest = u.pathname.replace(/^\/(ne|en)(?=\/|$)/, '').replace(/^\/?/, '/')
+          const neUrl = `${origin}/ne${rest}`
+          const enUrl = `${origin}/en${rest}`
+          const xDefault = `${origin}${rest}`
+          ensureHreflang('ne', neUrl)
+          ensureHreflang('en', enUrl)
+          ensureHreflang('x-default', xDefault)
+        } catch {
+          // Fallback gracefully to same-path if URL parsing fails
+          ensureHreflang('ne', url)
+          ensureHreflang('en', url)
+        }
+      } else {
+        ensureHreflang('ne', url)
+        ensureHreflang('en', url)
+      }
     }
     if (title) {
       ensureMeta('meta[property="og:title"]', 'content', title)
@@ -65,7 +93,7 @@ export default function Meta({ title, description, url, image, locale }: MetaPro
     if (locale) {
       ensureMeta('meta[property="og:locale"]', 'content', locale)
     }
-  }, [title, description, url, image, locale])
+  }, [title, description, url, image, locale, localizedUrlStrategy, alternates])
 
   return null
 }

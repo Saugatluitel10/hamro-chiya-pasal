@@ -21,6 +21,8 @@ async function main() {
   const out16 = resolve(root, 'public', 'favicon-16x16.png')
   const out32 = resolve(root, 'public', 'favicon-32x32.png')
   const outApple = resolve(root, 'public', 'apple-touch-icon.png')
+  const out192 = resolve(root, 'public', 'android-chrome-192x192.png')
+  const out512 = resolve(root, 'public', 'android-chrome-512x512.png')
 
   const svg = await readFile(svgPath)
 
@@ -30,11 +32,17 @@ async function main() {
   await sharp(svg).resize(32, 32, { fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 0 } }).png({ compressionLevel: 9 }).toFile(out32)
   // 180x180 Apple touch icon
   await sharp(svg).resize(180, 180, { fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 0 } }).png({ compressionLevel: 9 }).toFile(outApple)
+  // 192x192 Android icon
+  await sharp(svg).resize(192, 192, { fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 0 } }).png({ compressionLevel: 9 }).toFile(out192)
+  // 512x512 Android icon
+  await sharp(svg).resize(512, 512, { fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 0 } }).png({ compressionLevel: 9 }).toFile(out512)
 
   console.log('Generated:')
   console.log(' - public/favicon-16x16.png')
   console.log(' - public/favicon-32x32.png')
   console.log(' - public/apple-touch-icon.png')
+  console.log(' - public/android-chrome-192x192.png')
+  console.log(' - public/android-chrome-512x512.png')
 }
 
 main().catch((e) => {
