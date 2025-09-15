@@ -14,7 +14,7 @@ type PreferredContact = 'email' | 'phone' | 'whatsapp'
 export default function Contact() {
   const { t, locale } = useI18n()
   const origin = typeof window !== 'undefined' ? window.location.origin : ''
-  const url = `${origin}/contact`
+  const url = typeof window !== 'undefined' ? window.location.href : ''
   const og = `${origin}/og/og-default.svg`
   const ogLocale = locale === 'ne' ? 'ne_NP' : 'en_US'
   const [name, setName] = useState('')
@@ -63,7 +63,7 @@ export default function Contact() {
 
   return (
     <>
-    <Meta title={t('meta.contact.title')} description={t('meta.contact.desc')} url={url} image={og} locale={ogLocale} />
+    <Meta title={t('meta.contact.title')} description={t('meta.contact.desc')} url={url} image={og} locale={ogLocale} localizedUrlStrategy="prefix" />
     <main className="max-w-6xl mx-auto px-4 py-10">
       {/* Subtle cultural banner */}
       <div className="relative h-8 mb-1">

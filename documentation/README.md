@@ -3,7 +3,7 @@
 This guide covers local development, environment variables, deployment to Render (API) and Vercel (Frontend), contact email setup, and common troubleshooting.
 
 ## Live URLs
-- Frontend (Vercel): https://frontend-l7s6qlma7-saugats-projects-64133a90.vercel.app
+- Frontend (Vercel): https://frontend-juu3h5fhp-saugats-projects-64133a90.vercel.app
 - Backend (Render): https://hamro-chiya-pasal.onrender.com
 
 Health endpoints:

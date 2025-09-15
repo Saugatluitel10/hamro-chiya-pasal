@@ -1,4 +1,5 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom'
+import { useEffect } from 'react'
 import Home from './pages/Home'
 import Menu from './pages/Menu'
 import About from './pages/About'
@@ -6,6 +7,7 @@ import Contact from './pages/Contact'
 import NotFound from './pages/NotFound'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
+import { useI18n } from './i18n/I18nProvider'
 
 function App() {
   return (
@@ -13,10 +15,29 @@ function App() {
       <Navbar />
 
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/menu" element={<Menu />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
+        {/* Redirect base and legacy unprefixed paths to preferred locale */}
+        <Route path="/" element={<RedirectToPreferredLocale />} />
+        <Route path="/menu" element={<RedirectUnprefixed to="menu" />} />
+        <Route path="/about" element={<RedirectUnprefixed to="about" />} />
+        <Route path="/contact" element={<RedirectUnprefixed to="contact" />} />
+
+        {/* Locale-prefixed routes */}
+        <Route path="ne" element={<LocaleLayoutFixed locale="ne" />}>
+          <Route index element={<Home />} />
+          <Route path="menu" element={<Menu />} />
+          <Route path="about" element={<About />} />
+          <Route path="contact" element={<Contact />} />
+          <Route path="*" element={<NotFound />} />
+        </Route>
+        <Route path="en" element={<LocaleLayoutFixed locale="en" />}>
+          <Route index element={<Home />} />
+          <Route path="menu" element={<Menu />} />
+          <Route path="about" element={<About />} />
+          <Route path="contact" element={<Contact />} />
+          <Route path="*" element={<NotFound />} />
+        </Route>
+
+        {/* Catch-all */}
         <Route path="*" element={<NotFound />} />
       </Routes>
 
@@ -26,3 +47,37 @@ function App() {
 }
 
 export default App
+
+// --- Helpers & Layout for locale-prefixed routing ---
+
+function detectPreferredLocale(): 'ne' | 'en' {
+  try {
+    const saved = localStorage.getItem('locale')
+    if (saved === 'ne' || saved === 'en') return saved
+  } catch (_err) {
+    // Access to localStorage can fail in SSR or privacy modes; ignore and fallback below
+    void 0
+  }
+  const nav = typeof navigator !== 'undefined' ? navigator.language?.toLowerCase() : 'ne'
+  if (nav && nav.startsWith('ne')) return 'ne'
+  return 'en'
+}
+
+function RedirectToPreferredLocale() {
+  const l = detectPreferredLocale()
+  return <Navigate to={`/${l}/`} replace />
+}
+
+function RedirectUnprefixed({ to }: { to: 'menu' | 'about' | 'contact' }) {
+  const l = detectPreferredLocale()
+  return <Navigate to={`/${l}/${to}`} replace />
+}
+
+function LocaleLayoutFixed({ locale }: { locale: 'ne' | 'en' }) {
+  const { setLocale } = useI18n()
+  // Sync the i18n context with the URL segment
+  useEffect(() => {
+    setLocale(locale)
+  }, [locale, setLocale])
+  return <Outlet />
+}

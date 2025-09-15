@@ -10,6 +10,10 @@ const TeaSchema = new mongoose.Schema(
     healthBenefits: [String],
     difficulty: { type: String, enum: ['Easy', 'Medium', 'Hard'] },
     seasonal: Boolean,
+    // Availability flag for menu display
+    available: { type: Boolean, default: true },
+    // Popularity score for sorting (e.g., sales count or manual weight)
+    popularity: { type: Number, default: 0 },
   },
   { _id: false }
 )

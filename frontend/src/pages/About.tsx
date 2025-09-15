@@ -15,13 +15,13 @@ const regions: Region[] = ['Ilam', 'Dhankuta', 'Kaski']
 export default function About() {
   const { t, locale } = useI18n()
   const origin = typeof window !== 'undefined' ? window.location.origin : ''
-  const url = `${origin}/about`
+  const url = typeof window !== 'undefined' ? window.location.href : ''
   const og = `${origin}/og/og-default.svg`
   const ogLocale = locale === 'ne' ? 'ne_NP' : 'en_US'
   const [active, setActive] = useState<Region>('Ilam')
   return (
     <>
-    <Meta title={t('meta.about.title')} description={t('meta.about.desc')} url={url} image={og} locale={ogLocale} />
+    <Meta title={t('meta.about.title')} description={t('meta.about.desc')} url={url} image={og} locale={ogLocale} localizedUrlStrategy="prefix" />
     <StructuredData
       json={{
         '@context': 'https://schema.org',
@@ -53,6 +53,16 @@ export default function About() {
           { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Sunday','Monday','Tuesday','Wednesday','Thursday'], opens: '07:00', closes: '20:30' },
           { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Friday'], opens: '07:00', closes: '21:30' },
           { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Saturday'], opens: '08:00', closes: '21:00' },
+        ],
+      }}
+    />
+    <StructuredData
+      json={{
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: t('brand'), item: `${origin}/${locale}/` },
+          { '@type': 'ListItem', position: 2, name: t('nav.about'), item: `${origin}/${locale}/about` },
         ],
       }}
     />

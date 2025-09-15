@@ -15,7 +15,7 @@ export type MetaProps = {
 }
 
 // Lightweight per-route meta manager. No external deps.
-export default function Meta({ title, description, url, image, locale, alternates, localizedUrlStrategy = 'same-path' }: MetaProps) {
+export default function Meta({ title, description, url, image, locale, alternates, localizedUrlStrategy = 'prefix' }: MetaProps) {
   useEffect(() => {
     if (title) document.title = title
     const ensureMeta = (selector: string, attr: 'content' | 'href', value: string) => {

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import Meta from '../components/Meta'
+import StructuredData from '../components/StructuredData'
 import TeaCard from '../components/TeaCard'
 import { useI18n } from '../i18n/I18nProvider'
 
@@ -153,7 +154,7 @@ const fallbackCategories: Category[] = [
 export default function Menu() {
   const { t, locale } = useI18n()
   const origin = typeof window !== 'undefined' ? window.location.origin : ''
-  const url = `${origin}/menu`
+  const url = typeof window !== 'undefined' ? window.location.href : ''
   const og = `${origin}/og/og-default.svg`
   const ogLocale = locale === 'ne' ? 'ne_NP' : 'en_US'
   // English details for fallback data (only used when API is unavailable)
@@ -262,7 +263,42 @@ export default function Menu() {
 
   return (
     <>
-    <Meta title={t('meta.menu.title')} description={t('meta.menu.desc')} url={url} image={og} locale={ogLocale} />
+    <Meta title={t('meta.menu.title')} description={t('meta.menu.desc')} url={url} image={og} locale={ogLocale} localizedUrlStrategy="prefix" />
+    <StructuredData
+      json={{
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: t('brand'), item: `${origin}/${locale}/` },
+          { '@type': 'ListItem', position: 2, name: t('nav.menu'), item: `${origin}/${locale}/menu` },
+        ],
+      }}
+    />
+    <StructuredData
+      json={{
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        itemListElement: categories.flatMap((cat, cIdx) =>
+          cat.teas.map((tea, tIdx) => ({
+            '@type': 'ListItem',
+            position: cIdx * 100 + tIdx + 1,
+            item: {
+              '@type': 'Product',
+              name: locale === 'ne' ? tea.titleNepali : tea.titleEnglish,
+              ...(tea.imageUrl ? { image: tea.imageUrl } : {}),
+              brand: { '@type': 'Brand', name: 'Hamro Chiya Pasal' },
+              offers: {
+                '@type': 'Offer',
+                price: tea.priceNpr,
+                priceCurrency: 'NPR',
+                availability: 'https://schema.org/InStoreOnly',
+                url,
+              },
+            },
+          }))
+        ),
+      }}
+    />
     <main className="max-w-6xl mx-auto px-4 py-10 lg:grid lg:grid-cols-12 lg:gap-8">
       {/* Header */}
       <header className="mb-6 lg:mb-8 lg:col-span-12">

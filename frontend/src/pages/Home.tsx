@@ -32,7 +32,7 @@ function Counter({ to, duration = 1.2 }: { to: number; duration?: number }) {
 export default function Home() {
   const { t, locale } = useI18n()
   const origin = typeof window !== 'undefined' ? window.location.origin : ''
-  const url = `${origin}/`
+  const url = typeof window !== 'undefined' ? window.location.href : ''
   const og = `${origin}/og/og-default.svg`
   const ogLocale = locale === 'ne' ? 'ne_NP' : 'en_US'
   const prefersReduced = useReducedMotion()
@@ -83,6 +83,7 @@ export default function Home() {
         url={url}
         image={og}
         locale={ogLocale}
+        localizedUrlStrategy="prefix"
       />
       <StructuredData
         json={{
@@ -105,6 +106,20 @@ export default function Home() {
               },
             },
           })),
+        }}
+      />
+      <StructuredData
+        json={{
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            {
+              '@type': 'ListItem',
+              position: 1,
+              name: t('brand'),
+              item: `${origin}/${locale}/`,
+            },
+          ],
         }}
       />
       <main className="bg-gradient-to-br from-emerald-50 to-white dark:from-gray-900 dark:to-gray-950">
@@ -137,13 +152,13 @@ export default function Home() {
             <p className="text-white/90 mb-6 max-w-prose">{t('home.hero.subtitle')}</p>
             <div className="flex items-center gap-3">
               <Link
-                to="/menu"
+                to={`/${locale}/menu`}
                 className="inline-flex items-center justify-center rounded-md bg-white/90 text-emerald-900 px-4 py-2 font-medium hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2"
               >
                 {t('home.cta.menu')}
               </Link>
               <Link
-                to="/contact"
+                to={`/${locale}/contact`}
                 className="inline-flex items-center justify-center rounded-md border border-white/60 px-4 py-2 font-medium hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2"
               >
                 {t('home.cta.contact')}
@@ -169,7 +184,7 @@ export default function Home() {
             <PatternBorder className="text-[--color-accent] my-2" />
             <p className="text-gray-600 dark:text-gray-300">{t('home.featured.subtitle')}</p>
           </div>
-          <Link to="/menu" className="text-emerald-700 dark:text-emerald-400 font-medium hover:underline">
+          <Link to={`/${locale}/menu`} className="text-emerald-700 dark:text-emerald-400 font-medium hover:underline">
             {t('home.featured.link')}
           </Link>
         </div>
