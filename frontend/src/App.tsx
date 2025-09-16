@@ -5,8 +5,12 @@ import Menu from './pages/Menu'
 import About from './pages/About'
 import Contact from './pages/Contact'
 import NotFound from './pages/NotFound'
+import BlogList from './pages/BlogList'
+import BlogPost from './pages/BlogPost'
+import AdminTeas from './pages/AdminTeas'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
+import ToastContainer from './components/Toast'
 import { useI18n } from './i18n/I18nProvider'
 
 function App() {
@@ -27,6 +31,9 @@ function App() {
           <Route path="menu" element={<Menu />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="blog" element={<BlogList />} />
+          <Route path="blog/:slug" element={<BlogPost />} />
+          <Route path="admin/teas" element={<AdminTeas />} />
           <Route path="*" element={<NotFound />} />
         </Route>
         <Route path="en" element={<LocaleLayoutFixed locale="en" />}>
@@ -34,6 +41,9 @@ function App() {
           <Route path="menu" element={<Menu />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="blog" element={<BlogList />} />
+          <Route path="blog/:slug" element={<BlogPost />} />
+          <Route path="admin/teas" element={<AdminTeas />} />
           <Route path="*" element={<NotFound />} />
         </Route>
 
@@ -42,6 +52,7 @@ function App() {
       </Routes>
 
       <Footer />
+      <ToastContainer />
     </div>
   )
 }
@@ -54,9 +65,8 @@ function detectPreferredLocale(): 'ne' | 'en' {
   try {
     const saved = localStorage.getItem('locale')
     if (saved === 'ne' || saved === 'en') return saved
-  } catch (_err) {
+  } catch {
     // Access to localStorage can fail in SSR or privacy modes; ignore and fallback below
-    void 0
   }
   const nav = typeof navigator !== 'undefined' ? navigator.language?.toLowerCase() : 'ne'
   if (nav && nav.startsWith('ne')) return 'ne'

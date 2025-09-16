@@ -9,6 +9,7 @@ import PatternBorder from '../components/PatternBorder'
 import MountainSilhouette from '../components/MountainSilhouette'
 import PrayerFlags from '../components/PrayerFlags'
 import StructuredData from '../components/StructuredData'
+import NewsletterForm from '../components/NewsletterForm'
 
 function Counter({ to, duration = 1.2 }: { to: number; duration?: number }) {
   const count = useMotionValue(0)
@@ -192,6 +193,17 @@ export default function Home() {
           {featured.map((t) => (
             <TeaCard key={t.titleNepali} {...t} />
           ))}
+        </div>
+      </section>
+
+      {/* Newsletter signup */}
+      <section className="max-w-6xl mx-auto px-4 pb-6">
+        <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-6 bg-[--color-surface] dark:bg-gray-900">
+          <h2 className="text-2xl font-bold">{t('newsletter.title')}</h2>
+          <p className="text-gray-600 dark:text-gray-300 mt-1">{t('newsletter.subtitle')}</p>
+          <div className="mt-3">
+            <NewsletterForm />
+          </div>
         </div>
       </section>
 

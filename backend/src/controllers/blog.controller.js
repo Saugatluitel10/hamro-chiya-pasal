@@ -11,9 +11,15 @@ function getAllPosts() {
 }
 
 exports.listPosts = async (_req, res) => {
-  // If DB exists, you would query it here; for now seed-only
-  const posts = getAllPosts()
-  res.json({ posts })
+  // If DB exists, you would query it here; for now seed-only with pagination
+  const page = Math.max(parseInt(_req.query.page, 10) || 1, 1)
+  const limit = Math.min(Math.max(parseInt(_req.query.limit, 10) || 5, 1), 50)
+  const all = getAllPosts()
+  const total = all.length
+  const totalPages = Math.max(Math.ceil(total / limit), 1)
+  const start = (page - 1) * limit
+  const pagePosts = all.slice(start, start + limit)
+  res.json({ posts: pagePosts, page, totalPages, total })
 }
 
 exports.getPost = async (req, res) => {

@@ -10,7 +10,35 @@ Health endpoints:
 - GET / → { status: 'ok', service: 'hamro-chiya-pasal-api' }
 - GET /api/health → { status: 'ok', timestamp }
 
-Menu endpoint:
+## API Endpoints
+
+### Menu
+- GET /api/menu — list categories with embedded teas (seed fallback if no DB)
+- GET /api/menu/search — search/filter/sort teas
+  - Query params:
+    - q: text (matches Nepali/English title)
+    - minPrice, maxPrice: numbers (NPR)
+    - category: category key
+    - available: true|false
+    - sort: price_asc | price_desc | popularity_desc | name_asc
+ - PATCH /api/menu/:key/teas/:titleEnglish — update tea fields (admin-ready)
+   - Body: { available?: boolean, priceNpr?: number }
+   - Notes: Requires DB (MongoDB). Add auth middleware when admin is implemented.
+
+### Blog
+- GET /api/blog — list posts (supports ?page, ?limit)
+  - Response: { posts, page, totalPages, total }
+- GET /api/blog/:slug — get single post
+- GET /api/blog/:slug/related — related posts by category/tags (max 3)
+- GET /api/blog/rss — RSS 2.0 feed
+
+### Newsletter
+- POST /api/newsletter/subscribe — start email confirmation flow
+- GET /api/newsletter/confirm?token=... — confirm subscription
+- POST /api/newsletter/unsubscribe — start unsubscribe confirmation flow
+- GET /api/newsletter/unsubscribe?token=... — confirm unsubscribe
+
+### Menu endpoint:
 - GET /api/menu → { categories: [...] }
 
 ## Tech Stack

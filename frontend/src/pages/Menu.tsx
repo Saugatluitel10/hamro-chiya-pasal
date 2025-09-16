@@ -14,6 +14,8 @@ type Tea = {
   healthBenefits?: string[]
   difficulty?: 'Easy' | 'Medium' | 'Hard'
   seasonal?: boolean
+  available?: boolean
+  popularity?: number
 }
 
 type Category = {
@@ -201,12 +203,21 @@ export default function Menu() {
     },
   }
   const [categories, setCategories] = useState<Category[]>(fallbackCategories)
+  const [allCategories, setAllCategories] = useState<Category[]>(fallbackCategories)
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
   const [activeKey, setActiveKey] = useState<string>('')
   const env = (import.meta as unknown as { env?: { VITE_API_BASE_URL?: string } }).env
   const apiBase = env?.VITE_API_BASE_URL ?? 'http://localhost:5000'
+  const pollMs = Number((import.meta as unknown as { env?: { VITE_MENU_POLL_MS?: string } }).env?.VITE_MENU_POLL_MS ?? '0')
   const sectionId = (k: string) => `menu-${k}`
+  // Search & filter state
+  const [q, setQ] = useState('')
+  const [minPrice, setMinPrice] = useState<string>('')
+  const [maxPrice, setMaxPrice] = useState<string>('')
+  const [selectedCategory, setSelectedCategory] = useState<string>('')
+  const [onlyAvailable, setOnlyAvailable] = useState<boolean>(false)
+  const [sort, setSort] = useState<'price_asc' | 'price_desc' | 'popularity_desc' | 'name_asc'>('name_asc')
 
   useEffect(() => {
     let cancelled = false
@@ -217,6 +228,7 @@ export default function Menu() {
         if (!res.ok) throw new Error((data && (data as { message?: string }).message) || t('menu.error.fetch'))
         if (Array.isArray(data?.categories) && !cancelled) {
           setCategories(data.categories)
+          setAllCategories(data.categories)
         }
       } catch (e: unknown) {
         const msg = e instanceof Error ? e.message : t('menu.error.load')
@@ -231,6 +243,81 @@ export default function Menu() {
     }
   }, [apiBase, t])
 
+  // Debounced search with filters
+  useEffect(() => {
+    let cancelled = false
+    const ctrl = new AbortController()
+    const timer = setTimeout(async () => {
+      try {
+        // If no filters applied, show original categories
+        const noFilters = !q && !minPrice && !maxPrice && !selectedCategory && !onlyAvailable && sort === 'name_asc'
+        if (noFilters) {
+          if (!cancelled) setCategories(allCategories)
+          return
+        }
+        const params = new URLSearchParams()
+        if (q) params.set('q', q)
+        if (minPrice) params.set('minPrice', String(Number(minPrice) || ''))
+        if (maxPrice) params.set('maxPrice', String(Number(maxPrice) || ''))
+        if (selectedCategory) params.set('category', selectedCategory)
+        if (onlyAvailable) params.set('available', 'true')
+        if (sort) params.set('sort', sort)
+        const res = await fetch(`${apiBase}/api/menu/search?${params.toString()}`, { signal: ctrl.signal })
+        const data = await res.json()
+        if (!res.ok) throw new Error(data?.message || t('menu.error.fetch'))
+        if (Array.isArray(data?.categories) && !cancelled) {
+          setCategories(data.categories)
+        }
+      } catch (err) {
+        if (!cancelled && (err as Error).name !== 'AbortError') {
+          // keep previous results, but we could surface an inline error
+        }
+      }
+    }, 250)
+    return () => {
+      cancelled = true
+      ctrl.abort()
+      clearTimeout(timer)
+    }
+  }, [q, minPrice, maxPrice, selectedCategory, onlyAvailable, sort, apiBase, t, allCategories])
+
+  // Live polling for price/availability. If filters are active, poll the search endpoint with same params; otherwise poll base list.
+  useEffect(() => {
+    if (!pollMs || pollMs < 10000) return // require at least 10s to avoid excessive polling
+    let cancelled = false
+    const timer = setInterval(async () => {
+      try {
+        const hasFilters = !!(q || minPrice || maxPrice || selectedCategory || onlyAvailable || sort !== 'name_asc')
+        let url = `${apiBase}/api/menu`
+        if (hasFilters) {
+          const params = new URLSearchParams()
+          if (q) params.set('q', q)
+          if (minPrice) params.set('minPrice', String(Number(minPrice) || ''))
+          if (maxPrice) params.set('maxPrice', String(Number(maxPrice) || ''))
+          if (selectedCategory) params.set('category', selectedCategory)
+          if (onlyAvailable) params.set('available', 'true')
+          if (sort) params.set('sort', sort)
+          url = `${apiBase}/api/menu/search?${params.toString()}`
+        }
+        const res = await fetch(url)
+        const data = await res.json()
+        if (!cancelled && Array.isArray(data?.categories)) {
+          if (hasFilters) {
+            setCategories(data.categories)
+          } else {
+            setCategories(data.categories)
+            setAllCategories(data.categories)
+          }
+        }
+      } catch {
+        // ignore transient polling errors
+      }
+    }, pollMs)
+    return () => {
+      cancelled = true
+      clearInterval(timer)
+    }
+  }, [pollMs, apiBase, q, minPrice, maxPrice, selectedCategory, onlyAvailable, sort])
   // Scrollspy to highlight the active category in side rail and chips
   useEffect(() => {
     const observers: IntersectionObserver[] = []
@@ -316,6 +403,63 @@ export default function Menu() {
           </div>
         )}
 
+        {/* Search and filters */}
+        <div className="mt-4 grid md:grid-cols-4 gap-3">
+          <input
+            type="search"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder={t('menu.search.placeholder')}
+            className="border rounded px-3 py-2 bg-[--color-surface] dark:bg-gray-900 border-gray-200 dark:border-gray-800"
+          />
+          <div className="flex gap-2">
+            <input
+              type="number"
+              min={0}
+              inputMode="numeric"
+              value={minPrice}
+              onChange={(e) => setMinPrice(e.target.value)}
+              placeholder={t('menu.search.minPrice')}
+              className="w-full border rounded px-3 py-2 bg-[--color-surface] dark:bg-gray-900 border-gray-200 dark:border-gray-800"
+            />
+            <input
+              type="number"
+              min={0}
+              inputMode="numeric"
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(e.target.value)}
+              placeholder={t('menu.search.maxPrice')}
+              className="w-full border rounded px-3 py-2 bg-[--color-surface] dark:bg-gray-900 border-gray-200 dark:border-gray-800"
+            />
+          </div>
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="border rounded px-3 py-2 bg-[--color-surface] dark:bg-gray-900 border-gray-200 dark:border-gray-800"
+          >
+            <option value="">{t('menu.search.allCategories')}</option>
+            {allCategories.map((c) => (
+              <option key={c.key} value={c.key}>{c.titleNepali}</option>
+            ))}
+          </select>
+          <div className="flex items-center gap-2">
+            <label className="inline-flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+              <input type="checkbox" checked={onlyAvailable} onChange={(e) => setOnlyAvailable(e.target.checked)} />
+              {t('menu.search.onlyAvailable')}
+            </label>
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value as typeof sort)}
+              className="border rounded px-2 py-1 bg-[--color-surface] dark:bg-gray-900 border-gray-200 dark:border-gray-800 text-sm"
+            >
+              <option value="name_asc">{t('menu.sort.name')}</option>
+              <option value="price_asc">{t('menu.sort.priceAsc')}</option>
+              <option value="price_desc">{t('menu.sort.priceDesc')}</option>
+              <option value="popularity_desc">{t('menu.sort.popularity')}</option>
+            </select>
+          </div>
+        </div>
+
         {/* Mobile: horizontal category chips */}
         <div className="mt-4 flex gap-2 overflow-x-auto lg:hidden">
           {categories.map((cat) => (
@@ -382,6 +526,8 @@ export default function Menu() {
                   <TeaCard
                     key={t.titleEnglish}
                     {...t}
+                    available={t.available ?? true}
+                    highlight={q}
                     ingredients={override?.ingredients ?? t.ingredients}
                     healthBenefits={override?.healthBenefits ?? t.healthBenefits}
                   />

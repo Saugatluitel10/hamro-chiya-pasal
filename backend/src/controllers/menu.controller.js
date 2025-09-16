@@ -9,6 +9,51 @@ async function readCategoriesFromDB() {
     // DB not configured or unavailable
     return []
   }
+
+// PATCH /api/menu/:key/teas/:titleEnglish
+// Body: { available?: boolean, priceNpr?: number }
+// Note: Admin-ready endpoint; add auth middleware in routes when admin is implemented
+exports.updateTea = async (req, res) => {
+  const { key, titleEnglish } = req.params
+  const { available, priceNpr } = req.body || {}
+
+  // Must have DB to persist
+  if (!process.env.MONGODB_URI) {
+    res.status(503)
+    return res.json({ ok: false, message: 'Database not configured' })
+  }
+
+  if (typeof available === 'undefined' && typeof priceNpr === 'undefined') {
+    res.status(400)
+    return res.json({ ok: false, message: 'Provide at least one field: available or priceNpr' })
+  }
+  const setDoc = {}
+  if (typeof available !== 'undefined') setDoc['teas.$.available'] = Boolean(available)
+  if (typeof priceNpr !== 'undefined') {
+    const n = Number(priceNpr)
+    if (!Number.isFinite(n) || n < 0) {
+      res.status(400)
+      return res.json({ ok: false, message: 'priceNpr must be a non-negative number' })
+    }
+    setDoc['teas.$.priceNpr'] = n
+  }
+
+  try {
+    const result = await Category.updateOne(
+      { key, 'teas.titleEnglish': titleEnglish },
+      { $set: setDoc }
+    ).exec()
+
+    if (!result.matchedCount) {
+      res.status(404)
+      return res.json({ ok: false, message: 'Tea not found for given category/titleEnglish' })
+    }
+    return res.json({ ok: true })
+  } catch (err) {
+    res.status(500)
+    return res.json({ ok: false, message: 'Failed to update tea' })
+  }
+}
 }
 
 exports.listCategories = async (_req, res) => {
