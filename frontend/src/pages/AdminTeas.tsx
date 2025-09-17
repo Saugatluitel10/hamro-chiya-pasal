@@ -19,8 +19,19 @@ import { useEffect, useMemo, useState } from 'react'
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [filter, setFilter] = useState('')
+  const [adminKey, setAdminKey] = useState<string>('')
   const env = (import.meta as unknown as { env?: { VITE_API_BASE_URL?: string } }).env
   const apiBase = env?.VITE_API_BASE_URL ?? 'http://localhost:5000'
+
+  useEffect(() => {
+    try {
+      const k = localStorage.getItem('adminKey') || ''
+      setAdminKey(k)
+    } catch {
+      // ignore
+      void 0
+    }
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -61,7 +72,7 @@ import { useEffect, useMemo, useState } from 'react'
       if (!Object.keys(body).length) return
       const res = await fetch(`${apiBase}/api/menu/${encodeURIComponent(catKey)}/teas/${encodeURIComponent(tea.titleEnglish)}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-admin-key': adminKey || '' },
         body: JSON.stringify(body),
       })
       const data = await res.json()
@@ -89,6 +100,30 @@ import { useEffect, useMemo, useState } from 'react'
 
       {loading && <p className="text-sm text-gray-500">Loading…</p>}
       {error && <p className="text-sm text-rose-600">{error}</p>}
+
+      {/* Admin key controls */}
+      <div className="mb-4 flex flex-col md:flex-row gap-2 md:items-center md:justify-between">
+        <div className="text-xs text-gray-600 dark:text-gray-400">This page requires an admin key to save changes.</div>
+        <div className="flex gap-2 items-center">
+          <input
+            type="password"
+            placeholder="Admin key"
+            value={adminKey}
+            onChange={(e) => setAdminKey(e.target.value)}
+            className="w-64 border rounded px-3 py-2 bg-[--color-surface] dark:bg-gray-900 border-gray-200 dark:border-gray-800"
+          />
+          <button
+            type="button"
+            onClick={() => {
+              try { localStorage.setItem('adminKey', adminKey) } catch {
+                window.dispatchEvent(new CustomEvent('app:toast', { detail: { message: 'Failed to save key', type: 'error' } }))
+              }
+              window.dispatchEvent(new CustomEvent('app:toast', { detail: { message: 'Admin key saved', type: 'success' } }))
+            }}
+            className="px-3 py-2 rounded border border-gray-200 dark:border-gray-800"
+          >Save key</button>
+        </div>
+      </div>
 
       <div className="mb-4">
         <input

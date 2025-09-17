@@ -6,6 +6,7 @@ import IconTeaLeaf from '../components/IconTeaLeaf'
 import PatternBorder from '../components/PatternBorder'
 import PrayerFlags from '../components/PrayerFlags'
 import StructuredData from '../components/StructuredData'
+import Breadcrumbs from '../components/Breadcrumbs'
 
 type Region = 'Ilam' | 'Dhankuta' | 'Kaski'
 
@@ -67,6 +68,12 @@ export default function About() {
       }}
     />
     <main className="max-w-6xl mx-auto px-4 py-10">
+      <Breadcrumbs
+        items={[
+          { label: t('brand'), href: `/${locale}/` },
+          { label: t('nav.about'), href: `/${locale}/about` },
+        ]}
+      />
       {/* Business Story */}
       <section className="max-w-3xl">
         {/* Subtle cultural banner */}
@@ -140,6 +147,47 @@ export default function About() {
             <div className="rounded-md bg-white/90 dark:bg-gray-900/80 backdrop-blur px-3 py-2 text-sm shadow">{t('about.map.note')}</div>
           </div>
         </motion.div>
+      </section>
+
+      {/* Values */}
+      <section className="mt-10 max-w-5xl">
+        <h2 className="text-2xl font-semibold mb-2">{t('about.values.title')}</h2>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{t('about.values.subtitle')}</p>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {['craft', 'community', 'sustainability', 'heritage', 'quality', 'warmth'].map((k, idx) => (
+            <motion.div
+              key={k}
+              initial={{ opacity: 0, y: 8 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: Math.min(idx * 0.05, 0.2) }}
+              className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-[--color-surface] dark:bg-gray-900"
+            >
+              <div className="font-semibold">{t(`about.values.item.${k}.title`)}</div>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{t(`about.values.item.${k}.desc`)}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Milestones */}
+      <section className="mt-10 max-w-5xl">
+        <h2 className="text-2xl font-semibold mb-2">{t('about.milestones.title')}</h2>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{t('about.milestones.subtitle')}</p>
+        <div className="space-y-4">
+          {[1,2,3,4].map((i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 8 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-[--color-surface] dark:bg-gray-900"
+            >
+              <div className="font-semibold">{t(`about.milestones.item.${i}.title`)}</div>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{t(`about.milestones.item.${i}.desc`)}</p>
+            </motion.div>
+          ))}
+        </div>
       </section>
 
       {/* Team */}

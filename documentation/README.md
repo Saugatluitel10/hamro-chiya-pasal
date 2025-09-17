@@ -23,7 +23,14 @@ Health endpoints:
     - sort: price_asc | price_desc | popularity_desc | name_asc
  - PATCH /api/menu/:key/teas/:titleEnglish — update tea fields (admin-ready)
    - Body: { available?: boolean, priceNpr?: number }
-   - Notes: Requires DB (MongoDB). Add auth middleware when admin is implemented.
+   - Notes: Requires DB (MongoDB). Protected by ADMIN_KEY; send header `x-admin-key: <key>`.
+   - Example:
+     ```bash
+     curl -X PATCH "${API_BASE}/api/menu/traditional/teas/Dudh%20Chiya" \
+       -H "Content-Type: application/json" \
+       -H "x-admin-key: $ADMIN_KEY" \
+       -d '{"available":false, "priceNpr":35}'
+     ```
 
 ### Blog
 - GET /api/blog — list posts (supports ?page, ?limit)
@@ -75,6 +82,7 @@ npm run dev            # starts at http://localhost:5173
 - SMTP_SECURE: true|false for TLS
 - MAIL_FROM: Default From address (optional, default no-reply@hamro-chiya-pasal.local)
 - MAIL_TO: Override destination address (optional; if empty, uses SMTP_USER)
+- ADMIN_KEY: Secret key for admin access (e.g., updating teas)
 
 Dev fallback: If SMTP_* are not set, emails are not sent; instead a JSON representation is printed to the server console.
 
@@ -93,6 +101,7 @@ Dev fallback: If SMTP_* are not set, emails are not sent; instead a JSON represe
    - CORS_ORIGIN: include your Vercel production URL
    - SMTP_* vars if you want real email delivery; otherwise dev fallback is used
    - MONGODB_URI (optional)
+   - ADMIN_KEY (optional)
 7. Redeploy and verify health endpoints
 
 ### Frontend — Vercel Project
@@ -145,6 +154,11 @@ Dev fallback: If SMTP_* are not set, emails are not sent; instead a JSON represe
 - Messages: `frontend/src/i18n/messages/ne.json`, `frontend/src/i18n/messages/en.json`
 - App wrapper: `I18nProvider` is mounted in `src/main.tsx`
 - Toggle: Language switcher in `Navbar` (NE/EN). Selected locale persists in `localStorage`. Default is Nepali unless the browser prefers English.
+
+## Admin UI (Frontend)
+- Admin teas page (not linked in nav): `/:locale/admin/teas`
+- Requires admin key to save: enter the key in the input and click "Save key". The key is sent as `x-admin-key` with each PATCH.
+- Ensure the backend has `ADMIN_KEY` set, and the backend is connected to MongoDB.
 
 Tips:
 - TeaCard props support Nepali/English names, price, ingredients, health benefits, difficulty, and seasonal badge.
