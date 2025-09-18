@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { useEffect } from 'react'
 import Home from './pages/Home'
 import Menu from './pages/Menu'
@@ -89,5 +90,9 @@ function LocaleLayoutFixed({ locale }: { locale: 'ne' | 'en' }) {
   useEffect(() => {
     setLocale(locale)
   }, [locale, setLocale])
-  return <Outlet />
+  return (
+    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
+      <Outlet />
+    </motion.div>
+  )
 }

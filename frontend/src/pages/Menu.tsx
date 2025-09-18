@@ -4,6 +4,8 @@ import Meta from '../components/Meta'
 import StructuredData from '../components/StructuredData'
 import TeaCard from '../components/TeaCard'
 import { useI18n } from '../i18n/I18nProvider'
+import Breadcrumbs from '../components/Breadcrumbs'
+import { SkeletonBlock, SkeletonText } from '../components/Skeleton'
 
 type Tea = {
   titleNepali: string
@@ -389,6 +391,12 @@ export default function Menu() {
     <main className="max-w-6xl mx-auto px-4 py-10 lg:grid lg:grid-cols-12 lg:gap-8">
       {/* Header */}
       <header className="mb-6 lg:mb-8 lg:col-span-12">
+        <Breadcrumbs
+          items={[
+            { label: t('brand'), href: `/${locale}/` },
+            { label: t('nav.menu'), href: `/${locale}/menu` },
+          ]}
+        />
         <h1 className="text-3xl font-bold tracking-tight">{t('menu.title')}</h1>
         <p className="text-gray-600 dark:text-gray-300 mt-1">{t('menu.subtitle')}</p>
         <div className="mt-3 text-xs text-gray-500">
@@ -396,7 +404,16 @@ export default function Menu() {
           <span className="mr-2">{t('menu.legend.brew')}</span>
           <span>{t('menu.legend.seasonal')}</span>
         </div>
-        {loading && <p className="mt-2 text-xs text-gray-500">{t('menu.loading')}</p>}
+        {loading && (
+          <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="rounded-xl border border-gray-200 dark:border-gray-800 p-3">
+                <SkeletonBlock className="h-40 w-full mb-3" />
+                <SkeletonText lines={2} />
+              </div>
+            ))}
+          </div>
+        )}
         {error && (
           <div className="mt-3 text-sm rounded-md px-3 py-2 bg-rose-50 text-rose-700 dark:bg-rose-900/20 dark:text-rose-200">
             {error}

@@ -3,6 +3,9 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Meta from '../components/Meta'
 import StructuredData from '../components/StructuredData'
 import { useI18n } from '../i18n/I18nProvider'
+import Breadcrumbs from '../components/Breadcrumbs'
+import { SkeletonBlock, SkeletonText } from '../components/Skeleton'
+import { formatDateAuto } from '../utils/format'
 
 export type Post = {
   slug: string
@@ -93,6 +96,12 @@ export default function BlogList() {
       />
       <main className="max-w-4xl mx-auto px-4 py-10">
         <header className="mb-6">
+          <Breadcrumbs
+            items={[
+              { label: t('brand'), href: `/${locale}/` },
+              { label: t('nav.blog'), href: `/${locale}/blog` },
+            ]}
+          />
           <h1 className="text-3xl font-bold tracking-tight">{t('blog.title')}</h1>
           <p className="text-gray-600 dark:text-gray-300 mt-1">{t('blog.subtitle')}</p>
           <a href={`${apiBase}/api/blog/rss`} className="text-sm text-emerald-700 dark:text-emerald-400 hover:underline">
@@ -100,7 +109,17 @@ export default function BlogList() {
           </a>
         </header>
 
-        {loading && <p className="text-sm text-gray-500">{t('common.loading')}</p>}
+        {loading && (
+          <ul className="space-y-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <li key={i} className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-[--color-surface] dark:bg-gray-900">
+                <SkeletonBlock className="w-full h-44 mb-3" />
+                <SkeletonBlock className="h-6 w-1/2 mb-2" />
+                <SkeletonText lines={3} />
+              </li>
+            ))}
+          </ul>
+        )}
         {error && <p className="text-sm text-rose-600">{error}</p>}
 
         <ul className="space-y-4">
@@ -117,7 +136,7 @@ export default function BlogList() {
                 </h2>
                 <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{p.excerpt}</p>
                 <div className="text-xs text-gray-500 mt-2">
-                  <time dateTime={p.publishedAt}>{new Date(p.publishedAt).toLocaleDateString()}</time>
+                  <time dateTime={p.publishedAt}>{formatDateAuto(p.publishedAt, locale)}</time>
                   {p.author ? <> • {p.author}</> : null}
                 </div>
               </article>

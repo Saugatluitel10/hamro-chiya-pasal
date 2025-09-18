@@ -48,7 +48,23 @@ export default function Navbar() {
           <NavLink to={`${prefix}/about`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.about')}</NavLink>
           <NavLink to={`${prefix}/contact`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.contact')}</NavLink>
           <NavLink to={`${prefix}/blog`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.blog')}</NavLink>
-          <div className="flex items-center gap-1 ml-2" aria-label={t('toggle.language')}>
+          <div className="flex items-center gap-3 ml-2" aria-label={t('toggle.language')}>
+            <button
+              type="button"
+              onClick={() => {
+                try {
+                  const cur = localStorage.getItem('useNepaliNumerals') === 'true'
+                  localStorage.setItem('useNepaliNumerals', String(!cur))
+                  window.dispatchEvent(new CustomEvent('app:toast', { detail: { message: !cur ? 'Nepali numerals ON' : 'Nepali numerals OFF', type: 'success' } }))
+                } catch {
+                  window.dispatchEvent(new CustomEvent('app:toast', { detail: { message: 'Cannot change number format', type: 'error' } }))
+                }
+              }}
+              title="Toggle Nepali numerals"
+              className="text-xs px-2 py-1 rounded border border-gray-200 dark:border-gray-800"
+            >
+              १२३
+            </button>
             <button
               type="button"
               onClick={() => switchLocale('ne')}
@@ -107,6 +123,21 @@ export default function Navbar() {
               <NavLink to={`${prefix}/contact`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.contact')}</NavLink>
               <NavLink to={`${prefix}/blog`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.blog')}</NavLink>
               <div className="flex items-center gap-2 pt-2" aria-label={t('toggle.language')}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    try {
+                      const cur = localStorage.getItem('useNepaliNumerals') === 'true'
+                      localStorage.setItem('useNepaliNumerals', String(!cur))
+                      window.dispatchEvent(new CustomEvent('app:toast', { detail: { message: !cur ? 'Nepali numerals ON' : 'Nepali numerals OFF', type: 'success' } }))
+                    } catch {
+                      window.dispatchEvent(new CustomEvent('app:toast', { detail: { message: 'Cannot change number format', type: 'error' } }))
+                    }
+                  }}
+                  className="text-xs px-2 py-1 rounded border border-gray-200 dark:border-gray-800"
+                >
+                  १२३
+                </button>
                 <button type="button" onClick={() => { switchLocale('ne'); setMobileOpen(false) }} className={`text-xs px-2 py-1 rounded ${locale === 'ne' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200' : 'text-gray-600 dark:text-gray-400 hover:text-emerald-600'}`}>{t('lang.ne')}</button>
                 <button type="button" onClick={() => { switchLocale('en'); setMobileOpen(false) }} className={`text-xs px-2 py-1 rounded ${locale === 'en' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200' : 'text-gray-600 dark:text-gray-400 hover:text-emerald-600'}`}>{t('lang.en')}</button>
               </div>

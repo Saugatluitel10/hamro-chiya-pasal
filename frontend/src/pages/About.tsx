@@ -7,6 +7,8 @@ import PatternBorder from '../components/PatternBorder'
 import PrayerFlags from '../components/PrayerFlags'
 import StructuredData from '../components/StructuredData'
 import Breadcrumbs from '../components/Breadcrumbs'
+import Lightbox from '../components/Lightbox'
+import { formatNumberAuto } from '../utils/format'
 
 type Region = 'Ilam' | 'Dhankuta' | 'Kaski'
 
@@ -20,6 +22,27 @@ export default function About() {
   const og = `${origin}/og/og-default.svg`
   const ogLocale = locale === 'ne' ? 'ne_NP' : 'en_US'
   const [active, setActive] = useState<Region>('Ilam')
+  const foundedYear = 2019
+  const years = new Date().getFullYear() - foundedYear
+  const gallery = [
+    {
+      src: 'https://images.unsplash.com/photo-1541782814451-9c6779ed3403?q=80&w=1400&auto=format&fit=crop',
+      alt: 'Pouring milk tea',
+    },
+    {
+      src: 'https://images.unsplash.com/photo-1487029752779-a0c17b1f5ec9?q=80&w=1400&auto=format&fit=crop',
+      alt: 'Loose leaf tea selection',
+    },
+    {
+      src: 'https://images.unsplash.com/photo-1523906630133-f6934a1ab2b9?q=80&w=1400&auto=format&fit=crop',
+      alt: 'Clay cups and spices',
+    },
+    {
+      src: 'https://images.unsplash.com/photo-1576092768246-db68cd0d4e43?q=80&w=1400&auto=format&fit=crop',
+      alt: 'Green hills tea estates',
+    },
+  ]
+  const [galleryIndex, setGalleryIndex] = useState<number | null>(null)
   return (
     <>
     <Meta title={t('meta.about.title')} description={t('meta.about.desc')} url={url} image={og} locale={ogLocale} localizedUrlStrategy="prefix" />
@@ -97,6 +120,18 @@ export default function About() {
         </div>
       </section>
 
+      {/* Stats (localized numbers) */}
+      <section className="mt-8 grid sm:grid-cols-2 gap-4 max-w-3xl">
+        <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-[--color-surface] dark:bg-gray-900">
+          <div className="text-sm text-gray-600 dark:text-gray-400">{t('home.stats.years')}</div>
+          <div className="mt-1 text-2xl font-semibold">{formatNumberAuto(years, locale)}</div>
+        </div>
+        <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-[--color-surface] dark:bg-gray-900">
+          <div className="text-sm text-gray-600 dark:text-gray-400">{t('home.stats.satisfaction')}</div>
+          <div className="mt-1 text-2xl font-semibold">{formatNumberAuto(4.8, locale, { maximumFractionDigits: 1 })}/5</div>
+        </div>
+      </section>
+
       {/* Sourcing & Map */}
       <section className="mt-10 grid md:grid-cols-2 gap-6 items-start">
         <div>
@@ -170,6 +205,34 @@ export default function About() {
         </div>
       </section>
 
+      {/* Gallery */}
+      <section className="mt-10 max-w-5xl">
+        <h2 className="text-2xl font-semibold mb-2">Gallery</h2>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">A glimpse of our chai, craft, and places that inspire us.</p>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {gallery.map((g, idx) => (
+            <motion.button
+              key={g.src}
+              type="button"
+              initial={{ opacity: 0, y: 8 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="group relative block rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800"
+              onClick={() => setGalleryIndex(idx)}
+            >
+              <img
+                src={g.src}
+                alt={g.alt}
+                className="h-40 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                loading="lazy"
+                decoding="async"
+              />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            </motion.button>
+          ))}
+        </div>
+      </section>
+
       {/* Milestones */}
       <section className="mt-10 max-w-5xl">
         <h2 className="text-2xl font-semibold mb-2">{t('about.milestones.title')}</h2>
@@ -213,11 +276,18 @@ export default function About() {
             >
               <div className="font-semibold">{t(`about.team.member.${m.id}`)}</div>
               <div className="text-sm text-gray-600 dark:text-gray-400">{t(`about.team.role.${m.roleKey}`)}</div>
-              <div className="mt-1 text-xs text-gray-500">{m.years}{t('about.team.yearsSuffix')}</div>
+              <div className="mt-1 text-xs text-gray-500">{formatNumberAuto(m.years, locale)}{t('about.team.yearsSuffix')}</div>
             </motion.div>
           ))}
         </div>
       </section>
+      {galleryIndex !== null ? (
+        <Lightbox
+          src={gallery[galleryIndex].src}
+          alt={gallery[galleryIndex].alt}
+          onClose={() => setGalleryIndex(null)}
+        />
+      ) : null}
     </main>
     </>
   )

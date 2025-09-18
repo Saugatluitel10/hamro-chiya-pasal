@@ -1,6 +1,9 @@
 import { motion } from 'framer-motion'
 import type { ReactNode } from 'react'
+import { useState } from 'react'
 import { useI18n } from '../i18n/I18nProvider'
+import Lightbox from './Lightbox'
+import { formatCurrencyNprAuto } from '../utils/format'
 
 export type TeaCardProps = {
   titleNepali: string
@@ -27,7 +30,8 @@ export default function TeaCard({
   available = true,
   highlight,
 }: TeaCardProps) {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
+  const [lb, setLb] = useState(false)
   const diffText = difficulty ? t(`teacard.diff.${String(difficulty).toLowerCase()}`) : undefined
   const highlightText = (text?: string) => {
     if (!text) return text
@@ -71,12 +75,13 @@ export default function TeaCard({
             src={imageUrl}
             alt={titleEnglish || titleNepali}
             className={
-              'h-full w-full object-cover transition-transform duration-300 group-hover:scale-105 ' +
+              'h-full w-full object-cover transition-transform duration-300 group-hover:scale-105 cursor-zoom-in ' +
               (available ? '' : 'grayscale')
             }
             loading="lazy"
             decoding="async"
             sizes="(min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
+            onClick={() => setLb(true)}
           />
           {seasonal && (
             <div className="absolute left-2 top-2 rounded bg-amber-500 px-2 py-0.5 text-xs font-medium text-white shadow">
@@ -101,7 +106,7 @@ export default function TeaCard({
           </div>
           {typeof priceNpr === 'number' && (
             <div className="shrink-0 rounded-md bg-emerald-50 px-2 py-1 text-sm font-semibold text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
-              {t('teacard.pricePrefix')} {priceNpr}
+              {t('teacard.pricePrefix')} {formatCurrencyNprAuto(priceNpr, locale)}
             </div>
           )}
         </div>
@@ -126,6 +131,7 @@ export default function TeaCard({
           </div>
         )}
       </div>
+      {lb && imageUrl ? <Lightbox src={imageUrl} alt={titleEnglish || titleNepali} onClose={() => setLb(false)} /> : null}
     </motion.article>
   )
 }

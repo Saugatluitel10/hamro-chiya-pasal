@@ -3,6 +3,10 @@ import { Link, useLocation, useParams } from 'react-router-dom'
 import Meta from '../components/Meta'
 import StructuredData from '../components/StructuredData'
 import { useI18n } from '../i18n/I18nProvider'
+import Breadcrumbs from '../components/Breadcrumbs'
+import { SkeletonBlock, SkeletonText } from '../components/Skeleton'
+import { formatDateAuto } from '../utils/format'
+import Lightbox from '../components/Lightbox'
 
 type Post = {
   slug: string
@@ -27,6 +31,7 @@ export default function BlogPost() {
   const origin = typeof window !== 'undefined' ? window.location.origin : ''
   const { pathname } = useLocation()
   const url = `${origin}${pathname}`
+  const [lb, setLb] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -81,16 +86,38 @@ export default function BlogPost() {
         />
       )}
       <main className="max-w-3xl mx-auto px-4 py-10">
-        {loading && <p className="text-sm text-gray-500">{t('common.loading')}</p>}
-        {error && <p className="text-sm text-rose-600">{error}</p>}
+        <Breadcrumbs
+          items={[
+            { label: t('brand'), href: `/${locale}/` },
+            { label: t('nav.blog'), href: `/${locale}/blog` },
+            ...(post ? [{ label: post.title, href: `/${locale}/blog/${post.slug}` }] : []),
+          ]}
+        />
+        {loading && (
+          <article className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-[--color-surface] dark:bg-gray-900">
+            <SkeletonBlock className="w-full h-56 mb-4" />
+            <SkeletonBlock className="h-8 w-2/3 mb-2" />
+            <SkeletonText lines={3} />
+            <SkeletonText lines={6} className="mt-4" />
+          </article>
+        )}
+        {error && (
+          <div className="text-sm rounded-md px-3 py-2 bg-rose-50 text-rose-700 dark:bg-rose-900/20 dark:text-rose-200">{error}</div>
+        )}
         {!loading && post && (
           <article>
             {post.heroImage ? (
-              <img src={post.heroImage} alt="" className="w-full h-56 object-cover rounded mb-4" loading="lazy" />
+              <img
+                src={post.heroImage}
+                alt=""
+                className="w-full h-56 object-cover rounded mb-4 cursor-zoom-in"
+                loading="lazy"
+                onClick={() => setLb(true)}
+              />
             ) : null}
             <h1 className="text-3xl font-bold tracking-tight">{post.title}</h1>
             <div className="text-xs text-gray-500 mt-1">
-              <time dateTime={post.publishedAt}>{new Date(post.publishedAt).toLocaleDateString()}</time>
+              <time dateTime={post.publishedAt}>{formatDateAuto(post.publishedAt, locale)}</time>
               {post.author ? <> • {post.author}</> : null}
             </div>
             <p className="mt-3 text-gray-700 dark:text-gray-300">{post.excerpt}</p>
@@ -117,7 +144,7 @@ export default function BlogPost() {
                     <li key={r.slug} className="rounded border border-gray-200 dark:border-gray-800 p-3">
                       <Link className="hover:underline" to={`/${locale}/blog/${r.slug}`}>{r.title}</Link>
                       <div className="text-xs text-gray-500">
-                        <time dateTime={r.publishedAt}>{new Date(r.publishedAt).toLocaleDateString()}</time>
+                        <time dateTime={r.publishedAt}>{formatDateAuto(r.publishedAt, locale)}</time>
                       </div>
                     </li>
                   ))}
@@ -126,6 +153,7 @@ export default function BlogPost() {
             ) : null}
           </article>
         )}
+        {lb && post?.heroImage ? <Lightbox src={post.heroImage} alt={post.title} onClose={() => setLb(false)} /> : null}
       </main>
     </>
   )

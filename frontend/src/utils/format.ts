@@ -13,3 +13,27 @@ export function formatDate(date: Date | string, locale: 'ne' | 'en' = 'ne') {
   const loc = locale === 'ne' ? 'ne-NP' : 'en-US'
   return d.toLocaleDateString(loc, { year: 'numeric', month: 'short', day: 'numeric' })
 }
+
+// Preference helpers: allow forcing Nepali digits independent of language
+export function preferNepaliDigits(): boolean {
+  try {
+    return localStorage.getItem('useNepaliNumerals') === 'true'
+  } catch {
+    return false
+  }
+}
+
+export function formatCurrencyNprAuto(value: number, locale: 'ne' | 'en') {
+  const useNe = preferNepaliDigits() || locale === 'ne'
+  return formatCurrencyNpr(value, useNe ? 'ne' : 'en')
+}
+
+export function formatDateAuto(date: Date | string, locale: 'ne' | 'en') {
+  const useNe = preferNepaliDigits() || locale === 'ne'
+  return formatDate(date, useNe ? 'ne' : 'en')
+}
+
+export function formatNumberAuto(value: number, locale: 'ne' | 'en', options?: Intl.NumberFormatOptions) {
+  const useNe = preferNepaliDigits() || locale === 'ne'
+  return formatNumber(value, useNe ? 'ne' : 'en', options)
+}

@@ -7,6 +7,7 @@ import IconTeaLeaf from '../components/IconTeaLeaf'
 import PatternBorder from '../components/PatternBorder'
 import PrayerFlags from '../components/PrayerFlags'
 import IconKettle from '../components/IconKettle'
+import Breadcrumbs from '../components/Breadcrumbs'
 
 type MessageType = 'inquiry' | 'feedback' | 'catering'
 type PreferredContact = 'email' | 'phone' | 'whatsapp'
@@ -65,6 +66,12 @@ export default function Contact() {
     <>
     <Meta title={t('meta.contact.title')} description={t('meta.contact.desc')} url={url} image={og} locale={ogLocale} localizedUrlStrategy="prefix" />
     <main className="max-w-6xl mx-auto px-4 py-10">
+      <Breadcrumbs
+        items={[
+          { label: t('brand'), href: `/${locale}/` },
+          { label: t('nav.contact'), href: `/${locale}/contact` },
+        ]}
+      />
       {/* Subtle cultural banner */}
       <div className="relative h-8 mb-1">
         <div className="absolute inset-0">
