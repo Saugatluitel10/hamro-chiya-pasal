@@ -1,7 +1,7 @@
 import { motion, useMotionValue, animate, useReducedMotion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import TeaCard from '../components/TeaCard'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useI18n } from '../i18n/I18nProvider'
 import Meta from '../components/Meta'
 import IconTeaLeaf from '../components/IconTeaLeaf'
@@ -10,6 +10,9 @@ import MountainSilhouette from '../components/MountainSilhouette'
 import PrayerFlags from '../components/PrayerFlags'
 import StructuredData from '../components/StructuredData'
 import NewsletterForm from '../components/NewsletterForm'
+import Lightbox from '../components/Lightbox'
+import InstagramFeed from '../components/InstagramFeed'
+import UGCForm from '../components/UGCForm'
 
 function Counter({ to, duration = 1.2 }: { to: number; duration?: number }) {
   const count = useMotionValue(0)
@@ -75,6 +78,27 @@ export default function Home() {
       imageUrl: 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?q=80&w=1200&auto=format&fit=crop',
     },
   ]
+  const heroImages = [
+    { id: 'pouring', src: 'https://images.unsplash.com/photo-1541782814451-9c6779ed3403?q=80&w=1600&auto=format&fit=crop' },
+    { id: 'loose',   src: 'https://images.unsplash.com/photo-1487029752779-a0c17b1f5ec9?q=80&w=1600&auto=format&fit=crop' },
+    { id: 'clay',    src: 'https://images.unsplash.com/photo-1523906630133-f6934a1ab2b9?q=80&w=1600&auto=format&fit=crop' },
+  ] as const
+  const trackRef = useRef<HTMLDivElement>(null)
+  const heroPrev = () => { const el = trackRef.current; if (!el) return; el.scrollBy({ left: -el.clientWidth, behavior: 'smooth' }) }
+  const heroNext = () => { const el = trackRef.current; if (!el) return; el.scrollBy({ left: el.clientWidth, behavior: 'smooth' }) }
+  const gallery = [
+    { id: 'pouring', src: 'https://images.unsplash.com/photo-1541782814451-9c6779ed3403?q=80&w=1400&auto=format&fit=crop' },
+    { id: 'loose',   src: 'https://images.unsplash.com/photo-1487029752779-a0c17b1f5ec9?q=80&w=1400&auto=format&fit=crop' },
+    { id: 'clay',    src: 'https://images.unsplash.com/photo-1523906630133-f6934a1ab2b9?q=80&w=1400&auto=format&fit=crop' },
+    { id: 'hills',   src: 'https://images.unsplash.com/photo-1576092768246-db68cd0d4e43?q=80&w=1400&auto=format&fit=crop' },
+  ] as const
+  const [galleryIndex, setGalleryIndex] = useState<number | null>(null)
+  const openGallery = (i: number) => setGalleryIndex(i)
+  const closeGallery = () => setGalleryIndex(null)
+  const prevGallery = () => setGalleryIndex((i) => (i === null ? i : (i + gallery.length - 1) % gallery.length))
+  const nextGallery = () => setGalleryIndex((i) => (i === null ? i : (i + 1) % gallery.length))
+  const current = galleryIndex !== null ? gallery[galleryIndex] : null
+  const currentCaption = current ? t(`gallery.items.${current.id}.caption`) : ''
 
   return (
     <>
@@ -170,7 +194,78 @@ export default function Home() {
               <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-1">🍃 {t('home.chips.ilam')}</span>
               <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-1">🇳🇵 {t('home.chips.authentic')}</span>
             </div>
+            {/* Hero mini carousel */}
+            <div className="relative mt-5">
+              <div ref={trackRef} className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2" style={{ scrollbarWidth: 'none' }}>
+                {heroImages.map((img) => (
+                  <div key={img.id} className="group relative snap-start min-w-[75%] md:min-w-[50%] h-36 rounded-lg overflow-hidden border border-white/20">
+                    <img src={img.src} alt={t(`gallery.items.${img.id}.caption`)} className="h-full w-full object-cover" loading="lazy" decoding="async" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                    <div className="absolute bottom-2 left-2 right-2 text-xs text-white/90 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                      {t(`gallery.items.${img.id}.caption`)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="pointer-events-none absolute inset-0 flex items-center justify-between px-1">
+                <button type="button" onClick={heroPrev} className="pointer-events-auto hidden sm:inline-flex items-center justify-center w-8 h-8 rounded-full bg-white/20 text-white hover:bg-white/30">‹</button>
+                <button type="button" onClick={heroNext} className="pointer-events-auto hidden sm:inline-flex items-center justify-center w-8 h-8 rounded-full bg-white/20 text-white hover:bg-white/30">›</button>
+              </div>
+            </div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* UGC Submission */}
+      <section className="max-w-6xl mx-auto px-4 pb-10">
+        <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-6 bg-[--color-surface] dark:bg-gray-900">
+          <h2 className="text-2xl font-bold">{t('ugc.title')}</h2>
+          <p className="text-gray-600 dark:text-gray-300 mb-3">{t('ugc.desc')}</p>
+          <UGCForm />
+        </div>
+      </section>
+
+      {/* Gallery */}
+      <section className="max-w-6xl mx-auto px-4 pb-10">
+        <div className="mb-4">
+          <h2 className="text-2xl font-bold">{t('home.gallery.title')}</h2>
+          <p className="text-gray-600 dark:text-gray-300">{t('home.gallery.desc')}</p>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {gallery.map((g, idx) => (
+            <motion.button
+              key={g.src}
+              type="button"
+              initial={{ opacity: 0, y: 8 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="group relative block rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800"
+              onClick={() => openGallery(idx)}
+            >
+              <img
+                src={g.src}
+                alt={t(`gallery.items.${g.id}.caption`)}
+                className="h-40 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                loading="lazy"
+              />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+              <div className="absolute bottom-1 left-1 right-1 text-[11px] px-1 py-0.5 rounded bg-black/40 text-white opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                {t(`gallery.items.${g.id}.caption`)}
+              </div>
+            </motion.button>
+          ))}
+        </div>
+      </section>
+      {/* Gallery CTA */}
+      <section className="max-w-6xl mx-auto px-4 pb-6">
+        <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-5 bg-[--color-surface] dark:bg-gray-900 flex items-center justify-between gap-4">
+          <div>
+            <div className="text-lg font-semibold">{t('gallery.cta.title')}</div>
+            <p className="text-sm text-gray-600 dark:text-gray-300">{t('gallery.cta.desc')}</p>
+          </div>
+          <Link to={`/${locale}/gallery`} className="inline-flex items-center justify-center rounded-md bg-emerald-600 text-white px-3 py-2 text-sm hover:bg-emerald-700">
+            {t('gallery.cta.button')}
+          </Link>
         </div>
       </section>
 
@@ -255,6 +350,39 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      {/* Instagram Feed */}
+      <section className="max-w-6xl mx-auto px-4 pb-10">
+        <div className="mb-3">
+          <h2 className="text-2xl font-bold">{t('home.instagram.title')}</h2>
+          <p className="text-gray-600 dark:text-gray-300">{t('home.instagram.desc')}</p>
+        </div>
+        <InstagramFeed limit={8} />
+      </section>
+
+      {/* Social Proof */}
+      <section className="max-w-6xl mx-auto px-4 pb-14">
+        <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-5 bg-[--color-surface] dark:bg-gray-900">
+          <h2 className="text-2xl font-bold">{t('socialproof.title')}</h2>
+          <p className="text-gray-600 dark:text-gray-300 mb-3">{t('socialproof.subtitle')}</p>
+          <div className="grid sm:grid-cols-3 gap-3 text-sm">
+            <div className="rounded-md border border-gray-200 dark:border-gray-800 p-3">⭐️⭐️⭐️⭐️⭐️ Google Reviews</div>
+            <div className="rounded-md border border-gray-200 dark:border-gray-800 p-3">🏆 Local favorite 2025</div>
+            <div className="rounded-md border border-gray-200 dark:border-gray-800 p-3">🍵 {t('home.badges.handBrewed')}</div>
+          </div>
+        </div>
+      </section>
+
+        {current ? (
+          <Lightbox
+            src={current.src}
+            alt={currentCaption}
+            caption={currentCaption}
+            onClose={closeGallery}
+            onPrev={prevGallery}
+            onNext={nextGallery}
+          />
+        ) : null}
     </main>
     </>
   )

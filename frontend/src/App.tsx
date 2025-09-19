@@ -9,6 +9,8 @@ import NotFound from './pages/NotFound'
 import BlogList from './pages/BlogList'
 import BlogPost from './pages/BlogPost'
 import AdminTeas from './pages/AdminTeas'
+import AdminSocial from './pages/AdminSocial'
+import Gallery from './pages/Gallery'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ToastContainer from './components/Toast'
@@ -34,7 +36,9 @@ function App() {
           <Route path="contact" element={<Contact />} />
           <Route path="blog" element={<BlogList />} />
           <Route path="blog/:slug" element={<BlogPost />} />
+          <Route path="gallery" element={<Gallery />} />
           <Route path="admin/teas" element={<AdminTeas />} />
+          <Route path="admin/social" element={<AdminSocial />} />
           <Route path="*" element={<NotFound />} />
         </Route>
         <Route path="en" element={<LocaleLayoutFixed locale="en" />}>
@@ -44,7 +48,9 @@ function App() {
           <Route path="contact" element={<Contact />} />
           <Route path="blog" element={<BlogList />} />
           <Route path="blog/:slug" element={<BlogPost />} />
+          <Route path="gallery" element={<Gallery />} />
           <Route path="admin/teas" element={<AdminTeas />} />
+          <Route path="admin/social" element={<AdminSocial />} />
           <Route path="*" element={<NotFound />} />
         </Route>
 

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useI18n } from '../i18n/I18nProvider'
+import { getCampaignData } from '../utils/campaign'
 
 export default function NewsletterForm() {
   const { t } = useI18n()
@@ -28,7 +29,11 @@ export default function NewsletterForm() {
       const res = await fetch(`${apiBase}/api/newsletter/${path}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({
+          email,
+          campaign: getCampaignData(),
+          referrer: typeof document !== 'undefined' ? document.referrer : undefined,
+        }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data?.message || 'Error')

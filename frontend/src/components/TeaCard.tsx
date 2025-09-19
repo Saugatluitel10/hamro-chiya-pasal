@@ -32,6 +32,7 @@ export default function TeaCard({
 }: TeaCardProps) {
   const { t, locale } = useI18n()
   const [lb, setLb] = useState(false)
+  const origin = typeof window !== 'undefined' ? window.location.origin : ''
   const diffText = difficulty ? t(`teacard.diff.${String(difficulty).toLowerCase()}`) : undefined
   const highlightText = (text?: string) => {
     if (!text) return text
@@ -130,6 +131,34 @@ export default function TeaCard({
             ) : null}
           </div>
         )}
+        <div className="mt-3 flex justify-end">
+          <button
+            type="button"
+            className="text-xs px-2 py-1 rounded border border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800"
+            onClick={async () => {
+              const title = titleEnglish || titleNepali
+              const url = `${origin}/${locale}/menu`
+              const text = `${t('share.checkout')} ${title} — ${url}`
+              try {
+                if (navigator.share) {
+                  await navigator.share({ title, text, url })
+                  return
+                }
+              } catch {
+                // ignore share cancellation
+              }
+              const w = encodeURIComponent(text)
+              const tw = `https://twitter.com/intent/tweet?text=${w}`
+              const wa = `https://wa.me/?text=${w}`
+              const fb = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`
+              window.open(wa, '_blank')
+              setTimeout(() => window.open(tw, '_blank'), 300)
+              setTimeout(() => window.open(fb, '_blank'), 600)
+            }}
+          >
+            {t('share.button')}
+          </button>
+        </div>
       </div>
       {lb && imageUrl ? <Lightbox src={imageUrl} alt={titleEnglish || titleNepali} onClose={() => setLb(false)} /> : null}
     </motion.article>

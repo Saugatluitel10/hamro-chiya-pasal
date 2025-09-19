@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useI18n } from '../i18n/I18nProvider'
 import Meta from '../components/Meta'
 import IconTeaLeaf from '../components/IconTeaLeaf'
@@ -25,24 +26,18 @@ export default function About() {
   const foundedYear = 2019
   const years = new Date().getFullYear() - foundedYear
   const gallery = [
-    {
-      src: 'https://images.unsplash.com/photo-1541782814451-9c6779ed3403?q=80&w=1400&auto=format&fit=crop',
-      alt: 'Pouring milk tea',
-    },
-    {
-      src: 'https://images.unsplash.com/photo-1487029752779-a0c17b1f5ec9?q=80&w=1400&auto=format&fit=crop',
-      alt: 'Loose leaf tea selection',
-    },
-    {
-      src: 'https://images.unsplash.com/photo-1523906630133-f6934a1ab2b9?q=80&w=1400&auto=format&fit=crop',
-      alt: 'Clay cups and spices',
-    },
-    {
-      src: 'https://images.unsplash.com/photo-1576092768246-db68cd0d4e43?q=80&w=1400&auto=format&fit=crop',
-      alt: 'Green hills tea estates',
-    },
-  ]
+    { id: 'pouring', src: 'https://images.unsplash.com/photo-1541782814451-9c6779ed3403?q=80&w=1400&auto=format&fit=crop' },
+    { id: 'loose',   src: 'https://images.unsplash.com/photo-1487029752779-a0c17b1f5ec9?q=80&w=1400&auto=format&fit=crop' },
+    { id: 'clay',    src: 'https://images.unsplash.com/photo-1523906630133-f6934a1ab2b9?q=80&w=1400&auto=format&fit=crop' },
+    { id: 'hills',   src: 'https://images.unsplash.com/photo-1576092768246-db68cd0d4e43?q=80&w=1400&auto=format&fit=crop' },
+  ] as const
   const [galleryIndex, setGalleryIndex] = useState<number | null>(null)
+  const openGallery = (i: number) => setGalleryIndex(i)
+  const closeGallery = () => setGalleryIndex(null)
+  const prevGallery = () => setGalleryIndex((i) => (i === null ? i : (i + gallery.length - 1) % gallery.length))
+  const nextGallery = () => setGalleryIndex((i) => (i === null ? i : (i + 1) % gallery.length))
+  const current = galleryIndex !== null ? gallery[galleryIndex] : null
+  const currentCaption = current ? t(`gallery.items.${current.id}.caption`) : ''
   return (
     <>
     <Meta title={t('meta.about.title')} description={t('meta.about.desc')} url={url} image={og} locale={ogLocale} localizedUrlStrategy="prefix" />
@@ -207,8 +202,8 @@ export default function About() {
 
       {/* Gallery */}
       <section className="mt-10 max-w-5xl">
-        <h2 className="text-2xl font-semibold mb-2">Gallery</h2>
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">A glimpse of our chai, craft, and places that inspire us.</p>
+        <h2 className="text-2xl font-semibold mb-2">{t('about.gallery.title')}</h2>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{t('about.gallery.desc')}</p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {gallery.map((g, idx) => (
             <motion.button
@@ -218,18 +213,34 @@ export default function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               className="group relative block rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800"
-              onClick={() => setGalleryIndex(idx)}
+              onClick={() => openGallery(idx)}
             >
               <img
                 src={g.src}
-                alt={g.alt}
+                alt={t(`gallery.items.${g.id}.caption`)}
                 className="h-40 w-full object-cover transition-transform duration-300 group-hover:scale-105"
                 loading="lazy"
                 decoding="async"
               />
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+              <div className="absolute bottom-1 left-1 right-1 text-[11px] px-1 py-0.5 rounded bg-black/40 text-white opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                {t(`gallery.items.${g.id}.caption`)}
+              </div>
             </motion.button>
           ))}
+        </div>
+      </section>
+
+      {/* Gallery CTA */}
+      <section className="mt-6 max-w-5xl">
+        <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-5 bg-[--color-surface] dark:bg-gray-900 flex items-center justify-between gap-4">
+          <div>
+            <div className="text-lg font-semibold">{t('gallery.cta.title')}</div>
+            <p className="text-sm text-gray-600 dark:text-gray-300">{t('gallery.cta.desc')}</p>
+          </div>
+          <Link to={`/${locale}/gallery`} className="inline-flex items-center justify-center rounded-md bg-emerald-600 text-white px-3 py-2 text-sm hover:bg-emerald-700">
+            {t('gallery.cta.button')}
+          </Link>
         </div>
       </section>
 
@@ -281,11 +292,14 @@ export default function About() {
           ))}
         </div>
       </section>
-      {galleryIndex !== null ? (
+      {current ? (
         <Lightbox
-          src={gallery[galleryIndex].src}
-          alt={gallery[galleryIndex].alt}
-          onClose={() => setGalleryIndex(null)}
+          src={current.src}
+          alt={currentCaption}
+          caption={currentCaption}
+          onClose={closeGallery}
+          onPrev={prevGallery}
+          onNext={nextGallery}
         />
       ) : null}
     </main>

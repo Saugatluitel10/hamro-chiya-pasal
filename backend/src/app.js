@@ -7,6 +7,7 @@ const contactRouter = require('./routes/contact.route')
 const menuRouter = require('./routes/menu.route')
 const blogRouter = require('./routes/blog.route')
 const newsletterRouter = require('./routes/newsletter.route')
+const socialRouter = require('./routes/social.route')
 const errorHandler = require('./middleware/errorHandler')
 
 const app = express()
@@ -33,6 +34,7 @@ app.use('/api/contact', contactRouter)
 app.use('/api/menu', menuRouter)
 app.use('/api/blog', blogRouter)
 app.use('/api/newsletter', newsletterRouter)
+app.use('/api/social', socialRouter)
 
 // Not found handler
 app.use((req, res, next) => {

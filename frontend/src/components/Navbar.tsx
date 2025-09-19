@@ -48,6 +48,7 @@ export default function Navbar() {
           <NavLink to={`${prefix}/about`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.about')}</NavLink>
           <NavLink to={`${prefix}/contact`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.contact')}</NavLink>
           <NavLink to={`${prefix}/blog`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.blog')}</NavLink>
+          <NavLink to={`${prefix}/gallery`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('gallery.title')}</NavLink>
           <div className="flex items-center gap-3 ml-2" aria-label={t('toggle.language')}>
             <button
               type="button"
@@ -55,12 +56,12 @@ export default function Navbar() {
                 try {
                   const cur = localStorage.getItem('useNepaliNumerals') === 'true'
                   localStorage.setItem('useNepaliNumerals', String(!cur))
-                  window.dispatchEvent(new CustomEvent('app:toast', { detail: { message: !cur ? 'Nepali numerals ON' : 'Nepali numerals OFF', type: 'success' } }))
+                  window.dispatchEvent(new CustomEvent('app:toast', { detail: { message: !cur ? t('toggle.numerals.on') : t('toggle.numerals.off'), type: 'success' } }))
                 } catch {
-                  window.dispatchEvent(new CustomEvent('app:toast', { detail: { message: 'Cannot change number format', type: 'error' } }))
+                  window.dispatchEvent(new CustomEvent('app:toast', { detail: { message: t('toggle.numerals.error'), type: 'error' } }))
                 }
               }}
-              title="Toggle Nepali numerals"
+              title={t('toggle.numerals.title')}
               className="text-xs px-2 py-1 rounded border border-gray-200 dark:border-gray-800"
             >
               १२३
@@ -122,6 +123,7 @@ export default function Navbar() {
               <NavLink to={`${prefix}/about`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.about')}</NavLink>
               <NavLink to={`${prefix}/contact`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.contact')}</NavLink>
               <NavLink to={`${prefix}/blog`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.blog')}</NavLink>
+              <NavLink to={`${prefix}/gallery`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('gallery.title')}</NavLink>
               <div className="flex items-center gap-2 pt-2" aria-label={t('toggle.language')}>
                 <button
                   type="button"
@@ -129,9 +131,9 @@ export default function Navbar() {
                     try {
                       const cur = localStorage.getItem('useNepaliNumerals') === 'true'
                       localStorage.setItem('useNepaliNumerals', String(!cur))
-                      window.dispatchEvent(new CustomEvent('app:toast', { detail: { message: !cur ? 'Nepali numerals ON' : 'Nepali numerals OFF', type: 'success' } }))
+                      window.dispatchEvent(new CustomEvent('app:toast', { detail: { message: !cur ? t('toggle.numerals.on') : t('toggle.numerals.off'), type: 'success' } }))
                     } catch {
-                      window.dispatchEvent(new CustomEvent('app:toast', { detail: { message: 'Cannot change number format', type: 'error' } }))
+                      window.dispatchEvent(new CustomEvent('app:toast', { detail: { message: t('toggle.numerals.error'), type: 'error' } }))
                     }
                   }}
                   className="text-xs px-2 py-1 rounded border border-gray-200 dark:border-gray-800"
