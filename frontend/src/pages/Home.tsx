@@ -13,6 +13,7 @@ import NewsletterForm from '../components/NewsletterForm'
 import Lightbox from '../components/Lightbox'
 import InstagramFeed from '../components/InstagramFeed'
 import UGCForm from '../components/UGCForm'
+import GoogleReviews from '../components/GoogleReviews'
 
 function Counter({ to, duration = 1.2 }: { to: number; duration?: number }) {
   const count = useMotionValue(0)
@@ -366,9 +367,12 @@ export default function Home() {
           <h2 className="text-2xl font-bold">{t('socialproof.title')}</h2>
           <p className="text-gray-600 dark:text-gray-300 mb-3">{t('socialproof.subtitle')}</p>
           <div className="grid sm:grid-cols-3 gap-3 text-sm">
-            <div className="rounded-md border border-gray-200 dark:border-gray-800 p-3">⭐️⭐️⭐️⭐️⭐️ Google Reviews</div>
-            <div className="rounded-md border border-gray-200 dark:border-gray-800 p-3">🏆 Local favorite 2025</div>
-            <div className="rounded-md border border-gray-200 dark:border-gray-800 p-3">🍵 {t('home.badges.handBrewed')}</div>
+            <div className="rounded-md border border-gray-200 dark:border-gray-800 p-3">{t('socialproof.badge.trusted')}</div>
+            <div className="rounded-md border border-gray-200 dark:border-gray-800 p-3">{t('socialproof.badge.payments')}</div>
+            <div className="rounded-md border border-gray-200 dark:border-gray-800 p-3">{t('socialproof.badge.delivery')}</div>
+          </div>
+          <div className="mt-4">
+            <GoogleReviews />
           </div>
         </div>
       </section>

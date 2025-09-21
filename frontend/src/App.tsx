@@ -10,6 +10,8 @@ import BlogList from './pages/BlogList'
 import BlogPost from './pages/BlogPost'
 import AdminTeas from './pages/AdminTeas'
 import AdminSocial from './pages/AdminSocial'
+import OrderSuccess from './pages/OrderSuccess'
+import Checkout from './pages/Checkout'
 import Gallery from './pages/Gallery'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
@@ -32,6 +34,7 @@ function App() {
         <Route path="ne" element={<LocaleLayoutFixed locale="ne" />}>
           <Route index element={<Home />} />
           <Route path="menu" element={<Menu />} />
+          <Route path="checkout" element={<Checkout />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
           <Route path="blog" element={<BlogList />} />
@@ -39,11 +42,13 @@ function App() {
           <Route path="gallery" element={<Gallery />} />
           <Route path="admin/teas" element={<AdminTeas />} />
           <Route path="admin/social" element={<AdminSocial />} />
+          <Route path="order/success" element={<OrderSuccess />} />
           <Route path="*" element={<NotFound />} />
         </Route>
         <Route path="en" element={<LocaleLayoutFixed locale="en" />}>
           <Route index element={<Home />} />
           <Route path="menu" element={<Menu />} />
+          <Route path="checkout" element={<Checkout />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
           <Route path="blog" element={<BlogList />} />
@@ -51,6 +56,7 @@ function App() {
           <Route path="gallery" element={<Gallery />} />
           <Route path="admin/teas" element={<AdminTeas />} />
           <Route path="admin/social" element={<AdminSocial />} />
+          <Route path="order/success" element={<OrderSuccess />} />
           <Route path="*" element={<NotFound />} />
         </Route>
 

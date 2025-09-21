@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useI18n } from '../i18n/I18nProvider'
 import Lightbox from './Lightbox'
 import { formatCurrencyNprAuto } from '../utils/format'
+import { useCart } from '../hooks/useCart'
 
 export type TeaCardProps = {
   titleNepali: string
@@ -32,6 +33,7 @@ export default function TeaCard({
 }: TeaCardProps) {
   const { t, locale } = useI18n()
   const [lb, setLb] = useState(false)
+  const { add } = useCart()
   const origin = typeof window !== 'undefined' ? window.location.origin : ''
   const diffText = difficulty ? t(`teacard.diff.${String(difficulty).toLowerCase()}`) : undefined
   const highlightText = (text?: string) => {
@@ -129,6 +131,21 @@ export default function TeaCard({
                 <span className="text-gray-700 dark:text-gray-300"><span className="font-medium">{t('teacard.brew')}</span> {diffText}</span>
               </div>
             ) : null}
+          </div>
+        )}
+        {typeof priceNpr === 'number' && (
+          <div className="mt-3 flex justify-end">
+            <button
+              type="button"
+              className="text-xs px-3 py-1 rounded-md bg-emerald-600 text-white hover:bg-emerald-700"
+              onClick={() => {
+                const id = (titleEnglish || titleNepali).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+                add({ id, name: titleEnglish || titleNepali, priceNpr }, 1)
+                window.dispatchEvent(new CustomEvent('app:toast', { detail: { message: t('cart.added'), type: 'success' } }))
+              }}
+            >
+              {t('cart.add')}
+            </button>
           </div>
         )}
         <div className="mt-3 flex justify-end">

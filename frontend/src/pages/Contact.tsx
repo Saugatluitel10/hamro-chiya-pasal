@@ -8,6 +8,7 @@ import PatternBorder from '../components/PatternBorder'
 import PrayerFlags from '../components/PrayerFlags'
 import IconKettle from '../components/IconKettle'
 import Breadcrumbs from '../components/Breadcrumbs'
+import GoogleSignIn from '../components/GoogleSignIn'
 
 type MessageType = 'inquiry' | 'feedback' | 'catering'
 type PreferredContact = 'email' | 'phone' | 'whatsapp'
@@ -154,6 +155,19 @@ export default function Contact() {
             <span>{t('contact.form.title')}</span>
           </h2>
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{t('contact.form.subtitle')}</p>
+
+          <div className="mb-4">
+            <GoogleSignIn
+              onSuccess={(data) => {
+                try {
+                  localStorage.setItem('AUTH_TOKEN', data.token)
+                  window.dispatchEvent(new CustomEvent('app:toast', { detail: { message: 'Signed in with Google', type: 'success' } }))
+                } catch {
+                  // ignore storage errors
+                }
+              }}
+            />
+          </div>
 
           <form onSubmit={handleSubmit} className="grid gap-4">
             <div className="grid sm:grid-cols-2 gap-4">

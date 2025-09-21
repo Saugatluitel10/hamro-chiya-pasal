@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import Meta from '../components/Meta'
 import { useI18n } from '../i18n/I18nProvider'
+import { apiGet } from '../utils/api'
 
 export default function AdminSocial() {
   const { t, locale } = useI18n()
@@ -8,12 +9,14 @@ export default function AdminSocial() {
   const url = typeof window !== 'undefined' ? window.location.href : ''
   const og = `${origin}/og/og-default.svg`
   const ogLocale = locale === 'ne' ? 'ne_NP' : 'en_US'
-  const env = (import.meta as unknown as { env?: { VITE_API_BASE_URL?: string } }).env
-  const apiBase = env?.VITE_API_BASE_URL ?? 'http://localhost:5000'
+  // API base handled by api helper; no direct env needed here
 
   const [adminKey, setAdminKey] = useState<string>(() => localStorage.getItem('ADMIN_KEY') || '')
   type Metrics = { googleReviews?: { rating: number; count: number }; instagramFollowers?: number; ugcCount?: number }
   type UGCItem = { name?: string; handle?: string; postUrl?: string; submittedAt: number }
+  type UGCList = { items: UGCItem[] }
+  type RefAgg = { key: string; count: number }
+  type RefStats = { referrers: RefAgg[]; sources: RefAgg[]; campaigns: RefAgg[] }
   const [metrics, setMetrics] = useState<Metrics | null>(null)
   const [ugc, setUgc] = useState<UGCItem[] | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -24,17 +27,11 @@ export default function AdminSocial() {
   async function loadAll() {
     setError(null)
     try {
-      const [mRes, uRes, rRes] = await Promise.all([
-        fetch(`${apiBase}/api/social/metrics`, { headers }),
-        fetch(`${apiBase}/api/social/ugc`, { headers }),
-        fetch(`${apiBase}/api/social/refstats`, { headers }),
+      const [m, u, r] = await Promise.all([
+        apiGet<Metrics>('/api/social/metrics', { headers }),
+        apiGet<UGCList>('/api/social/ugc', { headers }),
+        apiGet<RefStats>('/api/social/refstats', { headers }),
       ])
-      const m = await mRes.json()
-      const u = await uRes.json()
-      const r = await rRes.json()
-      if (!mRes.ok) throw new Error(m?.message || 'metrics fail')
-      if (!uRes.ok) throw new Error(u?.message || 'ugc fail')
-      if (!rRes.ok) throw new Error(r?.message || 'refstats fail')
       setMetrics(m)
       setUgc(Array.isArray(u?.items) ? u.items : [])
       setRefstats(r)

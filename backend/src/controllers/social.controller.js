@@ -55,7 +55,21 @@ const submitUGC = async (req, res, next) => {
 
 function adminOk(req) {
   const key = req.headers['x-admin-key']
-  return key && process.env.ADMIN_KEY && String(key) === String(process.env.ADMIN_KEY)
+  if (key && process.env.ADMIN_KEY && String(key) === String(process.env.ADMIN_KEY)) return true
+  try {
+    const hdr = req.headers.authorization || ''
+    const m = hdr.match(/^Bearer\s+(.+)$/i)
+    if (!m) return false
+    const token = m[1]
+    const jwt = require('jsonwebtoken')
+    const payload = jwt.verify(token, process.env.JWT_SECRET || 'dev_secret')
+    const email = String(payload?.email || '')
+    const allowed = (process.env.ALLOWED_ADMIN_EMAILS || '').split(',').map((s) => s.trim().toLowerCase()).filter(Boolean)
+    if (!email) return false
+    return allowed.includes(email.toLowerCase())
+  } catch {
+    return false
+  }
 }
 
 const getMetrics = async (req, res) => {
@@ -108,11 +122,81 @@ const getRefStats = async (req, res) => {
   })
 }
 
+// Compose a shareable order string and helpful links
+const orderShareReady = async (req, res) => {
+  try {
+    const { orderId, items, totalNpr } = req.body || {}
+    const site = process.env.FRONTEND_URL || ''
+    const list = Array.isArray(items)
+      ? items
+          .slice(0, 10)
+          .map((it) => `${it.qty || 1}× ${it.name}`)
+          .join(', ')
+      : ''
+    const totalTxt = typeof totalNpr === 'number' ? ` — NPR ${totalNpr}` : ''
+    const idTxt = orderId ? ` (Order #${orderId})` : ''
+    const url = site ? `${site.replace(/\/$/, '')}/` : ''
+    const text = `I just ordered chai: ${list}${totalTxt}${idTxt}. ${url} #HamroChiyaPasal`
+    const w = encodeURIComponent(text)
+    const share = {
+      text,
+      url,
+      whatsapp: `https://wa.me/?text=${w}`,
+      twitter: `https://twitter.com/intent/tweet?text=${w}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+    }
+    return res.json(share)
+  } catch (err) {
+    return res.status(400).json({ message: 'Invalid order payload' })
+  }
+}
+
+// Google Places Reviews (cached)
+let cachedReviews = { data: null, at: 0 }
+const getGoogleReviews = async (_req, res) => {
+  const apiKey = process.env.GOOGLE_PLACES_API_KEY
+  const placeId = process.env.GOOGLE_PLACE_ID
+  if (!apiKey || !placeId) {
+    return res.status(503).json({ message: 'Google Places not configured' })
+  }
+  const now = Date.now()
+  if (cachedReviews.data && now - cachedReviews.at < 10 * 60 * 1000) {
+    return res.json(cachedReviews.data)
+  }
+  const url = new URL('https://maps.googleapis.com/maps/api/place/details/json')
+  url.searchParams.set('place_id', placeId)
+  url.searchParams.set('fields', 'rating,user_ratings_total,reviews')
+  url.searchParams.set('key', apiKey)
+  const r = await fetch(url)
+  const j = await r.json()
+  if (j?.status !== 'OK') {
+    return res.status(502).json({ message: 'Places API error', detail: j?.status })
+  }
+  const result = j.result || {}
+  const reviews = Array.isArray(result.reviews) ? result.reviews.slice(0, 5).map((rv) => ({
+    author_name: rv.author_name,
+    rating: rv.rating,
+    text: rv.text,
+    time: rv.time,
+    relative_time_description: rv.relative_time_description,
+    profile_photo_url: rv.profile_photo_url,
+  })) : []
+  const data = {
+    rating: result.rating || null,
+    total: result.user_ratings_total || 0,
+    reviews,
+  }
+  cachedReviews = { data, at: now }
+  return res.json(data)
+}
+
 module.exports = {
   fetchInstagram,
   submitUGC,
   getMetrics,
   trackHit,
   listUGC,
+  orderShareReady,
+  getGoogleReviews,
   getRefStats,
 }

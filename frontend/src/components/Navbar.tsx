@@ -2,6 +2,7 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { useI18n } from '../i18n/I18nProvider'
 import PatternBorder from './PatternBorder'
+import { useCart } from '../hooks/useCart'
 
 const base = 'text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-emerald-600 dark:hover:text-emerald-400 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2 ring-offset-white dark:focus-visible:ring-offset-gray-900'
 const active = 'text-emerald-700 dark:text-emerald-300'
@@ -13,6 +14,8 @@ export default function Navbar() {
   const prefix = `/${locale}`
   const [mobileOpen, setMobileOpen] = useState(false)
   const [navQuery, setNavQuery] = useState('')
+  const { items } = useCart()
+  const cartCount = items.reduce((s, it) => s + it.qty, 0)
 
   const switchLocale = (l: 'ne' | 'en') => {
     const rest = location.pathname.replace(/^\/(ne|en)(?=\/|$)/, '') || '/'
@@ -49,6 +52,11 @@ export default function Navbar() {
           <NavLink to={`${prefix}/contact`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.contact')}</NavLink>
           <NavLink to={`${prefix}/blog`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.blog')}</NavLink>
           <NavLink to={`${prefix}/gallery`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('gallery.title')}</NavLink>
+          <NavLink to={`${prefix}/checkout`} className={({isActive}) => `${base} ${isActive ? active : ''} relative`}>🛒
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-3 inline-flex items-center justify-center text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-600 text-white">{cartCount}</span>
+            )}
+          </NavLink>
           <div className="flex items-center gap-3 ml-2" aria-label={t('toggle.language')}>
             <button
               type="button"
@@ -124,6 +132,11 @@ export default function Navbar() {
               <NavLink to={`${prefix}/contact`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.contact')}</NavLink>
               <NavLink to={`${prefix}/blog`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.blog')}</NavLink>
               <NavLink to={`${prefix}/gallery`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('gallery.title')}</NavLink>
+              <NavLink to={`${prefix}/checkout`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''} relative`}>🛒
+                {cartCount > 0 && (
+                  <span className="ml-2 inline-flex items-center justify-center text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-600 text-white">{cartCount}</span>
+                )}
+              </NavLink>
               <div className="flex items-center gap-2 pt-2" aria-label={t('toggle.language')}>
                 <button
                   type="button"
