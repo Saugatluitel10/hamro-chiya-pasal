@@ -50,10 +50,42 @@ exports.esewaCreate = async (req, res) => {
 }
 
 exports.esewaSuccess = async (req, res) => {
-  // In real integration, verify the transaction with eSewa S2S, then redirect to app success page
-  const oid = req.query.oid
   const app = getFrontendUrl(req)
-  return res.redirect(`${app}/en/order/success?id=${encodeURIComponent(String(oid || ''))}`)
+  try {
+    // eSewa returns parameters like oid (our pid), amt, and refId (rid) to success URL (method may be GET)
+    const oid = String(req.query.oid || req.body?.oid || '')
+    const amt = String(req.query.amt || req.body?.amt || '')
+    const rid = String(req.query.refId || req.query.rid || req.body?.refId || req.body?.rid || '')
+    const scd = process.env.ESEWA_MERCHANT_CODE || process.env.ESEWA_SCD
+    const verifyUrl = process.env.ESEWA_S2S_URL || 'https://uat.esewa.com.np/epay/transrec'
+    if (!oid || !amt || !rid || !scd) {
+      return res.redirect(`${app}/en/checkout?fail=${encodeURIComponent(oid || '')}`)
+    }
+    const params = new URLSearchParams()
+    params.set('amt', amt)
+    params.set('scd', scd)
+    params.set('pid', oid)
+    params.set('rid', rid)
+    // Verify with eSewa S2S endpoint; expects SUCCESS in body on success
+    const vr = await fetch(`${verifyUrl}?${params.toString()}`)
+    const vtext = await vr.text()
+    const ok = vr.ok && /SUCCESS/i.test(vtext)
+    if (!ok) return res.redirect(`${app}/en/checkout?fail=${encodeURIComponent(oid)}`)
+    // Mark order as paid in memory and redirect to success with id and total for UX
+    try {
+      const { markPaid, findById } = require('./orders.controller')
+      await markPaid(oid, { provider: 'esewa', refId: rid, verified: true })
+      const o = findById(oid)
+      const qs = new URLSearchParams()
+      qs.set('id', oid)
+      if (o && typeof o.totalNpr === 'number') qs.set('total', String(o.totalNpr))
+      return res.redirect(`${app}/en/order/success?${qs.toString()}`)
+    } catch {
+      return res.redirect(`${app}/en/order/success?id=${encodeURIComponent(oid)}`)
+    }
+  } catch (e) {
+    return res.redirect(`${app}/en/checkout?fail=1`)
+  }
 }
 
 exports.esewaFailure = async (req, res) => {
