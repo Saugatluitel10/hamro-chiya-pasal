@@ -1,5 +1,5 @@
 const express = require('express')
-const { esewaCreate, esewaSuccess, esewaFailure, stripeCreateIntent } = require('../controllers/payments.controller')
+const { esewaCreate, esewaSuccess, esewaFailure, stripeCreateIntent, stripeWebhook } = require('../controllers/payments.controller')
 
 const router = express.Router()
 
@@ -10,5 +10,6 @@ router.get('/esewa/failure', esewaFailure)
 
 // Stripe
 router.post('/stripe/create-intent', stripeCreateIntent)
+router.post('/stripe/webhook', stripeWebhook)
 
 module.exports = router

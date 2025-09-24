@@ -16,6 +16,7 @@ export default function OrderSuccess() {
   const orderId = params.get('id') || undefined
   const totalNpr = params.get('total') ? Number(params.get('total')) : undefined
   const hasItemsParam = Boolean(params.get('items'))
+  const [status, setStatus] = useState<string | null>(null)
   const items: OrderItem[] = useMemo(() => {
     const raw = params.get('items')
     if (raw) {
@@ -41,10 +42,11 @@ export default function OrderSuccess() {
     async function load() {
       if (!orderId || hasItemsParam) return
       try {
-        const o = await apiGet<{ items?: { name: string; qty?: number }[] }>(`/api/orders/${orderId}`)
+        const o = await apiGet<{ items?: { name: string; qty?: number }[]; status?: string }>(`/api/orders/${orderId}`)
         if (Array.isArray(o?.items)) {
           setItemsFromServer(o.items.map((i) => ({ name: i.name, qty: Number(i.qty || 1) })))
         }
+        if (o?.status) setStatus(String(o.status))
       } catch {
         // ignore
       }
@@ -52,6 +54,30 @@ export default function OrderSuccess() {
     load()
   }, [orderId, hasItemsParam])
   const itemsToShow = itemsFromServer && itemsFromServer.length ? itemsFromServer : items
+
+  // Live status via SSE
+  useEffect(() => {
+    if (!orderId) return
+    const env = (import.meta as unknown as { env?: { VITE_API_BASE_URL?: string } }).env
+    const apiBase = env?.VITE_API_BASE_URL ?? 'http://localhost:5000'
+    const src = new EventSource(`${apiBase}/api/orders/${orderId}/events`)
+    const onStatus = (ev: MessageEvent) => {
+      try {
+        const data = JSON.parse(ev.data)
+        if (data?.status) setStatus(String(data.status))
+      } catch {}
+    }
+    src.addEventListener('status', onStatus)
+    src.onerror = () => {
+      try { src.close() } catch {}
+    }
+    return () => {
+      try {
+        src.removeEventListener('status', onStatus as any)
+        src.close()
+      } catch {}
+    }
+  }, [orderId])
 
   return (
     <>
@@ -67,6 +93,13 @@ export default function OrderSuccess() {
         <p className="text-gray-600 dark:text-gray-300 mb-4">{t('order.success.subtitle')}</p>
 
         <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-5 bg-[--color-surface] dark:bg-gray-900">
+          {status && (
+            <div className="mb-3">
+              <span className="inline-flex items-center gap-2 text-xs px-2 py-1 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200">
+                {t(`order.status.${status}` as any)}
+              </span>
+            </div>
+          )}
           <div className="text-sm text-gray-700 dark:text-gray-300 mb-3">
             {orderId ? (
               <span>

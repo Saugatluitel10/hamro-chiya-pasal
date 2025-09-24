@@ -121,6 +121,8 @@
   "order.success.breadcrumb": "अर्डर सफलता",
   "order.success.summaryWithId": "तपाईंको अर्डर गरिसक्नुभयो",
   "order.success.summary": "तपाईंको अर्डर गरिसक्नुभयो।",
+  "order.status.received": "प्राप्त भयो",
+  "order.status.paid": "भुक्तान भयो",
   "cart.add": "कार्टमा राख्नुहोस्",
   "cart.added": "कार्टमा थपियो",
   "checkout.title": "चेकआउट",

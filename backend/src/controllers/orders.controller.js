@@ -1,6 +1,8 @@
 // In-memory orders store (replace with MongoDB in production)
 const orders = []
 const sms = require('../services/sms')
+const events = require('../services/events')
+const store = require('../services/store')
 
 function makeId() {
   return Math.random().toString(36).slice(2, 10) + Date.now().toString(36)
@@ -32,11 +34,13 @@ exports.createOrder = async (req, res) => {
       createdAt: Date.now(),
     }
     orders.push(order)
+    try { await store.create(order) } catch {}
     try {
       if (order.customer && order.customer.phone) {
         sms.sendSms(String(order.customer.phone), `Hamro Chiya Pasal: Order ${id} received. Total NPR ${totalNpr}.`)
       }
     } catch {}
+    try { events.publish(id, 'status', { status: order.status }) } catch {}
     return res.json({ id, totalNpr, status: order.status, items: normalized })
   } catch (e) {
     return res.status(500).json({ message: 'Failed to create order' })
@@ -45,7 +49,13 @@ exports.createOrder = async (req, res) => {
 
 exports.getOrder = async (req, res) => {
   const { id } = req.params
-  const order = orders.find((o) => o.id === id)
+  let order = orders.find((o) => o.id === id)
+  if (!order) {
+    try {
+      const doc = await store.findById(id)
+      if (doc) order = doc
+    } catch {}
+  }
   if (!order) return res.status(404).json({ message: 'Not found' })
   return res.json(order)
 }
@@ -54,16 +64,28 @@ exports.findById = function findById(id) {
   return orders.find((o) => o.id === id)
 }
 
+exports.findByIdAsync = async function findByIdAsync(id) {
+  const mem = orders.find((o) => o.id === id)
+  if (mem) return mem
+  try {
+    const doc = await store.findById(id)
+    if (doc) return doc
+  } catch {}
+  return null
+}
+
 exports.markPaid = async function markPaid(id, paymentInfo) {
   const order = orders.find((o) => o.id === id)
   if (!order) return false
   order.status = 'paid'
   order.paidAt = Date.now()
   order.payment = Object.assign({}, order.payment, paymentInfo)
+  try { await store.markPaid(id, order.payment) } catch {}
   try {
     if (order.customer && order.customer.phone) {
       sms.sendSms(String(order.customer.phone), `Hamro Chiya Pasal: Payment received for order ${id}. Thank you!`)
     }
   } catch {}
+  try { events.publish(id, 'status', { status: order.status }) } catch {}
   return true
 }

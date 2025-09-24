@@ -13,7 +13,8 @@ declare global {
   }
 }
 
-export default function GoogleSignIn({ onSuccess }: { onSuccess: (payload: { token: string; user: { sub: string; email: string; name?: string; picture?: string } }) => void }) {
+type GooglePayload = { token: string; user: { sub: string; email: string; name?: string; picture?: string } }
+export default function GoogleSignIn({ onSuccess }: { onSuccess: (payload: GooglePayload) => void }) {
   useEffect(() => {
     // Load Google Identity Services if not present
     if (!window.google) {
@@ -50,9 +51,18 @@ export default function GoogleSignIn({ onSuccess }: { onSuccess: (payload: { tok
       const r = await fetch(`${apiBase}/api/auth/google`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_token: token }) })
       const data = await r.json()
       if (!r.ok) throw new Error(data?.message || 'Auth failed')
-      onSuccess(data)
+      const payload: GooglePayload = { token: String(data?.token || ''), user: (data?.user || {}) as GooglePayload['user'] }
+      try {
+        if (payload.token) localStorage.setItem('AUTH_TOKEN', payload.token)
+        localStorage.setItem('AUTH_USER', JSON.stringify(payload.user))
+        window.dispatchEvent(new CustomEvent('app:toast', { detail: { message: 'Signed in with Google', type: 'success' } }))
+      } catch {}
+      onSuccess(payload)
     } catch (e) {
       console.error(e)
+      try {
+        window.dispatchEvent(new CustomEvent('app:toast', { detail: { message: 'Google Sign-In failed', type: 'error' } }))
+      } catch {}
     }
   }
 

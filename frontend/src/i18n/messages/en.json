@@ -169,6 +169,8 @@
   "order.success.breadcrumb": "Order Success",
   "order.success.summaryWithId": "Your order has been placed",
   "order.success.summary": "Your order has been placed.",
+  "order.status.received": "Received",
+  "order.status.paid": "Paid",
   "cart.add": "Add to cart",
   "cart.added": "Added to cart",
   "checkout.title": "Checkout",
