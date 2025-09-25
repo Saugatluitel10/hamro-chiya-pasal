@@ -61,21 +61,27 @@ export default function OrderSuccess() {
     const env = (import.meta as unknown as { env?: { VITE_API_BASE_URL?: string } }).env
     const apiBase = env?.VITE_API_BASE_URL ?? 'http://localhost:5000'
     const src = new EventSource(`${apiBase}/api/orders/${orderId}/events`)
-    const onStatus = (ev: MessageEvent) => {
+    const onStatusListener: EventListener = (ev) => {
       try {
-        const data = JSON.parse(ev.data)
+        const data = JSON.parse((ev as MessageEvent).data as string)
         if (data?.status) setStatus(String(data.status))
-      } catch {}
+      } catch {
+        // ignore malformed SSE data
+      }
     }
-    src.addEventListener('status', onStatus)
+    src.addEventListener('status', onStatusListener)
     src.onerror = () => {
-      try { src.close() } catch {}
+      try { src.close() } catch {
+        // ignore close errors
+      }
     }
     return () => {
       try {
-        src.removeEventListener('status', onStatus as any)
+        src.removeEventListener('status', onStatusListener)
         src.close()
-      } catch {}
+      } catch {
+        // ignore cleanup errors
+      }
     }
   }, [orderId])
 
@@ -96,7 +102,7 @@ export default function OrderSuccess() {
           {status && (
             <div className="mb-3">
               <span className="inline-flex items-center gap-2 text-xs px-2 py-1 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200">
-                {t(`order.status.${status}` as any)}
+                {t(status === 'paid' ? 'order.status.paid' : 'order.status.received')}
               </span>
             </div>
           )}

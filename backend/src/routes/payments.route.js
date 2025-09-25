@@ -10,6 +10,7 @@ router.get('/esewa/failure', esewaFailure)
 
 // Stripe
 router.post('/stripe/create-intent', stripeCreateIntent)
-router.post('/stripe/webhook', stripeWebhook)
+// Use express.raw for Stripe webhook signature verification
+router.post('/stripe/webhook', express.raw({ type: 'application/json' }), stripeWebhook)
 
 module.exports = router

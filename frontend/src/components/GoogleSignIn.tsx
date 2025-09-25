@@ -56,13 +56,17 @@ export default function GoogleSignIn({ onSuccess }: { onSuccess: (payload: Googl
         if (payload.token) localStorage.setItem('AUTH_TOKEN', payload.token)
         localStorage.setItem('AUTH_USER', JSON.stringify(payload.user))
         window.dispatchEvent(new CustomEvent('app:toast', { detail: { message: 'Signed in with Google', type: 'success' } }))
-      } catch {}
+      } catch {
+        // ignore storage or toast errors
+      }
       onSuccess(payload)
     } catch (e) {
       console.error(e)
       try {
         window.dispatchEvent(new CustomEvent('app:toast', { detail: { message: 'Google Sign-In failed', type: 'error' } }))
-      } catch {}
+      } catch {
+        // ignore toast errors
+      }
     }
   }
 

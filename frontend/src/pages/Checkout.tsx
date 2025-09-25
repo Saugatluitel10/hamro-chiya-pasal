@@ -42,6 +42,7 @@ export default function Checkout() {
           await apiPost<{ clientSecret: string }>('/api/payments/stripe/create-intent', {
             amount: data.totalNpr,
             currency: 'npr',
+            orderId: data.id,
           })
           window.dispatchEvent(
             new CustomEvent('app:toast', { detail: { message: 'Stripe checkout coming soon. Using COD flow temporarily.', type: 'info' } })
