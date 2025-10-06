@@ -8,6 +8,41 @@ function makeId() {
   return Math.random().toString(36).slice(2, 10) + Date.now().toString(36)
 }
 
+exports.updateStatus = async (req, res) => {
+  const { id } = req.params
+  const { status } = req.body || {}
+  const allowed = new Set(['received', 'brewing', 'ready', 'paid', 'completed'])
+  if (!allowed.has(String(status))) return res.status(400).json({ message: 'Invalid status' })
+  let order = orders.find((o) => o.id === id)
+  if (!order) {
+    try {
+      const doc = await store.findById(id)
+      if (doc) order = doc
+    } catch {}
+  }
+  if (!order) return res.status(404).json({ message: 'Not found' })
+  order.status = String(status)
+  try { await store.updateStatus(id, order.status) } catch {}
+  try { events.publish(id, 'status', { status: order.status }) } catch {}
+  try {
+    if (order.status === 'ready' && order.customer && order.customer.phone) {
+      sms.sendSms(String(order.customer.phone), `Hamro Chiya Pasal: Your order ${id} is ready for pickup/delivery.`)
+    }
+  } catch {}
+  return res.json({ id, status: order.status })
+}
+
+exports.listRecent = async (req, res) => {
+  const limit = Math.min(parseInt(req.query.limit || '100', 10) || 100, 200)
+  try {
+    const docs = await store.listRecent(limit)
+    if (Array.isArray(docs) && docs.length) return res.json(docs)
+  } catch {}
+  // fallback to in-memory
+  const sorted = orders.slice().sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).slice(0, limit)
+  return res.json(sorted)
+}
+
 exports.createOrder = async (req, res) => {
   try {
     const { items, customer, paymentMethod } = req.body || {}

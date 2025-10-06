@@ -1,14 +1,15 @@
 const express = require('express')
 const { fetchInstagram, submitUGC, getMetrics, trackHit, listUGC, getRefStats, orderShareReady, getGoogleReviews } = require('../controllers/social.controller')
+const adminOrKey = require('../middleware/adminOrKey')
 
 const router = express.Router()
 
 router.get('/instagram', fetchInstagram)
 router.post('/ugc', submitUGC)
-router.get('/metrics', getMetrics)
-router.get('/ugc', listUGC)
+router.get('/metrics', adminOrKey, getMetrics)
+router.get('/ugc', adminOrKey, listUGC)
 router.post('/track', trackHit)
-router.get('/refstats', getRefStats)
+router.get('/refstats', adminOrKey, getRefStats)
 router.post('/order/share-ready', orderShareReady)
 router.get('/google/reviews', getGoogleReviews)
 

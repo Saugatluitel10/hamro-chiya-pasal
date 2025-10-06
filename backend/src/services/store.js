@@ -85,3 +85,26 @@ exports.markPaid = async function markPaid(id, paymentInfo) {
     return false
   }
 }
+
+exports.updateStatus = async function updateStatus(id, status) {
+  if (!exports.isReady()) return false
+  try {
+    const res = await OrderModel.updateOne(
+      { id },
+      { $set: { status } }
+    )
+    return res.modifiedCount > 0
+  } catch {
+    return false
+  }
+}
+
+exports.listRecent = async function listRecent(limit = 100) {
+  if (!exports.isReady()) return []
+  try {
+    const docs = await OrderModel.find({}).sort({ createdAt: -1 }).limit(limit).lean()
+    return docs
+  } catch {
+    return []
+  }
+}

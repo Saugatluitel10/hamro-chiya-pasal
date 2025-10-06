@@ -67,3 +67,4 @@ export async function apiRequest<T = unknown>(method: Method, path: string, body
 
 export const apiGet = <T = unknown>(path: string, opts?: { headers?: HeadersInit; signal?: AbortSignal }) => apiRequest<T>('GET', path, undefined, opts)
 export const apiPost = <T = unknown>(path: string, body?: unknown, opts?: { headers?: HeadersInit; signal?: AbortSignal }) => apiRequest<T>('POST', path, body, opts)
+export const apiPatch = <T = unknown>(path: string, body?: unknown, opts?: { headers?: HeadersInit; signal?: AbortSignal }) => apiRequest<T>('PATCH', path, body, opts)

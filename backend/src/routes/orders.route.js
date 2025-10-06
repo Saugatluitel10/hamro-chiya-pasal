@@ -1,6 +1,7 @@
 const express = require('express')
-const { createOrder, getOrder } = require('../controllers/orders.controller')
+const { createOrder, getOrder, listRecent, updateStatus } = require('../controllers/orders.controller')
 const events = require('../services/events')
+const adminOrKey = require('../middleware/adminOrKey')
 
 const router = express.Router()
 
@@ -14,5 +15,9 @@ router.get('/:id/events', (req, res) => {
   })
   events.subscribe(req.params.id, res)
 })
+
+// Admin endpoints
+router.get('/', adminOrKey, listRecent)
+router.patch('/:id/status', adminOrKey, updateStatus)
 
 module.exports = router

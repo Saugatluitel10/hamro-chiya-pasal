@@ -5,6 +5,7 @@ import { useI18n } from '../i18n/I18nProvider'
 import { useCart } from '../hooks/useCart'
 import { apiPost } from '../utils/api'
 import { Link, useNavigate } from 'react-router-dom'
+import StripeCheckout from '../components/StripeCheckout'
 
 export default function Checkout() {
   const { t, locale } = useI18n()
@@ -16,6 +17,9 @@ export default function Checkout() {
   const { items, total, updateQty, remove, clear } = useCart()
   const [busy, setBusy] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState<'esewa' | 'stripe' | 'cod'>('esewa')
+  const [stripeSecret, setStripeSecret] = useState<string | null>(null)
+  const [lastOrderId, setLastOrderId] = useState<string | null>(null)
+  const publishableKey = (import.meta as unknown as { env?: { VITE_STRIPE_PUBLISHABLE_KEY?: string } }).env?.VITE_STRIPE_PUBLISHABLE_KEY || ''
 
   const orderItems = useMemo(() => items.map((it) => ({ name: it.name, qty: it.qty, priceNpr: it.priceNpr })), [items])
 
@@ -37,16 +41,24 @@ export default function Checkout() {
         return
       }
       if (paymentMethod === 'stripe') {
-        // Create stripe intent (placeholder UI for now)
+        // Create stripe intent
         try {
-          await apiPost<{ clientSecret: string }>('/api/payments/stripe/create-intent', {
+          const resp = await apiPost<{ clientSecret: string }>('/api/payments/stripe/create-intent', {
             amount: data.totalNpr,
             currency: 'npr',
             orderId: data.id,
           })
-          window.dispatchEvent(
-            new CustomEvent('app:toast', { detail: { message: 'Stripe checkout coming soon. Using COD flow temporarily.', type: 'info' } })
-          )
+          if (publishableKey && resp?.clientSecret) {
+            setStripeSecret(resp.clientSecret)
+            setLastOrderId(data.id)
+            // Do not redirect; render Stripe Elements to complete payment
+            return
+          } else {
+            // No publishable key: dev fallback
+            window.dispatchEvent(
+              new CustomEvent('app:toast', { detail: { message: 'Stripe UI disabled (no publishable key). Using COD flow temporarily.', type: 'info' } })
+            )
+          }
         } catch {
           // ignore create-intent errors in placeholder flow
         }
@@ -128,14 +140,32 @@ export default function Checkout() {
                 <option value="stripe">Stripe</option>
                 <option value="cod">{t('checkout.cod')}</option>
               </select>
-              <button
-                type="button"
-                disabled={busy}
-                onClick={placeOrder}
-                className="w-full inline-flex items-center justify-center rounded-md bg-emerald-600 text-white px-3 py-2 text-sm hover:bg-emerald-700 disabled:opacity-60"
-              >
-                {busy ? t('common.loading') : t('checkout.placeOrder')}
-              </button>
+              {paymentMethod === 'stripe' && publishableKey && stripeSecret ? (
+                <StripeCheckout
+                  clientSecret={stripeSecret}
+                  publishableKey={publishableKey}
+                  amountNpr={total}
+                  onSuccess={() => {
+                    const qs = new URLSearchParams()
+                    qs.set('id', lastOrderId || '')
+                    qs.set('total', String(total))
+                    clear()
+                    nav(`/${locale}/order/success?` + qs.toString())
+                  }}
+                  onError={(msg) => {
+                    window.dispatchEvent(new CustomEvent('app:toast', { detail: { message: msg || t('checkout.error'), type: 'error' } }))
+                  }}
+                />
+              ) : (
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={placeOrder}
+                  className="w-full inline-flex items-center justify-center rounded-md bg-emerald-600 text-white px-3 py-2 text-sm hover:bg-emerald-700 disabled:opacity-60"
+                >
+                  {busy ? t('common.loading') : t('checkout.placeOrder')}
+                </button>
+              )}
             </div>
           </div>
         )}
@@ -143,3 +173,5 @@ export default function Checkout() {
     </>
   )
 }
+
+// orderId is tracked in state when Stripe intent is created in this page

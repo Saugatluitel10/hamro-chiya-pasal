@@ -10,6 +10,8 @@ import BlogList from './pages/BlogList'
 import BlogPost from './pages/BlogPost'
 import AdminTeas from './pages/AdminTeas'
 import AdminSocial from './pages/AdminSocial'
+import AdminOrders from './pages/AdminOrders'
+import KitchenBoard from './pages/KitchenBoard'
 import OrderSuccess from './pages/OrderSuccess'
 import Checkout from './pages/Checkout'
 import Gallery from './pages/Gallery'
@@ -42,6 +44,8 @@ function App() {
           <Route path="gallery" element={<Gallery />} />
           <Route path="admin/teas" element={<AdminTeas />} />
           <Route path="admin/social" element={<AdminSocial />} />
+          <Route path="admin/orders" element={<AdminOrders />} />
+          <Route path="admin/kitchen" element={<KitchenBoard />} />
           <Route path="order/success" element={<OrderSuccess />} />
           <Route path="*" element={<NotFound />} />
         </Route>
@@ -56,6 +60,8 @@ function App() {
           <Route path="gallery" element={<Gallery />} />
           <Route path="admin/teas" element={<AdminTeas />} />
           <Route path="admin/social" element={<AdminSocial />} />
+          <Route path="admin/orders" element={<AdminOrders />} />
+          <Route path="admin/kitchen" element={<KitchenBoard />} />
           <Route path="order/success" element={<OrderSuccess />} />
           <Route path="*" element={<NotFound />} />
         </Route>
