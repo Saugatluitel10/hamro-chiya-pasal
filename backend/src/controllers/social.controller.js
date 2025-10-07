@@ -127,12 +127,24 @@ const orderShareReady = async (req, res) => {
   try {
     const { orderId, items, totalNpr } = req.body || {}
     const site = process.env.FRONTEND_URL || ''
-    const list = Array.isArray(items)
-      ? items
-          .slice(0, 10)
-          .map((it) => `${it.qty || 1}× ${it.name}`)
-          .join(', ')
-      : ''
+    // Validate payload (lightweight)
+    if (items !== undefined && !Array.isArray(items)) {
+      res.status(400)
+      throw new Error('items must be an array')
+    }
+    const normalized = Array.isArray(items)
+      ? items.slice(0, 10).map((it) => ({ name: String(it.name || ''), qty: Number(it.qty || 1) }))
+      : []
+    if (normalized.some((it) => !it.name || !Number.isFinite(it.qty) || it.qty <= 0)) {
+      res.status(400)
+      throw new Error('Invalid items')
+    }
+    const tn = totalNpr === undefined || totalNpr === null ? undefined : Number(totalNpr)
+    if (tn !== undefined && (!Number.isFinite(tn) || tn < 0)) {
+      res.status(400)
+      throw new Error('Invalid totalNpr')
+    }
+    const list = normalized.map((it) => `${it.qty || 1}× ${it.name}`).join(', ')
     const totalTxt = typeof totalNpr === 'number' ? ` — NPR ${totalNpr}` : ''
     const idTxt = orderId ? ` (Order #${orderId})` : ''
     const url = site ? `${site.replace(/\/$/, '')}/` : ''
@@ -147,7 +159,8 @@ const orderShareReady = async (req, res) => {
     }
     return res.json(share)
   } catch (err) {
-    return res.status(400).json({ message: 'Invalid order payload' })
+    if (!res.statusCode || res.statusCode === 200) res.status(400)
+    throw err instanceof Error ? err : new Error('Invalid order payload')
   }
 }
 

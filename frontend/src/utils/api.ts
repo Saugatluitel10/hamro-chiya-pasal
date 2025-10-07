@@ -45,8 +45,14 @@ export async function apiRequest<T = unknown>(method: Method, path: string, body
         let msg: string = 'Request failed'
         if (json && typeof json === 'object') {
           const j = json as { message?: unknown; error?: unknown }
-          if (typeof j.message === 'string') msg = j.message
-          else if (typeof j.error === 'string') msg = j.error
+          // Prefer standardized backend error shape: { error: { message } }
+          if (j && typeof (j as any).error === 'object' && (j as any).error && typeof (j as any).error.message === 'string') {
+            msg = (j as any).error.message
+          } else if (typeof j.message === 'string') {
+            msg = j.message
+          } else if (typeof j.error === 'string') {
+            msg = j.error
+          }
         }
         if (!msg && res.statusText) msg = res.statusText
         throw new Error(msg)

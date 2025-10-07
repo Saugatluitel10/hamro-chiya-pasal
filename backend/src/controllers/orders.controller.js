@@ -3,6 +3,7 @@ const orders = []
 const sms = require('../services/sms')
 const events = require('../services/events')
 const store = require('../services/store')
+const { ORDER_STATUS_SET } = require('../constants')
 
 function makeId() {
   return Math.random().toString(36).slice(2, 10) + Date.now().toString(36)
@@ -11,8 +12,10 @@ function makeId() {
 exports.updateStatus = async (req, res) => {
   const { id } = req.params
   const { status } = req.body || {}
-  const allowed = new Set(['received', 'brewing', 'ready', 'paid', 'completed'])
-  if (!allowed.has(String(status))) return res.status(400).json({ message: 'Invalid status' })
+  if (!ORDER_STATUS_SET.has(String(status))) {
+    res.status(400)
+    throw new Error('Invalid status')
+  }
   let order = orders.find((o) => o.id === id)
   if (!order) {
     try {
@@ -20,7 +23,10 @@ exports.updateStatus = async (req, res) => {
       if (doc) order = doc
     } catch {}
   }
-  if (!order) return res.status(404).json({ message: 'Not found' })
+  if (!order) {
+    res.status(404)
+    throw new Error('Not found')
+  }
   order.status = String(status)
   try { await store.updateStatus(id, order.status) } catch {}
   try { events.publish(id, 'status', { status: order.status }) } catch {}
@@ -47,15 +53,17 @@ exports.createOrder = async (req, res) => {
   try {
     const { items, customer, paymentMethod } = req.body || {}
     if (!Array.isArray(items) || items.length === 0) {
-      return res.status(400).json({ message: 'No items' })
+      res.status(400)
+      throw new Error('No items')
     }
     const normalized = items.map((it) => ({
       name: String(it.name || ''),
       qty: Number(it.qty || 1),
       priceNpr: Number(it.priceNpr || 0),
     }))
-    if (normalized.some((it) => !it.name || it.qty <= 0)) {
-      return res.status(400).json({ message: 'Invalid item' })
+    if (normalized.some((it) => !it.name || it.qty <= 0 || !Number.isFinite(it.qty) || it.priceNpr < 0 || !Number.isFinite(it.priceNpr))) {
+      res.status(400)
+      throw new Error('Invalid item')
     }
     const totalNpr = normalized.reduce((s, it) => s + it.qty * (isFinite(it.priceNpr) ? it.priceNpr : 0), 0)
     const id = makeId()
@@ -78,7 +86,8 @@ exports.createOrder = async (req, res) => {
     try { events.publish(id, 'status', { status: order.status }) } catch {}
     return res.json({ id, totalNpr, status: order.status, items: normalized })
   } catch (e) {
-    return res.status(500).json({ message: 'Failed to create order' })
+    if (!res.statusCode || res.statusCode === 200) res.status(500)
+    throw new Error('Failed to create order')
   }
 }
 
@@ -91,7 +100,10 @@ exports.getOrder = async (req, res) => {
       if (doc) order = doc
     } catch {}
   }
-  if (!order) return res.status(404).json({ message: 'Not found' })
+  if (!order) {
+    res.status(404)
+    throw new Error('Not found')
+  }
   return res.json(order)
 }
 

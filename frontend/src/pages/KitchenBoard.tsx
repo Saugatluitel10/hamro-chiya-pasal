@@ -17,6 +17,8 @@ export default function KitchenBoard() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const sourcesRef = useRef<Record<string, EventSource>>({})
+  const attemptsRef = useRef<Record<string, number>>({})
+  const mountedRef = useRef(true)
 
   const grouped = useMemo(() => {
     const by: Record<string, Order[]> = { received: [], brewing: [], ready: [], paid: [], completed: [] }
@@ -50,6 +52,7 @@ export default function KitchenBoard() {
         try { es.close() } catch { /* ignore */ }
       })
       sourcesRef.current = {}
+      mountedRef.current = false
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -57,8 +60,9 @@ export default function KitchenBoard() {
   function attachSse(list: Order[]) {
     const env = (import.meta as unknown as { env?: { VITE_API_BASE_URL?: string } }).env
     const apiBase = env?.VITE_API_BASE_URL ?? 'http://localhost:5000'
-    for (const o of list) {
-      if (sourcesRef.current[o.id]) continue
+    const connect = (o: Order) => {
+      // Reset attempts on fresh connect
+      attemptsRef.current[o.id] = 0
       const src = new EventSource(`${apiBase}/api/orders/${o.id}/events`)
       const onStatus: EventListener = (ev) => {
         try {
@@ -71,8 +75,23 @@ export default function KitchenBoard() {
         }
       }
       src.addEventListener('status', onStatus)
-      src.onerror = () => { try { src.close() } catch { /* ignore */ } }
+      src.onerror = () => {
+        try { src.close() } catch { /* ignore */ }
+        delete sourcesRef.current[o.id]
+        const n = (attemptsRef.current[o.id] || 0) + 1
+        attemptsRef.current[o.id] = n
+        const delay = Math.min(30000, 1000 * 2 ** Math.min(n, 5))
+        if (!mountedRef.current) return
+        setTimeout(() => {
+          if (!mountedRef.current) return
+          if (sourcesRef.current[o.id]) return // already reconnected
+          connect(o)
+        }, delay)
+      }
       sourcesRef.current[o.id] = src
+    }
+    for (const o of list) {
+      if (!sourcesRef.current[o.id]) connect(o)
     }
   }
 
