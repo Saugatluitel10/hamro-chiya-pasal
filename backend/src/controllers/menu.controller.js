@@ -9,6 +9,7 @@ async function readCategoriesFromDB() {
     // DB not configured or unavailable
     return []
   }
+}
 
 // PATCH /api/menu/:key/teas/:titleEnglish
 // Body: { available?: boolean, priceNpr?: number }
@@ -53,7 +54,6 @@ exports.updateTea = async (req, res) => {
     res.status(500)
     return res.json({ ok: false, message: 'Failed to update tea' })
   }
-}
 }
 
 exports.listCategories = async (_req, res) => {

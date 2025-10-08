@@ -6,6 +6,17 @@ const adminOrKey = require('../middleware/adminOrKey')
 const router = express.Router()
 
 router.post('/', createOrder)
+// Global SSE stream for all order updates
+router.get('/events', (req, res) => {
+  // SSE headers; disable proxy buffering for Nginx/Cloudflare and prevent transformations
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache, no-transform',
+    Connection: 'keep-alive',
+    'X-Accel-Buffering': 'no',
+  })
+  events.subscribeAll(res)
+})
 router.get('/:id', getOrder)
 router.get('/:id/events', (req, res) => {
   // SSE headers; disable proxy buffering for Nginx/Cloudflare and prevent transformations

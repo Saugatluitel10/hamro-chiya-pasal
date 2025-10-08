@@ -16,8 +16,8 @@ export default function KitchenBoard() {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const sourcesRef = useRef<Record<string, EventSource>>({})
-  const attemptsRef = useRef<Record<string, number>>({})
+  const sourceRef = useRef<EventSource | null>(null)
+  const attemptsRef = useRef<number>(0)
   const mountedRef = useRef(true)
 
   const grouped = useMemo(() => {
@@ -35,8 +35,8 @@ export default function KitchenBoard() {
       const data = await apiGet<Order[]>('/api/orders?limit=100')
       const list = (Array.isArray(data) ? data : []) as Order[]
       setOrders(list)
-      // Start/refresh SSE per order
-      attachSse(list)
+      // Start/refresh single SSE stream for all orders
+      attachGlobalSse()
     } catch (e) {
       setError((e as Error).message)
     } finally {
@@ -48,51 +48,46 @@ export default function KitchenBoard() {
     load()
     return () => {
       // cleanup SSE
-      Object.values(sourcesRef.current).forEach((es) => {
-        try { es.close() } catch { /* ignore */ }
-      })
-      sourcesRef.current = {}
+      try { sourceRef.current?.close() } catch { /* ignore */ }
+      sourceRef.current = null
       mountedRef.current = false
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  function attachSse(list: Order[]) {
+  function attachGlobalSse() {
     const env = (import.meta as unknown as { env?: { VITE_API_BASE_URL?: string } }).env
     const apiBase = env?.VITE_API_BASE_URL ?? 'http://localhost:5000'
-    const connect = (o: Order) => {
-      // Reset attempts on fresh connect
-      attemptsRef.current[o.id] = 0
-      const src = new EventSource(`${apiBase}/api/orders/${o.id}/events`)
-      const onStatus: EventListener = (ev) => {
+    const connect = () => {
+      attemptsRef.current = 0
+      const src = new EventSource(`${apiBase}/api/orders/events`)
+      const onAnyOrder: EventListener = (ev) => {
         try {
-          const data = JSON.parse((ev as MessageEvent).data as string)
-          if (data?.status) {
-            setOrders((prev) => prev.map((x) => (x.id === o.id ? { ...x, status: String(data.status) } : x)))
+          const payload = JSON.parse((ev as MessageEvent).data as string) as { id?: string; event?: string; status?: string }
+          if (payload?.id && payload?.event === 'status' && payload.status) {
+            setOrders((prev) => prev.map((x) => (x.id === payload.id ? { ...x, status: String(payload.status) } : x)))
           }
         } catch {
           // ignore malformed data
         }
       }
-      src.addEventListener('status', onStatus)
+      src.addEventListener('order', onAnyOrder)
       src.onerror = () => {
         try { src.close() } catch { /* ignore */ }
-        delete sourcesRef.current[o.id]
-        const n = (attemptsRef.current[o.id] || 0) + 1
-        attemptsRef.current[o.id] = n
+        sourceRef.current = null
+        const n = (attemptsRef.current || 0) + 1
+        attemptsRef.current = n
         const delay = Math.min(30000, 1000 * 2 ** Math.min(n, 5))
         if (!mountedRef.current) return
         setTimeout(() => {
           if (!mountedRef.current) return
-          if (sourcesRef.current[o.id]) return // already reconnected
-          connect(o)
+          if (sourceRef.current) return // already reconnected
+          connect()
         }, delay)
       }
-      sourcesRef.current[o.id] = src
+      sourceRef.current = src
     }
-    for (const o of list) {
-      if (!sourcesRef.current[o.id]) connect(o)
-    }
+    if (!sourceRef.current) connect()
   }
 
   async function setStatus(id: string, status: string) {
