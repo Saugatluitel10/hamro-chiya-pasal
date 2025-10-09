@@ -516,7 +516,7 @@ export default function Menu() {
               className={
                 'block rounded-md px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2 ring-offset-white dark:focus-visible:ring-offset-gray-900 ' +
                 (activeKey === cat.key
-                  ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800'
+                  ? 'bg-[--color-surface] text-[--color-primary] dark:text-[--color-accent] border border-[--color-primary]/30'
                   : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/60')
               }
             >

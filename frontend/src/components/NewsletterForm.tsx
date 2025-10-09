@@ -60,7 +60,7 @@ export default function NewsletterForm() {
         <button
           type="submit"
           disabled={status === 'loading'}
-          className="inline-flex items-center justify-center rounded-md bg-emerald-600 text-white px-4 py-2 font-medium hover:bg-emerald-700 disabled:opacity-60"
+          className="inline-flex items-center justify-center rounded-md bg-[--color-primary] text-white px-4 py-2 font-medium hover:bg-[#6f1616] disabled:opacity-60"
         >
           {status === 'loading'
             ? t('common.loading')
@@ -76,7 +76,7 @@ export default function NewsletterForm() {
             setMode((m) => (m === 'subscribe' ? 'unsubscribe' : 'subscribe'))
             setStatus('idle')
           }}
-          className="text-xs text-emerald-700 dark:text-emerald-400 hover:underline"
+          className="text-xs text-[--color-primary] dark:text-[--color-accent] hover:underline"
         >
           {mode === 'subscribe' ? t('newsletter.switchToUnsubscribe') : t('newsletter.switchToSubscribe')}
         </button>

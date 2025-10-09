@@ -237,7 +237,7 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="inline-flex items-center justify-center rounded-md bg-emerald-600 px-4 py-2 text-white font-medium hover:bg-emerald-700 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2 ring-offset-white dark:focus-visible:ring-offset-gray-900"
+                className="inline-flex items-center justify-center rounded-md bg-[--color-primary] px-4 py-2 text-white font-medium hover:bg-[#6f1616] disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2 ring-offset-white dark:focus-visible:ring-offset-gray-900"
               >
                 {submitting ? t('contact.form.submit.sending') : t('contact.form.submit.label')}
               </button>
@@ -249,7 +249,7 @@ export default function Contact() {
                 className={
                   'text-sm rounded-md px-3 py-2 ' +
                   (result.ok
-                    ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-200'
+                    ? 'bg-[--color-surface] text-[--color-primary] dark:text-[--color-accent]'
                     : 'bg-rose-50 text-rose-700 dark:bg-rose-900/20 dark:text-rose-200')
                 }
               >

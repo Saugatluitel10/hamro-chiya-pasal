@@ -28,6 +28,11 @@
     text-decoration: underline;
     text-decoration-color: var(--color-accent);
   }
+  /* High-visibility focus outline for accessibility */
+  *:focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 2px;
+  }
 }
 
 /* Cultural textures & accents */
@@ -45,18 +50,18 @@
 @layer base {
   :root {
     /* Colors */
-    --color-primary: #B55239;      /* Terracotta / Clay Red */
-    --color-secondary: #1F5E46;    /* Deep tea garden green */
-    --color-accent: #D4A017;       /* Mustard yellow */
-    --color-background: #F8F3E7;   /* Off-white, warm */
-    --color-surface: #FCF8F3;      /* Paper-like surface */
-    --color-text: #2E2A27;         /* Deep brown for readability */
+    --color-primary: #8B1D1D;      /* Deep Nepali red (Maroon) */
+    --color-secondary: #1F5E46;    /* Tea garden green */
+    --color-accent: #FF9933;       /* Saffron */
+    --color-background: #FAF3E7;   /* Cream */
+    --color-surface: #FFF9F0;      /* Light cream surface */
+    --color-text: #2B2B2B;         /* Charcoal for readability */
 
     /* Fonts */
-    --font-sans: 'Inter', 'Noto Sans Devanagari', 'Hind Siliguri', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    --font-sans: 'Noto Sans Devanagari', 'Inter', 'Hind Siliguri', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
     --font-heading: 'Noto Serif Devanagari', 'Merriweather', Georgia, ui-serif, serif;
 
-    font-family: 'Inter', 'Noto Sans Devanagari', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';
+    font-family: 'Noto Sans Devanagari', 'Inter', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';
   }
 }
 

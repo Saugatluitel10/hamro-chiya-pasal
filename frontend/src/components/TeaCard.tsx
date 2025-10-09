@@ -108,7 +108,7 @@ export default function TeaCard({
             )}
           </div>
           {typeof priceNpr === 'number' && (
-            <div className="shrink-0 rounded-md bg-emerald-50 px-2 py-1 text-sm font-semibold text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
+            <div className="shrink-0 rounded-md bg-[--color-surface] px-2 py-1 text-sm font-semibold text-[--color-primary] dark:text-[--color-accent]">
               {t('teacard.pricePrefix')} {formatCurrencyNprAuto(priceNpr, locale)}
             </div>
           )}
@@ -137,7 +137,7 @@ export default function TeaCard({
           <div className="mt-3 flex justify-end">
             <button
               type="button"
-              className="text-xs px-3 py-1 rounded-md bg-emerald-600 text-white hover:bg-emerald-700"
+              className="text-xs px-3 py-1 rounded-md bg-[--color-primary] text-white hover:bg-[#6f1616]"
               onClick={() => {
                 const id = (titleEnglish || titleNepali).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
                 add({ id, name: titleEnglish || titleNepali, priceNpr }, 1)

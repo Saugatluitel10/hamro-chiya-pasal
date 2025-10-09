@@ -148,14 +148,14 @@ export default function Home() {
           ],
         }}
       />
-      <main className="bg-gradient-to-br from-emerald-50 to-white dark:from-gray-900 dark:to-gray-950">
+      <main className="bg-gradient-to-br from-[--color-surface] to-white dark:from-gray-900 dark:to-gray-950">
       {/* Hero with background image */}
       <section className="relative">
         <div
           className="absolute inset-0 -z-10 bg-center bg-cover"
           style={{
             backgroundImage:
-              "linear-gradient(to bottom, rgba(6, 95, 70, 0.35), rgba(6, 95, 70, 0.6)), url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop')",
+              "linear-gradient(to bottom, rgba(139, 29, 29, 0.35), rgba(139, 29, 29, 0.6)), url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop')",
           }}
         />
         {/* Prayer flags overlay at the top */}
@@ -169,7 +169,7 @@ export default function Home() {
 
         <div className="max-w-6xl mx-auto px-4 py-20 md:py-28 grid md:grid-cols-2 gap-8 items-center text-white relative z-10">
           <motion.div initial={prefersReduced ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={prefersReduced ? { duration: 0 } : { duration: 0.5 }}>
-            <p className="text-emerald-200 font-semibold mb-2">{t('home.hero.tagline')}</p>
+            <p className="text-[--color-surface] font-semibold mb-2">{t('home.hero.tagline')}</p>
             <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-2 flex items-center gap-2">
               <IconTeaLeaf className="text-[--color-accent]" />
               <span>{t('home.hero.title')}</span>
@@ -179,13 +179,13 @@ export default function Home() {
             <div className="flex items-center gap-3">
               <Link
                 to={`/${locale}/menu`}
-                className="inline-flex items-center justify-center rounded-md bg-white/90 text-emerald-900 px-4 py-2 font-medium hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2"
+                className="inline-flex items-center justify-center rounded-md bg-white/90 text-[--color-primary] px-4 py-2 font-medium hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2"
               >
                 {t('home.cta.menu')}
               </Link>
               <Link
                 to={`/${locale}/contact`}
-                className="inline-flex items-center justify-center rounded-md border border-white/60 px-4 py-2 font-medium hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2"
+                className="inline-flex items-center justify-center rounded-md border border-white/70 px-4 py-2 font-medium hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2"
               >
                 {t('home.cta.contact')}
               </Link>
@@ -264,7 +264,7 @@ export default function Home() {
             <div className="text-lg font-semibold">{t('gallery.cta.title')}</div>
             <p className="text-sm text-gray-600 dark:text-gray-300">{t('gallery.cta.desc')}</p>
           </div>
-          <Link to={`/${locale}/gallery`} className="inline-flex items-center justify-center rounded-md bg-emerald-600 text-white px-3 py-2 text-sm hover:bg-emerald-700">
+          <Link to={`/${locale}/gallery`} className="inline-flex items-center justify-center rounded-md bg-[--color-primary] text-white px-3 py-2 text-sm hover:bg-[#6f1616]">
             {t('gallery.cta.button')}
           </Link>
         </div>
@@ -281,7 +281,7 @@ export default function Home() {
             <PatternBorder className="text-[--color-accent] my-2" />
             <p className="text-gray-600 dark:text-gray-300">{t('home.featured.subtitle')}</p>
           </div>
-          <Link to={`/${locale}/menu`} className="text-emerald-700 dark:text-emerald-400 font-medium hover:underline">
+          <Link to={`/${locale}/menu`} className="text-[--color-primary] dark:text-[--color-accent] font-medium hover:underline">
             {t('home.featured.link')}
           </Link>
         </div>
@@ -307,11 +307,11 @@ export default function Home() {
       <section className="max-w-6xl mx-auto px-4 pb-16">
         <div className="grid md:grid-cols-4 gap-4">
           <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-6 bg-[--color-surface] dark:bg-gray-900 text-center">
-            <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-400"><Counter to={7} />+ </div>
+            <div className="text-3xl font-bold text-[--color-primary] dark:text-[--color-accent]"><Counter to={7} />+ </div>
             <p className="text-sm text-gray-600 dark:text-gray-300">{t('home.stats.years')}</p>
           </div>
           <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-6 bg-[--color-surface] dark:bg-gray-900 text-center">
-            <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-400"><Counter to={98} />% </div>
+            <div className="text-3xl font-bold text-[--color-primary] dark:text-[--color-accent]"><Counter to={98} />% </div>
             <p className="text-sm text-gray-600 dark:text-gray-300">{t('home.stats.satisfaction')}</p>
           </div>
           <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-6 bg-[--color-surface] dark:bg-gray-900">
@@ -323,7 +323,7 @@ export default function Home() {
             <div className="font-semibold mb-2">{t('home.stats.authenticity')}</div>
             <div className="flex flex-wrap gap-2">
               {[t('home.badges.ilamSourced'), t('home.badges.handBrewed'), t('home.badges.freshSpices')].map((b) => (
-                <span key={b} className="inline-flex items-center rounded-full border border-emerald-200 dark:border-emerald-900/40 px-2 py-1 text-xs text-emerald-700 dark:text-emerald-300">
+                <span key={b} className="inline-flex items-center rounded-full border px-2 py-1 text-xs text-[--color-primary] border-[--color-primary]/30 dark:text-[--color-accent]">
                   {b}
                 </span>
               ))}

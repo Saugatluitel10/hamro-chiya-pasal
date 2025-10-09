@@ -43,7 +43,7 @@ export default function OrderShareCTA({ orderId, items, totalNpr }: { orderId?: 
   }
 
   return (
-    <button type="button" disabled={busy} onClick={share} className="inline-flex items-center justify-center rounded-md bg-emerald-600 text-white px-3 py-2 text-sm hover:bg-emerald-700 disabled:opacity-60">
+    <button type="button" disabled={busy} onClick={share} className="inline-flex items-center justify-center rounded-md bg-[--color-primary] text-white px-3 py-2 text-sm hover:bg-[#6f1616] disabled:opacity-60">
       {busy ? t('common.loading') : t('order.share.cta')}
     </button>
   )

@@ -4,8 +4,8 @@ import { useI18n } from '../i18n/I18nProvider'
 import PatternBorder from './PatternBorder'
 import { useCart } from '../hooks/useCart'
 
-const base = 'text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-emerald-600 dark:hover:text-emerald-400 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2 ring-offset-white dark:focus-visible:ring-offset-gray-900'
-const active = 'text-emerald-700 dark:text-emerald-300'
+const base = 'text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-[--color-primary] dark:hover:text-[--color-accent] rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2 ring-offset-white dark:focus-visible:ring-offset-gray-900'
+const active = 'text-[--color-primary] dark:text-[--color-accent]'
 
 export default function Navbar() {
   const { t, locale, setLocale } = useI18n()
@@ -25,7 +25,7 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-10 backdrop-blur supports-[backdrop-filter]:bg-white/60 bg-white/90 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-800">
       <nav className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
-        <NavLink to={`${prefix}/`} className="font-semibold text-emerald-600 dark:text-emerald-400 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2 ring-offset-white dark:focus-visible:ring-offset-gray-900">
+        <NavLink to={`${prefix}/`} className="font-semibold text-[--color-primary] dark:text-[--color-accent] rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2 ring-offset-white dark:focus-visible:ring-offset-gray-900">
           {t('brand')}
         </NavLink>
         {/* Desktop nav */}
@@ -50,11 +50,10 @@ export default function Navbar() {
           <NavLink to={`${prefix}/menu`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.menu')}</NavLink>
           <NavLink to={`${prefix}/about`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.about')}</NavLink>
           <NavLink to={`${prefix}/contact`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.contact')}</NavLink>
-          <NavLink to={`${prefix}/blog`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.blog')}</NavLink>
-          <NavLink to={`${prefix}/gallery`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('gallery.title')}</NavLink>
+          {/* Simplify nav: hide blog/gallery in primary navbar for launch */}
           <NavLink to={`${prefix}/checkout`} className={({isActive}) => `${base} ${isActive ? active : ''} relative`}>🛒
             {cartCount > 0 && (
-              <span className="absolute -top-2 -right-3 inline-flex items-center justify-center text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-600 text-white">{cartCount}</span>
+              <span className="absolute -top-2 -right-3 inline-flex items-center justify-center text-[10px] px-1.5 py-0.5 rounded-full bg-[--color-primary] text-white">{cartCount}</span>
             )}
           </NavLink>
           <div className="flex items-center gap-3 ml-2" aria-label={t('toggle.language')}>
@@ -77,7 +76,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => switchLocale('ne')}
-              className={`text-xs px-2 py-1 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2 ring-offset-white dark:focus-visible:ring-offset-gray-900 ${locale === 'ne' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200' : 'text-gray-600 dark:text-gray-400 hover:text-emerald-600'}`}
+              className={`text-xs px-2 py-1 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2 ring-offset-white dark:focus-visible:ring-offset-gray-900 ${locale === 'ne' ? 'bg-[--color-surface] text-[--color-primary]' : 'text-gray-600 dark:text-gray-400 hover:text-[--color-primary]'}`}
             >
               {t('lang.ne')}
             </button>
@@ -85,7 +84,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => switchLocale('en')}
-              className={`text-xs px-2 py-1 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2 ring-offset-white dark:focus-visible:ring-offset-gray-900 ${locale === 'en' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200' : 'text-gray-600 dark:text-gray-400 hover:text-emerald-600'}`}
+              className={`text-xs px-2 py-1 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2 ring-offset-white dark:focus-visible:ring-offset-gray-900 ${locale === 'en' ? 'bg-[--color-surface] text-[--color-primary]' : 'text-gray-600 dark:text-gray-400 hover:text-[--color-primary]'}`}
             >
               {t('lang.en')}
             </button>
@@ -130,11 +129,9 @@ export default function Navbar() {
               <NavLink to={`${prefix}/menu`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.menu')}</NavLink>
               <NavLink to={`${prefix}/about`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.about')}</NavLink>
               <NavLink to={`${prefix}/contact`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.contact')}</NavLink>
-              <NavLink to={`${prefix}/blog`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.blog')}</NavLink>
-              <NavLink to={`${prefix}/gallery`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('gallery.title')}</NavLink>
               <NavLink to={`${prefix}/checkout`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''} relative`}>🛒
                 {cartCount > 0 && (
-                  <span className="ml-2 inline-flex items-center justify-center text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-600 text-white">{cartCount}</span>
+                  <span className="ml-2 inline-flex items-center justify-center text-[10px] px-1.5 py-0.5 rounded-full bg-[--color-primary] text-white">{cartCount}</span>
                 )}
               </NavLink>
               <div className="flex items-center gap-2 pt-2" aria-label={t('toggle.language')}>
@@ -153,8 +150,8 @@ export default function Navbar() {
                 >
                   १२३
                 </button>
-                <button type="button" onClick={() => { switchLocale('ne'); setMobileOpen(false) }} className={`text-xs px-2 py-1 rounded ${locale === 'ne' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200' : 'text-gray-600 dark:text-gray-400 hover:text-emerald-600'}`}>{t('lang.ne')}</button>
-                <button type="button" onClick={() => { switchLocale('en'); setMobileOpen(false) }} className={`text-xs px-2 py-1 rounded ${locale === 'en' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200' : 'text-gray-600 dark:text-gray-400 hover:text-emerald-600'}`}>{t('lang.en')}</button>
+                <button type="button" onClick={() => { switchLocale('ne'); setMobileOpen(false) }} className={`text-xs px-2 py-1 rounded ${locale === 'ne' ? 'bg-[--color-surface] text-[--color-primary]' : 'text-gray-600 dark:text-gray-400 hover:text-[--color-primary]'}`}>{t('lang.ne')}</button>
+                <button type="button" onClick={() => { switchLocale('en'); setMobileOpen(false) }} className={`text-xs px-2 py-1 rounded ${locale === 'en' ? 'bg-[--color-surface] text-[--color-primary]' : 'text-gray-600 dark:text-gray-400 hover:text-[--color-primary]'}`}>{t('lang.en')}</button>
               </div>
             </div>
           </div>
