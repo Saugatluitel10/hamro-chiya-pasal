@@ -101,7 +101,7 @@ export default function OrderSuccess() {
         <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-5 bg-[--color-surface] dark:bg-gray-900">
           {status && (
             <div className="mb-3">
-              <span className="inline-flex items-center gap-2 text-xs px-2 py-1 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200">
+              <span className="inline-flex items-center gap-2 text-xs px-2 py-1 rounded bg-[--color-surface] text-[--color-primary] dark:text-[--color-accent]">
                 {t(status === 'paid' ? 'order.status.paid' : 'order.status.received')}
               </span>
             </div>

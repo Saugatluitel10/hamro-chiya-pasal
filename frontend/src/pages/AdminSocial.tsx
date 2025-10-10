@@ -66,7 +66,7 @@ export default function AdminSocial() {
               <button
                 type="button"
                 onClick={() => { localStorage.setItem('ADMIN_KEY', adminKey); loadAll() }}
-                className="inline-flex items-center justify-center rounded-md bg-emerald-600 text-white px-3 py-2 text-sm hover:bg-emerald-700"
+                className="inline-flex items-center justify-center rounded-md bg-[--color-primary] text-white px-3 py-2 text-sm hover:bg-[#6f1616]"
               >
                 {t('admin.social.saveKey')}
               </button>
@@ -118,7 +118,7 @@ export default function AdminSocial() {
                       <tr key={u.submittedAt} className="border-b border-gray-100 dark:border-gray-800">
                         <td className="py-1 pr-2">{u.name || '—'}</td>
                         <td className="py-1 pr-2">{u.handle || '—'}</td>
-                        <td className="py-1 pr-2">{u.postUrl ? <a href={u.postUrl} target="_blank" rel="noreferrer" className="text-emerald-700 dark:text-emerald-400 hover:underline">link</a> : '—'}</td>
+                        <td className="py-1 pr-2">{u.postUrl ? <a href={u.postUrl} target="_blank" rel="noreferrer" className="text-[--color-primary] dark:text-[--color-accent] hover:underline">link</a> : '—'}</td>
                         <td className="py-1 pr-2">{new Date(u.submittedAt).toLocaleString()}</td>
                       </tr>
                     ))}

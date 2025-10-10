@@ -48,7 +48,7 @@ export default function UGCForm() {
         {t('ugc.consent')}
       </label>
       <div className="flex gap-2 items-center">
-        <button type="submit" disabled={status==='loading'} className="inline-flex items-center justify-center rounded-md bg-emerald-600 text-white px-3 py-2 text-sm hover:bg-emerald-700 disabled:opacity-60">
+        <button type="submit" disabled={status==='loading'} className="inline-flex items-center justify-center rounded-md bg-[--color-primary] text-white px-3 py-2 text-sm hover:bg-[#6f1616] disabled:opacity-60">
           {status==='loading' ? t('common.loading') : t('ugc.submit')}
         </button>
         <span className="text-xs text-gray-600 dark:text-gray-400">{t('ugc.note')}</span>
