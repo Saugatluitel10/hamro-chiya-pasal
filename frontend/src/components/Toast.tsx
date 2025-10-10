@@ -39,7 +39,7 @@ export default function ToastContainer() {
           className={
             'min-w-[220px] max-w-xs rounded-md shadow-md px-3 py-2 text-sm border ' +
             (t.type === 'success'
-              ? 'bg-emerald-50 text-emerald-800 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-200 dark:border-emerald-900/40'
+              ? 'bg-[--color-surface] text-[--color-primary] border-[--color-primary]/30 dark:bg-gray-900 dark:text-[--color-accent] dark:border-[--color-accent]/40'
               : t.type === 'error'
               ? 'bg-rose-50 text-rose-800 border-rose-200 dark:bg-rose-900/20 dark:text-rose-200 dark:border-rose-900/40'
               : 'bg-gray-50 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700')

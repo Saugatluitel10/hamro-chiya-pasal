@@ -140,7 +140,7 @@ export default function About() {
                 onClick={() => setActive(r)}
                 className={`rounded-full border px-3 py-1 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900 ring-offset-white transition-colors ${
                   active === r
-                    ? 'bg-emerald-600 text-white border-emerald-600'
+                    ? 'bg-[--color-primary] text-white border-[--color-primary]'
                     : 'border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
                 }`}
               >
@@ -163,7 +163,7 @@ export default function About() {
           initial={{ opacity: 0, y: 8 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="relative rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 bg-emerald-50 dark:bg-emerald-900/10"
+          className="relative rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 bg-[--color-surface] dark:bg-gray-900"
         >
           {/* Simple map placeholder with markers */}
           <div

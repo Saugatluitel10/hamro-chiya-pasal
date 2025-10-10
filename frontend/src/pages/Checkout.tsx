@@ -96,7 +96,7 @@ export default function Checkout() {
         {items.length === 0 ? (
           <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-6 bg-[--color-surface] dark:bg-gray-900">
             <div className="text-sm text-gray-700 dark:text-gray-300 mb-3">{t('checkout.empty')}</div>
-            <Link to={`/${locale}/menu`} className="inline-flex items-center justify-center rounded-md bg-emerald-600 text-white px-3 py-2 text-sm hover:bg-emerald-700">
+            <Link to={`/${locale}/menu`} className="inline-flex items-center justify-center rounded-md bg-[--color-primary] text-white px-3 py-2 text-sm hover:bg-[#6f1616]">
               {t('checkout.goToMenu')}
             </Link>
           </div>
@@ -161,7 +161,7 @@ export default function Checkout() {
                   type="button"
                   disabled={busy}
                   onClick={placeOrder}
-                  className="w-full inline-flex items-center justify-center rounded-md bg-emerald-600 text-white px-3 py-2 text-sm hover:bg-emerald-700 disabled:opacity-60"
+                  className="w-full inline-flex items-center justify-center rounded-md bg-[--color-primary] text-white px-3 py-2 text-sm hover:bg-[#6f1616] disabled:opacity-60"
                 >
                   {busy ? t('common.loading') : t('checkout.placeOrder')}
                 </button>
