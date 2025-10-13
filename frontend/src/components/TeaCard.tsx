@@ -137,7 +137,7 @@ export default function TeaCard({
           <div className="mt-3 flex justify-end">
             <button
               type="button"
-              className="text-xs px-3 py-1 rounded-md bg-[--color-primary] text-white hover:bg-[#6f1616]"
+              className="btn-primary text-xs"
               onClick={() => {
                 const id = (titleEnglish || titleNepali).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
                 add({ id, name: titleEnglish || titleNepali, priceNpr }, 1)
