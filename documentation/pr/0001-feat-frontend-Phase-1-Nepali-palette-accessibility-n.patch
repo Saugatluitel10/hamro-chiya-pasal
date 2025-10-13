@@ -1,0 +1,224 @@
+From a2fe797c5fde7ea1071e560c660647c8979855f3 Mon Sep 17 00:00:00 2001
+From: saugat <saugatluitel5@gmail.com>
+Date: Fri, 10 Oct 2025 16:39:50 +0545
+Subject: [PATCH] feat(frontend): Phase 1 Nepali palette + accessibility\n\n-
+ Apply Nepali-inspired palette (primary maroon, saffron accent, cream surface)
+ via CSS variables\n- Prioritize Devanagari fonts and improve focus-visible
+ accessibility\n- Simplify nav and align components/pages to palette: Navbar,
+ Home, Menu, About, Contact, Checkout, 404\n- Update components:
+ NewsletterForm, OrderShareCTA, TeaCard, Toast, GoogleReviews, InstagramFeed,
+ UGCForm, StripeCheckout, AdminSocial, OrderSuccess\n- Update meta theme color
+ and mask icon\n- Remove remaining emerald classes; consolidate on
+ variables\n- Add PR notes at documentation/pr/nepali-palette-phase1.md
+
+---
+ documentation/pr/nepali-palette-phase1.md  | 56 ++++++++++++++++++++++
+ frontend/src/components/GoogleReviews.tsx  |  2 +-
+ frontend/src/components/InstagramFeed.tsx  |  2 +-
+ frontend/src/components/StripeCheckout.tsx |  2 +-
+ frontend/src/components/UGCForm.tsx        |  2 +-
+ frontend/src/pages/About.tsx               |  2 +-
+ frontend/src/pages/AdminSocial.tsx         |  4 +-
+ frontend/src/pages/BlogList.tsx            |  4 +-
+ frontend/src/pages/BlogPost.tsx            |  6 +--
+ frontend/src/pages/OrderSuccess.tsx        |  2 +-
+ 10 files changed, 68 insertions(+), 14 deletions(-)
+ create mode 100644 documentation/pr/nepali-palette-phase1.md
+
+diff --git a/documentation/pr/nepali-palette-phase1.md b/documentation/pr/nepali-palette-phase1.md
+new file mode 100644
+index 0000000..9f6c8f1
+--- /dev/null
++++ b/documentation/pr/nepali-palette-phase1.md
+@@ -0,0 +1,56 @@
++# Phase 1: Nepali Palette, Accessibility, and Launch Readiness
++
++This PR implements the Phase 1 redesign to simplify the site, set Nepali as the default vibe, and prepare the frontend for launch.
++
++## Summary
++- Adopted Nepali-inspired palette
++  - Primary (Maroon): #8B1D1D
++  - Accent (Saffron): #FF9933
++  - Surface (Cream): #FAF3E7
++- Prioritized Devanagari fonts (Noto Sans/Serif Devanagari)
++- Improved accessibility: strong focus-visible rings, better contrast
++- Simplified navigation and Nepali-first UX
++- Updated meta/theme color and mask-icon tint
++- Removed lingering emerald classes; consolidated on CSS variables
++
++## Affected Areas
++- Tailwind and global styles: `frontend/src/tailwind.css`, `frontend/index.html`
++- Navigation and shell: `frontend/src/components/Navbar.tsx`
++- Pages: Home, Menu, About, Contact, Checkout, NotFound
++- Components: NewsletterForm, OrderShareCTA, TeaCard, Toast, GoogleReviews, InstagramFeed, UGCForm, StripeCheckout
++
++## Notable Changes (high-level)
++- Navbar brand and active states use `--color-primary` / `--color-accent`
++- Home hero gradient updated to maroon overlay; CTAs use primary
++- Menu side-rail active item uses surface/primary
++- Contact & Checkout CTAs styled with primary; success states aligned
++- TeaCard price pill and add-to-cart updated to primary/accent
++- Toast success styling uses primary/accent; error/info intact
++- 404 button uses primary; About page chips/map/gallery CTA updated
++- AdminSocial UI and social links updated to primary/accent
++
++## How to Test
++1. Run frontend dev server:
++   - `npm run dev` from `frontend/`
++2. Verify pages:
++   - Home: Hero overlay, CTAs, featured section, badges
++   - Menu: Side nav active highlight; add-to-cart button
++   - Contact & Checkout: Buttons and success states
++   - 404: Primary button
++   - About: Region chips active state, map card, gallery CTA
++   - AdminSocial: Save key button and links
++3. Accessibility
++   - Keyboard tab through links/buttons and check focus-visible ring
++   - Contrast looks good on light/dark modes
++4. Build
++   - `npm run build` from `frontend/` should succeed
++
++## Deployment Notes
++- Frontend (Vercel): Auto-deploy on push to default branch (per project settings)
++- Backend: No code changes in this PR
++
++## Screenshots (optional)
++- Add screenshots of Home, Menu, Contact, Checkout, and About with new palette
++
++## Rollback Plan
++- Revert this commit to restore previous palette and component styles.
+diff --git a/frontend/src/components/GoogleReviews.tsx b/frontend/src/components/GoogleReviews.tsx
+index a61f98f..fbb3ccc 100644
+--- a/frontend/src/components/GoogleReviews.tsx
++++ b/frontend/src/components/GoogleReviews.tsx
+@@ -51,7 +51,7 @@ export default function GoogleReviews() {
+           {t('reviews.google.title')} — {data.rating ?? '—'}★ ({data.total})
+         </div>
+         <a
+-          className="text-emerald-700 dark:text-emerald-400 text-sm hover:underline"
++          className="text-[--color-primary] dark:text-[--color-accent] text-sm hover:underline"
+           href="https://www.google.com/maps"
+           target="_blank"
+           rel="noreferrer"
+diff --git a/frontend/src/components/InstagramFeed.tsx b/frontend/src/components/InstagramFeed.tsx
+index 2dff408..d095955 100644
+--- a/frontend/src/components/InstagramFeed.tsx
++++ b/frontend/src/components/InstagramFeed.tsx
+@@ -37,7 +37,7 @@ export default function InstagramFeed({ limit = 8 }: { limit?: number }) {
+     return (
+       <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4">
+         <div className="text-sm text-gray-600 dark:text-gray-300 mb-2">{t('instagram.fallback')}</div>
+-        <a href="https://www.instagram.com/hamro.chiya.pasal" target="_blank" rel="noreferrer" className="text-emerald-700 dark:text-emerald-400 hover:underline">{t('instagram.viewOn')}</a>
++        <a href="https://www.instagram.com/hamro.chiya.pasal" target="_blank" rel="noreferrer" className="text-[--color-primary] dark:text-[--color-accent] hover:underline">{t('instagram.viewOn')}</a>
+       </div>
+     )
+   }
+diff --git a/frontend/src/components/StripeCheckout.tsx b/frontend/src/components/StripeCheckout.tsx
+index 0ca38af..6fb3b16 100644
+--- a/frontend/src/components/StripeCheckout.tsx
++++ b/frontend/src/components/StripeCheckout.tsx
+@@ -31,7 +31,7 @@ function Inner({ amountNpr, onSuccess, onError }: { amountNpr: number; onSuccess
+         type="button"
+         onClick={handlePay}
+         disabled={busy || !stripe || !elements}
+-        className="w-full inline-flex items-center justify-center rounded-md bg-emerald-600 text-white px-3 py-2 text-sm hover:bg-emerald-700 disabled:opacity-60"
++        className="w-full inline-flex items-center justify-center rounded-md bg-[--color-primary] text-white px-3 py-2 text-sm hover:bg-[#6f1616] disabled:opacity-60"
+       >
+         {busy ? 'Processing…' : `Pay NPR ${amountNpr}`}
+       </button>
+diff --git a/frontend/src/components/UGCForm.tsx b/frontend/src/components/UGCForm.tsx
+index 0236244..be371aa 100644
+--- a/frontend/src/components/UGCForm.tsx
++++ b/frontend/src/components/UGCForm.tsx
+@@ -48,7 +48,7 @@ export default function UGCForm() {
+         {t('ugc.consent')}
+       </label>
+       <div className="flex gap-2 items-center">
+-        <button type="submit" disabled={status==='loading'} className="inline-flex items-center justify-center rounded-md bg-emerald-600 text-white px-3 py-2 text-sm hover:bg-emerald-700 disabled:opacity-60">
++        <button type="submit" disabled={status==='loading'} className="inline-flex items-center justify-center rounded-md bg-[--color-primary] text-white px-3 py-2 text-sm hover:bg-[#6f1616] disabled:opacity-60">
+           {status==='loading' ? t('common.loading') : t('ugc.submit')}
+         </button>
+         <span className="text-xs text-gray-600 dark:text-gray-400">{t('ugc.note')}</span>
+diff --git a/frontend/src/pages/About.tsx b/frontend/src/pages/About.tsx
+index 6c2cecf..a09323c 100644
+--- a/frontend/src/pages/About.tsx
++++ b/frontend/src/pages/About.tsx
+@@ -238,7 +238,7 @@ export default function About() {
+             <div className="text-lg font-semibold">{t('gallery.cta.title')}</div>
+             <p className="text-sm text-gray-600 dark:text-gray-300">{t('gallery.cta.desc')}</p>
+           </div>
+-          <Link to={`/${locale}/gallery`} className="inline-flex items-center justify-center rounded-md bg-emerald-600 text-white px-3 py-2 text-sm hover:bg-emerald-700">
++          <Link to={`/${locale}/gallery`} className="inline-flex items-center justify-center rounded-md bg-[--color-primary] text-white px-3 py-2 text-sm hover:bg-[#6f1616]">
+             {t('gallery.cta.button')}
+           </Link>
+         </div>
+diff --git a/frontend/src/pages/AdminSocial.tsx b/frontend/src/pages/AdminSocial.tsx
+index 5a57b1e..ca3c492 100644
+--- a/frontend/src/pages/AdminSocial.tsx
++++ b/frontend/src/pages/AdminSocial.tsx
+@@ -66,7 +66,7 @@ export default function AdminSocial() {
+               <button
+                 type="button"
+                 onClick={() => { localStorage.setItem('ADMIN_KEY', adminKey); loadAll() }}
+-                className="inline-flex items-center justify-center rounded-md bg-emerald-600 text-white px-3 py-2 text-sm hover:bg-emerald-700"
++                className="inline-flex items-center justify-center rounded-md bg-[--color-primary] text-white px-3 py-2 text-sm hover:bg-[#6f1616]"
+               >
+                 {t('admin.social.saveKey')}
+               </button>
+@@ -118,7 +118,7 @@ export default function AdminSocial() {
+                       <tr key={u.submittedAt} className="border-b border-gray-100 dark:border-gray-800">
+                         <td className="py-1 pr-2">{u.name || '—'}</td>
+                         <td className="py-1 pr-2">{u.handle || '—'}</td>
+-                        <td className="py-1 pr-2">{u.postUrl ? <a href={u.postUrl} target="_blank" rel="noreferrer" className="text-emerald-700 dark:text-emerald-400 hover:underline">link</a> : '—'}</td>
++                        <td className="py-1 pr-2">{u.postUrl ? <a href={u.postUrl} target="_blank" rel="noreferrer" className="text-[--color-primary] dark:text-[--color-accent] hover:underline">link</a> : '—'}</td>
+                         <td className="py-1 pr-2">{new Date(u.submittedAt).toLocaleString()}</td>
+                       </tr>
+                     ))}
+diff --git a/frontend/src/pages/BlogList.tsx b/frontend/src/pages/BlogList.tsx
+index 62b6c9b..e17129d 100644
+--- a/frontend/src/pages/BlogList.tsx
++++ b/frontend/src/pages/BlogList.tsx
+@@ -104,9 +104,7 @@ export default function BlogList() {
+           />
+           <h1 className="text-3xl font-bold tracking-tight">{t('blog.title')}</h1>
+           <p className="text-gray-600 dark:text-gray-300 mt-1">{t('blog.subtitle')}</p>
+-          <a href={`${apiBase}/api/blog/rss`} className="text-sm text-emerald-700 dark:text-emerald-400 hover:underline">
+-            {t('blog.rss')}
+-          </a>
++          <a href={`${apiBase}/api/blog/rss`} className="text-sm text-[--color-primary] dark:text-[--color-accent] hover:underline">{t('blog.rss')}</a>
+         </header>
+ 
+         {loading && (
+diff --git a/frontend/src/pages/BlogPost.tsx b/frontend/src/pages/BlogPost.tsx
+index cb3c5ea..346ea32 100644
+--- a/frontend/src/pages/BlogPost.tsx
++++ b/frontend/src/pages/BlogPost.tsx
+@@ -130,9 +130,9 @@ export default function BlogPost() {
+             {/* Sharing */}
+             <div className="mt-6 flex items-center gap-3 text-sm">
+               <span className="text-gray-600 dark:text-gray-300">{t('blog.share')}</span>
+-              <a className="text-emerald-700 dark:text-emerald-400 hover:underline" href={`https://twitter.com/intent/tweet?url=${shareUrl}&text=${shareText}`} target="_blank" rel="noreferrer">{t('blog.share.twitter')}</a>
+-              <a className="text-emerald-700 dark:text-emerald-400 hover:underline" href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`} target="_blank" rel="noreferrer">{t('blog.share.facebook')}</a>
+-              <a className="text-emerald-700 dark:text-emerald-400 hover:underline" href={`https://api.whatsapp.com/send?text=${shareText}%20${shareUrl}`} target="_blank" rel="noreferrer">{t('blog.share.whatsapp')}</a>
++              <a className="text-[--color-primary] dark:text-[--color-accent] hover:underline" href={`https://twitter.com/intent/tweet?url=${shareUrl}&text=${shareText}`} target="_blank" rel="noreferrer">{t('blog.share.twitter')}</a>
++              <a className="text-[--color-primary] dark:text-[--color-accent] hover:underline" href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`} target="_blank" rel="noreferrer">{t('blog.share.facebook')}</a>
++              <a className="text-[--color-primary] dark:text-[--color-accent] hover:underline" href={`https://api.whatsapp.com/send?text=${shareText}%20${shareUrl}`} target="_blank" rel="noreferrer">{t('blog.share.whatsapp')}</a>
+             </div>
+ 
+             {/* Related posts */}
+diff --git a/frontend/src/pages/OrderSuccess.tsx b/frontend/src/pages/OrderSuccess.tsx
+index 7025544..e8bff1a 100644
+--- a/frontend/src/pages/OrderSuccess.tsx
++++ b/frontend/src/pages/OrderSuccess.tsx
+@@ -101,7 +101,7 @@ export default function OrderSuccess() {
+         <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-5 bg-[--color-surface] dark:bg-gray-900">
+           {status && (
+             <div className="mb-3">
+-              <span className="inline-flex items-center gap-2 text-xs px-2 py-1 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200">
++              <span className="inline-flex items-center gap-2 text-xs px-2 py-1 rounded bg-[--color-surface] text-[--color-primary] dark:text-[--color-accent]">
+                 {t(status === 'paid' ? 'order.status.paid' : 'order.status.received')}
+               </span>
+             </div>
+-- 
+2.50.1 (Apple Git-155)
+
