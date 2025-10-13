@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import Meta from '../components/Meta'
 import StructuredData from '../components/StructuredData'
@@ -157,10 +158,18 @@ const fallbackCategories: Category[] = [
 
 export default function Menu() {
   const { t, locale } = useI18n()
+  const location = useLocation()
   const origin = typeof window !== 'undefined' ? window.location.origin : ''
   const url = typeof window !== 'undefined' ? window.location.href : ''
   const og = `${origin}/og/og-default.svg`
   const ogLocale = locale === 'ne' ? 'ne_NP' : 'en_US'
+  // Initialize search query from URL params once
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const qp = (params.get('q') || '').trim()
+    if (qp) setQ(qp)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   // English details for fallback data (only used when API is unavailable)
   const fallbackEnglishDetail: Record<string, { ingredients?: string[]; healthBenefits?: string[] }> = {
     'Dudh Chiya': {

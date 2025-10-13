@@ -19,6 +19,10 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ToastContainer from './components/Toast'
 import { useI18n } from './i18n/I18nProvider'
+import PolicyShipping from './pages/PolicyShipping'
+import PolicyReturns from './pages/PolicyReturns'
+import PolicyTerms from './pages/PolicyTerms'
+import PolicyPrivacy from './pages/PolicyPrivacy'
 
 function App() {
   return (
@@ -39,6 +43,10 @@ function App() {
           <Route path="checkout" element={<Checkout />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="policy/shipping" element={<PolicyShipping />} />
+          <Route path="policy/returns" element={<PolicyReturns />} />
+          <Route path="policy/terms" element={<PolicyTerms />} />
+          <Route path="policy/privacy" element={<PolicyPrivacy />} />
           <Route path="blog" element={<BlogList />} />
           <Route path="blog/:slug" element={<BlogPost />} />
           <Route path="gallery" element={<Gallery />} />
@@ -55,6 +63,10 @@ function App() {
           <Route path="checkout" element={<Checkout />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="policy/shipping" element={<PolicyShipping />} />
+          <Route path="policy/returns" element={<PolicyReturns />} />
+          <Route path="policy/terms" element={<PolicyTerms />} />
+          <Route path="policy/privacy" element={<PolicyPrivacy />} />
           <Route path="blog" element={<BlogList />} />
           <Route path="blog/:slug" element={<BlogPost />} />
           <Route path="gallery" element={<Gallery />} />
