@@ -17,6 +17,9 @@ export type TeaCardProps = {
   seasonal?: boolean
   available?: boolean
   highlight?: string
+  bestSeller?: boolean
+  isNew?: boolean
+  discountPct?: number
 }
 
 export default function TeaCard({
@@ -30,9 +33,13 @@ export default function TeaCard({
   seasonal,
   available = true,
   highlight,
+  bestSeller,
+  isNew,
+  discountPct,
 }: TeaCardProps) {
   const { t, locale } = useI18n()
   const [lb, setLb] = useState(false)
+  const [open, setOpen] = useState(false)
   const { add } = useCart()
   const origin = typeof window !== 'undefined' ? window.location.origin : ''
   const diffText = difficulty ? t(`teacard.diff.${String(difficulty).toLowerCase()}`) : undefined
@@ -86,6 +93,21 @@ export default function TeaCard({
             sizes="(min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
             onClick={() => setLb(true)}
           />
+          {bestSeller && (
+            <div className="absolute left-2 top-2 rounded bg-[--color-accent] text-white px-2 py-0.5 text-xs font-semibold shadow">
+              {t('teacard.bestSeller') || 'Best Seller'}
+            </div>
+          )}
+          {isNew && (
+            <div className="absolute left-2 top-2 translate-y-6 rounded bg-emerald-600 text-white px-2 py-0.5 text-xs font-semibold shadow">
+              {t('teacard.new') || 'New'}
+            </div>
+          )}
+          {typeof discountPct === 'number' && discountPct > 0 && (
+            <div className="absolute right-2 top-2 rounded bg-amber-500 text-white px-2 py-0.5 text-xs font-semibold shadow">
+              -{discountPct}%
+            </div>
+          )}
           {seasonal && (
             <div className="absolute left-2 top-2 rounded bg-amber-500 px-2 py-0.5 text-xs font-medium text-white shadow">
               {t('teacard.seasonal')}
@@ -133,8 +155,11 @@ export default function TeaCard({
             ) : null}
           </div>
         )}
-        {typeof priceNpr === 'number' && (
-          <div className="mt-3 flex justify-end">
+        <div className="mt-3 flex items-center justify-between gap-2">
+          <button type="button" className="btn-secondary text-xs" onClick={() => setOpen(true)}>
+            {t('teacard.viewDetails') || 'View details'}
+          </button>
+          {typeof priceNpr === 'number' && (
             <button
               type="button"
               className="btn-primary text-xs"
@@ -146,8 +171,8 @@ export default function TeaCard({
             >
               {t('cart.add')}
             </button>
-          </div>
-        )}
+          )}
+        </div>
         <div className="mt-3 flex justify-end">
           <button
             type="button"
@@ -178,6 +203,52 @@ export default function TeaCard({
         </div>
       </div>
       {lb && imageUrl ? <Lightbox src={imageUrl} alt={titleEnglish || titleNepali} onClose={() => setLb(false)} /> : null}
+      {open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setOpen(false)} />
+          <div className="relative z-10 w-[92vw] max-w-md rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-5 shadow-lg">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h3 className="text-xl font-semibold">{titleEnglish || titleNepali}</h3>
+                {titleEnglish && <p className="text-sm text-gray-600 dark:text-gray-400">{titleNepali}</p>}
+              </div>
+              <button type="button" onClick={() => setOpen(false)} aria-label="Close" className="text-gray-500 hover:text-gray-800 dark:hover:text-gray-200">×</button>
+            </div>
+            {imageUrl && (
+              <div className="mt-3 rounded overflow-hidden">
+                <img src={imageUrl} alt={titleEnglish || titleNepali} className="w-full h-48 object-cover" loading="lazy" />
+              </div>
+            )}
+            <div className="mt-3 space-y-2 text-sm">
+              {ingredients?.length ? (
+                <p className="text-gray-700 dark:text-gray-300"><span className="font-medium">{t('teacard.ingredients')}</span> {ingredients.join(', ')}</p>
+              ) : null}
+              {healthBenefits?.length ? (
+                <p className="text-gray-700 dark:text-gray-300"><span className="font-medium">{t('teacard.benefits')}</span> {healthBenefits.join(', ')}</p>
+              ) : null}
+              {difficulty ? (
+                <p className="text-gray-700 dark:text-gray-300"><span className="font-medium">{t('teacard.brew')}</span> {diffText}</p>
+              ) : null}
+            </div>
+            {typeof priceNpr === 'number' && (
+              <div className="mt-4 flex justify-end">
+                <button
+                  type="button"
+                  className="btn-primary text-xs"
+                  onClick={() => {
+                    const id = (titleEnglish || titleNepali).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+                    add({ id, name: titleEnglish || titleNepali, priceNpr }, 1)
+                    setOpen(false)
+                    window.dispatchEvent(new CustomEvent('app:toast', { detail: { message: t('cart.added'), type: 'success' } }))
+                  }}
+                >
+                  {t('cart.add')}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </motion.article>
   )
 }
