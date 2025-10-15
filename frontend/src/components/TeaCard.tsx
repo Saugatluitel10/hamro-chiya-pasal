@@ -81,18 +81,32 @@ export default function TeaCard({
     >
       {imageUrl && (
         <div className="relative h-40 w-full overflow-hidden">
-          <img
-            src={imageUrl}
-            alt={titleEnglish || titleNepali}
-            className={
-              'h-full w-full object-cover transition-transform duration-300 group-hover:scale-105 cursor-zoom-in ' +
-              (available ? '' : 'grayscale')
-            }
-            loading="lazy"
-            decoding="async"
-            sizes="(min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
-            onClick={() => setLb(true)}
-          />
+          <picture>
+            <source
+              type="image/avif"
+              srcSet={`${imageUrl}&fm=avif&w=480 480w, ${imageUrl}&fm=avif&w=768 768w, ${imageUrl}&fm=avif&w=1024 1024w`}
+              sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            />
+            <source
+              type="image/webp"
+              srcSet={`${imageUrl}&fm=webp&w=480 480w, ${imageUrl}&fm=webp&w=768 768w, ${imageUrl}&fm=webp&w=1024 1024w`}
+              sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            />
+            <img
+              src={`${imageUrl}&w=1024`}
+              alt={titleEnglish || titleNepali}
+              className={
+                'h-full w-full object-cover transition-transform duration-300 group-hover:scale-105 cursor-zoom-in ' +
+                (available ? '' : 'grayscale')
+              }
+              loading="lazy"
+              decoding="async"
+              sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+              width={1024}
+              height={480}
+              onClick={() => setLb(true)}
+            />
+          </picture>
           {bestSeller && (
             <div className="absolute left-2 top-2 rounded bg-[--color-accent] text-white px-2 py-0.5 text-xs font-semibold shadow">
               {t('teacard.bestSeller') || 'Best Seller'}

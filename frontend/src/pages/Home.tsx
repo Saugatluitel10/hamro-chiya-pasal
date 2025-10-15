@@ -150,13 +150,32 @@ export default function Home() {
       <main className="bg-gradient-to-br from-[--color-surface] to-white dark:from-gray-900 dark:to-gray-950">
       {/* Hero with background image */}
       <section className="relative min-h-[35vh] md:min-h-[50vh]">
-        <div
-          className="absolute inset-0 -z-10 bg-center bg-cover"
-          style={{
-            backgroundImage:
-              "linear-gradient(to bottom, rgba(255, 248, 240, 0.92), rgba(255, 248, 240, 0.7)), url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop')",
-          }}
-        />
+        {/* Hero image with responsive sources */}
+        <div className="absolute inset-0 -z-20 overflow-hidden">
+          <picture>
+            <source
+              type="image/avif"
+              srcSet="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&auto=format&fit=crop&fm=avif&w=800 800w, https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&auto=format&fit=crop&fm=avif&w=1200 1200w, https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&auto=format&fit=crop&fm=avif&w=1600 1600w"
+              sizes="(min-width: 1024px) 100vw, 100vw"
+            />
+            <source
+              type="image/webp"
+              srcSet="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&auto=format&fit=crop&fm=webp&w=800 800w, https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&auto=format&fit=crop&fm=webp&w=1200 1200w, https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&auto=format&fit=crop&fm=webp&w=1600 1600w"
+              sizes="(min-width: 1024px) 100vw, 100vw"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&auto=format&fit=crop&w=1600"
+              alt="Tea being poured into cups with warm morning light"
+              className="w-full h-full object-cover"
+              loading="eager"
+              decoding="async"
+              width={1600}
+              height={800}
+            />
+          </picture>
+          {/* Cream overlay for legibility */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,248,240,0.92),rgba(255,248,240,0.7))]" />
+        </div>
         {/* Prayer flags overlay at the top */}
         <div className="absolute inset-x-0 top-0 z-0 pointer-events-none">
           <PrayerFlags className="opacity-90" height={70} />
