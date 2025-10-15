@@ -1,4 +1,4 @@
-import { NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate, Link } from 'react-router-dom'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useI18n } from '../i18n/I18nProvider'
 import PatternBorder from './PatternBorder'
@@ -113,6 +113,7 @@ export default function Navbar() {
           </form>
           <NavLink to={`${prefix}/menu`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.menu')}</NavLink>
           <NavLink to={`${prefix}/about`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.about')}</NavLink>
+          <NavLink to={`${prefix}/blog`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.blog') || 'Blog'}</NavLink>
           <NavLink to={`${prefix}/contact`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.contact')}</NavLink>
           {/* Simplify nav: hide blog/gallery in primary navbar for launch */}
           <NavLink to={`${prefix}/checkout`} className={({isActive}) => `${base} ${isActive ? active : ''} relative`}>🛒
@@ -120,6 +121,7 @@ export default function Navbar() {
               <span className="absolute -top-2 -right-3 inline-flex items-center justify-center text-[10px] px-1.5 py-0.5 rounded-full bg-[--color-primary] text-white">{cartCount}</span>
             )}
           </NavLink>
+          <Link to={`${prefix}/menu`} className="btn-primary text-xs">{t('cta.shopNow') || 'Shop Now'}</Link>
           <div className="flex items-center gap-3 ml-2" aria-label={t('toggle.language')}>
             <button
               type="button"
@@ -193,11 +195,13 @@ export default function Navbar() {
               <NavLink to={`${prefix}/menu`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.menu')}</NavLink>
               <NavLink to={`${prefix}/about`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.about')}</NavLink>
               <NavLink to={`${prefix}/contact`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.contact')}</NavLink>
+              <NavLink to={`${prefix}/blog`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.blog') || 'Blog'}</NavLink>
               <NavLink to={`${prefix}/checkout`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''} relative`}>🛒
                 {cartCount > 0 && (
                   <span className="ml-2 inline-flex items-center justify-center text-[10px] px-1.5 py-0.5 rounded-full bg-[--color-primary] text-white">{cartCount}</span>
                 )}
               </NavLink>
+              <Link to={`${prefix}/menu`} onClick={() => setMobileOpen(false)} className="btn-primary w-full text-center">{t('cta.shopNow') || 'Shop Now'}</Link>
               <div className="flex items-center gap-2 pt-2" aria-label={t('toggle.language')}>
                 <button
                   type="button"

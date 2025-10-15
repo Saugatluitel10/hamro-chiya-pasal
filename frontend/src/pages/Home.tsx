@@ -149,12 +149,12 @@ export default function Home() {
       />
       <main className="bg-gradient-to-br from-[--color-surface] to-white dark:from-gray-900 dark:to-gray-950">
       {/* Hero with background image */}
-      <section className="relative min-h-[40vh] md:min-h-[55vh]">
+      <section className="relative min-h-[35vh] md:min-h-[50vh]">
         <div
           className="absolute inset-0 -z-10 bg-center bg-cover"
           style={{
             backgroundImage:
-              "linear-gradient(to bottom, rgba(255, 248, 240, 0.85), rgba(255, 248, 240, 0.6)), url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop')",
+              "linear-gradient(to bottom, rgba(255, 248, 240, 0.92), rgba(255, 248, 240, 0.7)), url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop')",
           }}
         />
         {/* Prayer flags overlay at the top */}
@@ -166,7 +166,7 @@ export default function Home() {
           <MountainSilhouette className="text-white/30 dark:text-white/20" />
         </div>
 
-        <div className="max-w-6xl mx-auto px-4 py-14 md:py-20 grid md:grid-cols-2 gap-8 items-center text-[--color-text] relative z-10">
+        <div className="max-w-6xl mx-auto px-4 py-10 md:py-16 grid md:grid-cols-2 gap-8 items-center text-[--color-text] relative z-10">
           <motion.div initial={prefersReduced ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={prefersReduced ? { duration: 0 } : { duration: 0.5 }}>
             <p className="text-[--color-accent] font-semibold mb-2">{t('home.hero.tagline')}</p>
             <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-2 flex items-center gap-2">
@@ -207,6 +207,36 @@ export default function Home() {
               </div>
             </div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Phase 1: Simplified 4-up grid for key sections */}
+      <section className="max-w-6xl mx-auto px-4 py-8">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Featured Products */}
+          <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-[--color-surface] dark:bg-gray-900">
+            <h3 className="font-semibold mb-2">{t('home.featured.title') || 'Featured Products'}</h3>
+            <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">{t('home.featured.desc') || 'Taste our most loved teas picked by our customers.'}</p>
+            <Link to={`/${locale}/menu`} className="btn-secondary text-xs">{t('home.featured.cta') || 'Explore teas'}</Link>
+          </div>
+          {/* Our Story */}
+          <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-[--color-surface] dark:bg-gray-900">
+            <h3 className="font-semibold mb-2">{t('home.story.title') || 'Our Story'}</h3>
+            <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">{t('home.story.desc') || 'Rooted in Nepali tradition, brewed for today.'}</p>
+            <Link to={`/${locale}/about`} className="btn-secondary text-xs">{t('home.story.cta') || 'Read more'}</Link>
+          </div>
+          {/* Testimonials */}
+          <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-[--color-surface] dark:bg-gray-900">
+            <h3 className="font-semibold mb-2">{t('home.testimonials.title') || 'What customers say'}</h3>
+            <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">{t('home.testimonials.desc') || 'Trusted by tea lovers across Nepal.'}</p>
+            <a href="#testimonials" className="btn-secondary text-xs">{t('home.testimonials.cta') || 'Read reviews'}</a>
+          </div>
+          {/* Newsletter / Contact */}
+          <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-[--color-surface] dark:bg-gray-900">
+            <h3 className="font-semibold mb-2">{t('newsletter.title') || 'Subscribe for updates'}</h3>
+            <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">{t('newsletter.subtitle') || 'Get news, offers, and stories from Hamro Chiya Pasal.'}</p>
+            <NewsletterForm />
+          </div>
         </div>
       </section>
 
