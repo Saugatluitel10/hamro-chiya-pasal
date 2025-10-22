@@ -85,6 +85,13 @@
     border-radius: 10px;
   }
   .btn-secondary:hover { background-color: rgba(107,10,10,0.06); }
+
+  /* Form + Card UI Kit */
+  .label { @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1; }
+  .input { @apply w-full rounded-md border border-gray-200 dark:border-gray-800 bg-[--color-surface] dark:bg-gray-900 px-3 py-2 text-sm placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2 ring-offset-white dark:focus-visible:ring-offset-gray-900; }
+  .help { @apply mt-1 text-xs text-gray-500 dark:text-gray-400; }
+  .card { @apply rounded-xl border border-gray-200 dark:border-gray-800 bg-[--color-surface] dark:bg-gray-900 shadow; }
+  .badge { @apply inline-flex items-center rounded px-2 py-0.5 text-xs font-semibold; }
 }
 
 /* Respect reduced motion preferences */
