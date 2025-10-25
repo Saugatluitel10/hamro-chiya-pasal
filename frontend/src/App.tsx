@@ -15,6 +15,7 @@ import KitchenBoard from './pages/KitchenBoard'
 import OrderSuccess from './pages/OrderSuccess'
 import Checkout from './pages/Checkout'
 import Gallery from './pages/Gallery'
+import Product from './pages/Product'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ToastContainer from './components/Toast'
@@ -41,6 +42,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="menu" element={<Menu />} />
           <Route path="checkout" element={<Checkout />} />
+          <Route path="product/:slug" element={<Product />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
           <Route path="policy/shipping" element={<PolicyShipping />} />
@@ -61,6 +63,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="menu" element={<Menu />} />
           <Route path="checkout" element={<Checkout />} />
+          <Route path="product/:slug" element={<Product />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
           <Route path="policy/shipping" element={<PolicyShipping />} />
