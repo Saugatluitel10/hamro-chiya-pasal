@@ -19,6 +19,8 @@ import Product from './pages/Product'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ToastContainer from './components/Toast'
+import Analytics from './components/Analytics'
+import ConsentBanner from './components/ConsentBanner'
 import { useI18n } from './i18n/I18nProvider'
 import PolicyShipping from './pages/PolicyShipping'
 import PolicyReturns from './pages/PolicyReturns'
@@ -87,6 +89,8 @@ function App() {
 
       <Footer />
       <ToastContainer />
+      <ConsentBanner />
+      <Analytics />
     </div>
   )
 }
@@ -122,6 +126,16 @@ function LocaleLayoutFixed({ locale }: { locale: 'ne' | 'en' }) {
   // Sync the i18n context with the URL segment
   useEffect(() => {
     setLocale(locale)
+    try {
+      const root = document.documentElement
+      const add = locale === 'ne' ? 'locale-ne' : 'locale-en'
+      const remove = locale === 'ne' ? 'locale-en' : 'locale-ne'
+      root.classList.add(add)
+      root.classList.remove(remove)
+      return () => { root.classList.remove(add) }
+    } catch {
+      // ignore if document unavailable
+    }
   }, [locale, setLocale])
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
