@@ -16,6 +16,7 @@ import OrderSuccess from './pages/OrderSuccess'
 import Checkout from './pages/Checkout'
 import Gallery from './pages/Gallery'
 import Product from './pages/Product'
+import Visit from './pages/Visit'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ToastContainer from './components/Toast'
@@ -46,6 +47,7 @@ function App() {
           <Route path="checkout" element={<Checkout />} />
           <Route path="product/:slug" element={<Product />} />
           <Route path="about" element={<About />} />
+          <Route path="visit" element={<Visit />} />
           <Route path="contact" element={<Contact />} />
           <Route path="policy/shipping" element={<PolicyShipping />} />
           <Route path="policy/returns" element={<PolicyReturns />} />
@@ -67,6 +69,7 @@ function App() {
           <Route path="checkout" element={<Checkout />} />
           <Route path="product/:slug" element={<Product />} />
           <Route path="about" element={<About />} />
+          <Route path="visit" element={<Visit />} />
           <Route path="contact" element={<Contact />} />
           <Route path="policy/shipping" element={<PolicyShipping />} />
           <Route path="policy/returns" element={<PolicyReturns />} />
