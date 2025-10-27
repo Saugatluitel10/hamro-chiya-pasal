@@ -149,7 +149,7 @@ export default function Home() {
       />
       <main className="bg-gradient-to-br from-[--color-surface] to-white dark:from-gray-900 dark:to-gray-950">
       {/* Hero with background image */}
-      <section className="relative min-h-[35vh] md:min-h-[50vh]">
+      <section className={`relative ${locale === 'en' ? 'min-h-[60vh]' : 'min-h-[35vh] md:min-h-[50vh]'}`}>
         {/* Hero image with responsive sources */}
         <div className="absolute inset-0 -z-20 overflow-hidden">
           <picture>
@@ -176,25 +176,28 @@ export default function Home() {
           {/* Cream overlay for legibility */}
           <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,248,240,0.92),rgba(255,248,240,0.7))]" />
         </div>
-        {/* Prayer flags overlay at the top */}
-        <div className="absolute inset-x-0 top-0 z-0 pointer-events-none">
-          <PrayerFlags className="opacity-90" height={70} />
-        </div>
-        {/* Mountain silhouette overlay (above bg, behind content) */}
-        <div className="absolute inset-x-0 bottom-0 z-0 pointer-events-none">
-          <MountainSilhouette className="text-white/30 dark:text-white/20" />
-        </div>
+        {/* Cultural overlays only for Nepali locale */}
+        {locale === 'ne' && (
+          <>
+            <div className="absolute inset-x-0 top-0 z-0 pointer-events-none">
+              <PrayerFlags className="opacity-90" height={70} />
+            </div>
+            <div className="absolute inset-x-0 bottom-0 z-0 pointer-events-none">
+              <MountainSilhouette className="text-white/30 dark:text-white/20" />
+            </div>
+          </>
+        )}
 
-        <div className="max-w-6xl mx-auto px-4 py-10 md:py-16 grid md:grid-cols-2 gap-8 items-center text-[--color-text] relative z-10">
+        <div className={`max-w-6xl mx-auto px-4 ${locale === 'en' ? 'py-20' : 'py-10 md:py-16'} grid md:grid-cols-2 gap-8 items-center text-[--color-text] relative z-10 ${locale === 'en' ? 'md:grid-cols-1 text-center' : ''}`}>
           <motion.div initial={prefersReduced ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={prefersReduced ? { duration: 0 } : { duration: 0.5 }}>
             <p className="text-[--color-accent] font-semibold mb-2">{t('home.hero.tagline')}</p>
-            <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-2 flex items-center gap-2">
-              <IconTeaLeaf className="text-[--color-accent]" />
+            <h1 className={`text-4xl sm:text-5xl font-bold tracking-tight mb-2 ${locale === 'en' ? '' : 'flex items-center gap-2'}`}>
+              {locale !== 'en' && <IconTeaLeaf className="text-[--color-accent]" />}
               <span>{t('home.hero.title')}</span>
             </h1>
             <PatternBorder className="text-[--color-accent] mb-4" />
             <p className="text-[--color-text] mb-6 max-w-prose">{t('home.hero.subtitle')}</p>
-            <div className="flex items-center gap-3">
+            <div className={`flex items-center gap-3 ${locale === 'en' ? 'justify-center' : ''}`}>
               <Link to={`/${locale}/menu`} className="btn-primary">
                 {t('home.cta.menu')}
               </Link>
@@ -202,11 +205,13 @@ export default function Home() {
                 {t('home.cta.contact')}
               </Link>
             </div>
-            <div className="mt-6 flex flex-wrap items-center gap-2 text-sm text-white/90">
-              <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-1">🏔️ {t('home.chips.himalaya')}</span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-1">🍃 {t('home.chips.ilam')}</span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-1">🇳🇵 {t('home.chips.authentic')}</span>
-            </div>
+            {locale === 'ne' && (
+              <div className="mt-6 flex flex-wrap items-center gap-2 text-sm text-white/90">
+                <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-1">🏔️ {t('home.chips.himalaya')}</span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-1">🍃 {t('home.chips.ilam')}</span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-1">🇳🇵 {t('home.chips.authentic')}</span>
+              </div>
+            )}
             {/* Hero mini carousel */}
             <div className="relative mt-5">
               <div ref={trackRef} className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2" style={{ scrollbarWidth: 'none' }}>
