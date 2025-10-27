@@ -116,6 +116,12 @@ export default function Navbar() {
           </form>
           <NavLink to={`${prefix}/menu`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.menu')}</NavLink>
           <NavLink to={`${prefix}/about`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.about')}</NavLink>
+          <NavLink to={`${prefix}/visit`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.visit') || 'Visit'}</NavLink>
+          <NavLink to={`${prefix}/events`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.events') || 'Events'}</NavLink>
+          <NavLink to={`${prefix}/press`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.press') || 'Press'}</NavLink>
+          <NavLink to={`${prefix}/careers`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.careers') || 'Careers'}</NavLink>
+          <NavLink to={`${prefix}/gift-cards`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.giftcards') || 'Gift Cards'}</NavLink>
+          <NavLink to={`${prefix}/faqs`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.faqs') || 'FAQs'}</NavLink>
           <NavLink to={`${prefix}/blog`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.blog') || 'Blog'}</NavLink>
           <NavLink to={`${prefix}/contact`} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.contact')}</NavLink>
           {/* Simplify nav: hide blog/gallery in primary navbar for launch */}
@@ -197,8 +203,14 @@ export default function Navbar() {
             <div className="flex flex-col gap-2">
               <NavLink to={`${prefix}/menu`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.menu')}</NavLink>
               <NavLink to={`${prefix}/about`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.about')}</NavLink>
-              <NavLink to={`${prefix}/contact`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.contact')}</NavLink>
+              <NavLink to={`${prefix}/visit`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.visit') || 'Visit'}</NavLink>
+              <NavLink to={`${prefix}/events`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.events') || 'Events'}</NavLink>
+              <NavLink to={`${prefix}/press`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.press') || 'Press'}</NavLink>
+              <NavLink to={`${prefix}/careers`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.careers') || 'Careers'}</NavLink>
+              <NavLink to={`${prefix}/gift-cards`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.giftcards') || 'Gift Cards'}</NavLink>
+              <NavLink to={`${prefix}/faqs`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.faqs') || 'FAQs'}</NavLink>
               <NavLink to={`${prefix}/blog`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.blog') || 'Blog'}</NavLink>
+              <NavLink to={`${prefix}/contact`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''}`}>{t('nav.contact')}</NavLink>
               <NavLink to={`${prefix}/checkout`} onClick={() => setMobileOpen(false)} className={({isActive}) => `${base} ${isActive ? active : ''} relative`}>🛒
                 {cartCount > 0 && (
                   <span className="ml-2 inline-flex items-center justify-center text-[10px] px-1.5 py-0.5 rounded-full bg-[--color-primary] text-white">{cartCount}</span>

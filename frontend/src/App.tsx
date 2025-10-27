@@ -20,6 +20,8 @@ import Visit from './pages/Visit'
 import Press from './pages/Press'
 import Careers from './pages/Careers'
 import Events from './pages/Events'
+import GiftCards from './pages/GiftCards'
+import FAQs from './pages/FAQs'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ToastContainer from './components/Toast'
@@ -53,6 +55,8 @@ function App() {
           <Route path="visit" element={<Visit />} />
           <Route path="press" element={<Press />} />
           <Route path="events" element={<Events />} />
+          <Route path="gift-cards" element={<GiftCards />} />
+          <Route path="faqs" element={<FAQs />} />
           <Route path="careers" element={<Careers />} />
           <Route path="contact" element={<Contact />} />
           <Route path="policy/shipping" element={<PolicyShipping />} />
@@ -78,6 +82,8 @@ function App() {
           <Route path="visit" element={<Visit />} />
           <Route path="events" element={<Events />} />
           <Route path="press" element={<Press />} />
+          <Route path="gift-cards" element={<GiftCards />} />
+          <Route path="faqs" element={<FAQs />} />
           <Route path="careers" element={<Careers />} />
           <Route path="contact" element={<Contact />} />
           <Route path="policy/shipping" element={<PolicyShipping />} />

@@ -29,7 +29,15 @@ export default function Footer() {
             <div className="font-semibold mb-2">Links</div>
             <ul className="space-y-1">
               <li><Link to={`${prefix}/about`} className="hover:underline">About</Link></li>
+              <li><Link to={`${prefix}/visit`} className="hover:underline">Visit</Link></li>
               <li><Link to={`${prefix}/contact`} className="hover:underline">Contact</Link></li>
+              <li><Link to={`${prefix}/menu`} className="hover:underline">Menu</Link></li>
+              <li><Link to={`${prefix}/events`} className="hover:underline">Events</Link></li>
+              <li><Link to={`${prefix}/press`} className="hover:underline">Press</Link></li>
+              <li><Link to={`${prefix}/careers`} className="hover:underline">Careers</Link></li>
+              <li><Link to={`${prefix}/gift-cards`} className="hover:underline">Gift Cards</Link></li>
+              <li><Link to={`${prefix}/faqs`} className="hover:underline">FAQs</Link></li>
+              <li><Link to={`${prefix}/blog`} className="hover:underline">Blog</Link></li>
               <li><Link to={`${prefix}/policy/shipping`} className="hover:underline">Shipping Policy</Link></li>
               <li><Link to={`${prefix}/policy/returns`} className="hover:underline">Returns & Refunds</Link></li>
               <li><Link to={`${prefix}/policy/terms`} className="hover:underline">Terms & Conditions</Link></li>
