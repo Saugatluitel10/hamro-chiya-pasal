@@ -9,6 +9,12 @@ import PrayerFlags from '../components/PrayerFlags'
 import IconKettle from '../components/IconKettle'
 import Breadcrumbs from '../components/Breadcrumbs'
 import GoogleSignIn from '../components/GoogleSignIn'
+import Label from '../components/ui/Label'
+import Input from '../components/ui/Input'
+import Select from '../components/ui/Select'
+import Textarea from '../components/ui/Textarea'
+import Button from '../components/ui/Button'
+import { FormField, HelpText } from '../components/ui/FormField'
 
 type MessageType = 'inquiry' | 'feedback' | 'catering'
 type PreferredContact = 'email' | 'phone' | 'whatsapp'
@@ -171,55 +177,75 @@ export default function Contact() {
 
           <form onSubmit={handleSubmit} className="grid gap-4">
             <div className="grid sm:grid-cols-2 gap-4">
-              <input
-                className="border rounded px-3 py-2 bg-[--color-surface] dark:bg-gray-900 border-gray-200 dark:border-gray-800"
-                placeholder={t('contact.form.placeholder.name')}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-              <input
-                type="email"
-                className="border rounded px-3 py-2 bg-[--color-surface] dark:bg-gray-900 border-gray-200 dark:border-gray-800"
-                placeholder={t('contact.form.placeholder.email')}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+              <FormField>
+                <Label htmlFor="name">{t('contact.form.label.name')}</Label>
+                <Input
+                  id="name"
+                  placeholder={t('contact.form.placeholder.name')}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                />
+              </FormField>
+              <FormField>
+                <Label htmlFor="email">{t('contact.form.label.email')}</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder={t('contact.form.placeholder.email')}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <HelpText>{t('contact.form.help.email')}</HelpText>
+              </FormField>
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
-              <input
-                className="border rounded px-3 py-2 bg-[--color-surface] dark:bg-gray-900 border-gray-200 dark:border-gray-800"
-                placeholder={t('contact.form.placeholder.phone')}
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
-              <select
-                className="border rounded px-3 py-2 bg-[--color-surface] dark:bg-gray-900 border-gray-200 dark:border-gray-800"
-                value={messageType}
-                onChange={(e) => setMessageType(e.target.value as MessageType)}
-              >
-                <option value="inquiry">{t('contact.form.type.inquiry')}</option>
-                <option value="feedback">{t('contact.form.type.feedback')}</option>
-                <option value="catering">{t('contact.form.type.catering')}</option>
-              </select>
+              <FormField>
+                <Label htmlFor="phone">{t('contact.form.label.phone')}</Label>
+                <Input
+                  id="phone"
+                  placeholder={t('contact.form.placeholder.phone')}
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
+              </FormField>
+              <FormField>
+                <Label htmlFor="type">{t('contact.form.label.type')}</Label>
+                <Select
+                  id="type"
+                  value={messageType}
+                  onChange={(e) => setMessageType(e.target.value as MessageType)}
+                >
+                  <option value="inquiry">{t('contact.form.type.inquiry')}</option>
+                  <option value="feedback">{t('contact.form.type.feedback')}</option>
+                  <option value="catering">{t('contact.form.type.catering')}</option>
+                </Select>
+              </FormField>
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
-              <select
-                className="border rounded px-3 py-2 bg-[--color-surface] dark:bg-gray-900 border-gray-200 dark:border-gray-800"
-                value={preferredContact}
-                onChange={(e) => setPreferredContact(e.target.value as PreferredContact)}
-              >
-                <option value="email">{t('contact.form.pref.email')}</option>
-                <option value="phone">{t('contact.form.pref.phone')}</option>
-                <option value="whatsapp">{t('contact.form.pref.whatsapp')}</option>
-              </select>
+              <FormField>
+                <Label htmlFor="pref">{t('contact.form.label.pref')}</Label>
+                <Select
+                  id="pref"
+                  value={preferredContact}
+                  onChange={(e) => setPreferredContact(e.target.value as PreferredContact)}
+                >
+                  <option value="email">{t('contact.form.pref.email')}</option>
+                  <option value="phone">{t('contact.form.pref.phone')}</option>
+                  <option value="whatsapp">{t('contact.form.pref.whatsapp')}</option>
+                </Select>
+              </FormField>
             </div>
-            <textarea
-              rows={6}
-              className="border rounded px-3 py-2 bg-[--color-surface] dark:bg-gray-900 border-gray-200 dark:border-gray-800"
-              placeholder={t('contact.form.placeholder.message')}
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-            />
+            <FormField>
+              <Label htmlFor="message">{t('contact.form.label.message')}</Label>
+              <Textarea
+                id="message"
+                rows={6}
+                placeholder={t('contact.form.placeholder.message')}
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+              />
+            </FormField>
             {/* Honeypot: visually hidden text field to trap bots */}
             <div aria-hidden="true" className="absolute -left-[9999px] -top-[9999px]">
               <label htmlFor="hp" className="sr-only">{t('contact.form.hpLabel')}</label>
@@ -234,13 +260,9 @@ export default function Contact() {
               />
             </div>
             <div className="flex items-center gap-3">
-              <button
-                type="submit"
-                disabled={submitting}
-                className="inline-flex items-center justify-center rounded-md bg-[--color-primary] px-4 py-2 text-white font-medium hover:bg-[#6f1616] disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2 ring-offset-white dark:focus-visible:ring-offset-gray-900"
-              >
+              <Button type="submit" disabled={submitting}>
                 {submitting ? t('contact.form.submit.sending') : t('contact.form.submit.label')}
-              </button>
+              </Button>
               <span className="text-xs text-gray-600 dark:text-gray-400">{t('contact.form.privacy')}</span>
             </div>
 

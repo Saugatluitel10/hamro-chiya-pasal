@@ -18,11 +18,11 @@
 
   h1, h2, h3, h4 {
     font-family: var(--font-heading);
-    font-weight: 700;
+    font-weight: 600; /* H1 */
   }
 
   a {
-    color: var(--color-primary);
+    color: var(--color-accent);
   }
   a:hover {
     text-decoration: underline;
@@ -32,6 +32,18 @@
   *:focus-visible {
     outline: 3px solid var(--color-accent);
     outline-offset: 2px;
+  }
+}
+
+/* Locale-aware font overrides */
+@layer base {
+  .locale-ne {
+    --font-sans: 'Noto Sans Devanagari', 'Noto Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
+    --font-heading: 'Noto Serif Devanagari', 'Noto Serif', 'Noto Sans Devanagari', Arial;
+  }
+  .locale-en {
+    --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
+    --font-heading: 'Merriweather', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
   }
 }
 
@@ -49,20 +61,49 @@
 
 @layer base {
   :root {
-    /* Colors */
-    --color-primary: #8B1D1D;      /* Deep Nepali red (Maroon) */
-    --color-secondary: #1F5E46;    /* Tea garden green */
-    --color-accent: #FF9933;       /* Saffron */
-    --color-background: #FAF3E7;   /* Cream */
-    --color-surface: #FFF9F0;      /* Light cream surface */
-    --color-text: #2B2B2B;         /* Charcoal for readability */
+    /* Colors (Phase 2 brand rules) */
+    --color-primary: #F2994A;      /* Saffron: primary CTA background */
+    --color-accent: #6B0A0A;       /* Maroon: headings/links/accent */
+    --color-background: #FFF8F0;   /* Cream background */
+    --color-surface: #F6F4F2;      /* Neutral light surface */
+    --color-text: #2B2B2B;         /* Neutral dark text */
 
-    /* Fonts */
-    --font-sans: 'Noto Sans Devanagari', 'Inter', 'Hind Siliguri', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-    --font-heading: 'Noto Serif Devanagari', 'Merriweather', Georgia, ui-serif, serif;
+    /* Fonts default (English-first) */
+    --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    --font-heading: 'Merriweather', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
 
-    font-family: 'Noto Sans Devanagari', 'Inter', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';
+    font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';
   }
+}
+
+/* Components: Buttons */
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center uppercase font-semibold;
+    background-color: var(--color-primary);
+    color: var(--color-accent);
+    padding: 12px 20px;
+    border-radius: 10px;
+  }
+  .btn-primary:hover { filter: brightness(0.95); }
+  .btn-primary:disabled { opacity: 0.6; }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center font-medium;
+    background-color: transparent;
+    color: var(--color-accent);
+    border: 1px solid var(--color-accent);
+    padding: 12px 20px;
+    border-radius: 10px;
+  }
+  .btn-secondary:hover { background-color: rgba(107,10,10,0.06); }
+
+  /* Form + Card UI Kit */
+  .label { @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1; }
+  .input { @apply w-full rounded-md border border-gray-200 dark:border-gray-800 bg-[--color-surface] dark:bg-gray-900 px-3 py-2 text-sm placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2 ring-offset-white dark:focus-visible:ring-offset-gray-900; }
+  .help { @apply mt-1 text-xs text-gray-500 dark:text-gray-400; }
+  .card { @apply rounded-xl border border-gray-200 dark:border-gray-800 bg-[--color-surface] dark:bg-gray-900 shadow; }
+  .badge { @apply inline-flex items-center rounded px-2 py-0.5 text-xs font-semibold; }
 }
 
 /* Respect reduced motion preferences */

@@ -11,8 +11,7 @@ import PrayerFlags from '../components/PrayerFlags'
 import StructuredData from '../components/StructuredData'
 import NewsletterForm from '../components/NewsletterForm'
 import Lightbox from '../components/Lightbox'
-import InstagramFeed from '../components/InstagramFeed'
-import UGCForm from '../components/UGCForm'
+// Instagram/UGC hidden for launch
 import GoogleReviews from '../components/GoogleReviews'
 
 function Counter({ to, duration = 1.2 }: { to: number; duration?: number }) {
@@ -150,14 +149,33 @@ export default function Home() {
       />
       <main className="bg-gradient-to-br from-[--color-surface] to-white dark:from-gray-900 dark:to-gray-950">
       {/* Hero with background image */}
-      <section className="relative">
-        <div
-          className="absolute inset-0 -z-10 bg-center bg-cover"
-          style={{
-            backgroundImage:
-              "linear-gradient(to bottom, rgba(139, 29, 29, 0.35), rgba(139, 29, 29, 0.6)), url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop')",
-          }}
-        />
+      <section className="relative min-h-[35vh] md:min-h-[50vh]">
+        {/* Hero image with responsive sources */}
+        <div className="absolute inset-0 -z-20 overflow-hidden">
+          <picture>
+            <source
+              type="image/avif"
+              srcSet="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&auto=format&fit=crop&fm=avif&w=800 800w, https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&auto=format&fit=crop&fm=avif&w=1200 1200w, https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&auto=format&fit=crop&fm=avif&w=1600 1600w"
+              sizes="(min-width: 1024px) 100vw, 100vw"
+            />
+            <source
+              type="image/webp"
+              srcSet="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&auto=format&fit=crop&fm=webp&w=800 800w, https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&auto=format&fit=crop&fm=webp&w=1200 1200w, https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&auto=format&fit=crop&fm=webp&w=1600 1600w"
+              sizes="(min-width: 1024px) 100vw, 100vw"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&auto=format&fit=crop&w=1600"
+              alt="Tea being poured into cups with warm morning light"
+              className="w-full h-full object-cover"
+              loading="eager"
+              decoding="async"
+              width={1600}
+              height={800}
+            />
+          </picture>
+          {/* Cream overlay for legibility */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,248,240,0.92),rgba(255,248,240,0.7))]" />
+        </div>
         {/* Prayer flags overlay at the top */}
         <div className="absolute inset-x-0 top-0 z-0 pointer-events-none">
           <PrayerFlags className="opacity-90" height={70} />
@@ -167,26 +185,20 @@ export default function Home() {
           <MountainSilhouette className="text-white/30 dark:text-white/20" />
         </div>
 
-        <div className="max-w-6xl mx-auto px-4 py-20 md:py-28 grid md:grid-cols-2 gap-8 items-center text-white relative z-10">
+        <div className="max-w-6xl mx-auto px-4 py-10 md:py-16 grid md:grid-cols-2 gap-8 items-center text-[--color-text] relative z-10">
           <motion.div initial={prefersReduced ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={prefersReduced ? { duration: 0 } : { duration: 0.5 }}>
-            <p className="text-[--color-surface] font-semibold mb-2">{t('home.hero.tagline')}</p>
+            <p className="text-[--color-accent] font-semibold mb-2">{t('home.hero.tagline')}</p>
             <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-2 flex items-center gap-2">
               <IconTeaLeaf className="text-[--color-accent]" />
               <span>{t('home.hero.title')}</span>
             </h1>
             <PatternBorder className="text-[--color-accent] mb-4" />
-            <p className="text-white/90 mb-6 max-w-prose">{t('home.hero.subtitle')}</p>
+            <p className="text-[--color-text] mb-6 max-w-prose">{t('home.hero.subtitle')}</p>
             <div className="flex items-center gap-3">
-              <Link
-                to={`/${locale}/menu`}
-                className="inline-flex items-center justify-center rounded-md bg-white/90 text-[--color-primary] px-4 py-2 font-medium hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2"
-              >
+              <Link to={`/${locale}/menu`} className="btn-primary">
                 {t('home.cta.menu')}
               </Link>
-              <Link
-                to={`/${locale}/contact`}
-                className="inline-flex items-center justify-center rounded-md border border-white/70 px-4 py-2 font-medium hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2"
-              >
+              <Link to={`/${locale}/contact`} className="btn-secondary">
                 {t('home.cta.contact')}
               </Link>
             </div>
@@ -217,14 +229,44 @@ export default function Home() {
         </div>
       </section>
 
-      {/* UGC Submission */}
-      <section className="max-w-6xl mx-auto px-4 pb-10">
+      {/* Phase 1: Simplified 4-up grid for key sections */}
+      <section className="max-w-6xl mx-auto px-4 py-8">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Featured Products */}
+          <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-[--color-surface] dark:bg-gray-900">
+            <h3 className="font-semibold mb-2">{t('home.featured.title') || 'Featured Products'}</h3>
+            <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">{t('home.featured.desc') || 'Taste our most loved teas picked by our customers.'}</p>
+            <Link to={`/${locale}/menu`} className="btn-secondary text-xs">{t('home.featured.cta') || 'Explore teas'}</Link>
+          </div>
+          {/* Our Story */}
+          <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-[--color-surface] dark:bg-gray-900">
+            <h3 className="font-semibold mb-2">{t('home.story.title') || 'Our Story'}</h3>
+            <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">{t('home.story.desc') || 'Rooted in Nepali tradition, brewed for today.'}</p>
+            <Link to={`/${locale}/about`} className="btn-secondary text-xs">{t('home.story.cta') || 'Read more'}</Link>
+          </div>
+          {/* Testimonials */}
+          <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-[--color-surface] dark:bg-gray-900">
+            <h3 className="font-semibold mb-2">{t('home.testimonials.title') || 'What customers say'}</h3>
+            <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">{t('home.testimonials.desc') || 'Trusted by tea lovers across Nepal.'}</p>
+            <a href="#testimonials" className="btn-secondary text-xs">{t('home.testimonials.cta') || 'Read reviews'}</a>
+          </div>
+          {/* Newsletter / Contact */}
+          <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-[--color-surface] dark:bg-gray-900">
+            <h3 className="font-semibold mb-2">{t('newsletter.title') || 'Subscribe for updates'}</h3>
+            <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">{t('newsletter.subtitle') || 'Get news, offers, and stories from Hamro Chiya Pasal.'}</p>
+            <NewsletterForm />
+          </div>
+        </div>
+      </section>
+
+      {/* UGC Submission (hidden for launch, will enable in later phase) */}
+      {/* <section className="max-w-6xl mx-auto px-4 pb-10">
         <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-6 bg-[--color-surface] dark:bg-gray-900">
           <h2 className="text-2xl font-bold">{t('ugc.title')}</h2>
           <p className="text-gray-600 dark:text-gray-300 mb-3">{t('ugc.desc')}</p>
           <UGCForm />
         </div>
-      </section>
+      </section> */}
 
       {/* Gallery */}
       <section className="max-w-6xl mx-auto px-4 pb-10">
@@ -352,14 +394,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Instagram Feed */}
-      <section className="max-w-6xl mx-auto px-4 pb-10">
+      {/* Instagram Feed (hidden for launch) */}
+      {/* <section className="max-w-6xl mx-auto px-4 pb-10">
         <div className="mb-3">
           <h2 className="text-2xl font-bold">{t('home.instagram.title')}</h2>
           <p className="text-gray-600 dark:text-gray-300">{t('home.instagram.desc')}</p>
         </div>
         <InstagramFeed limit={8} />
-      </section>
+      </section> */}
 
       {/* Social Proof */}
       <section className="max-w-6xl mx-auto px-4 pb-14">
