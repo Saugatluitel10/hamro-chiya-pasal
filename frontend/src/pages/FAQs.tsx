@@ -2,6 +2,7 @@ import Meta from '../components/Meta'
 import Breadcrumbs from '../components/Breadcrumbs'
 import { useI18n } from '../i18n/I18nProvider'
 import { motion } from 'framer-motion'
+import StructuredData from '../components/StructuredData'
 
 const faqs = [
   { q: 'What makes your tea authentic?', a: 'We source from Nepali regions like Ilam and brew using traditional methods with fresh spices.' },
@@ -19,6 +20,16 @@ export default function FAQs() {
   return (
     <>
       <Meta title={(t('nav.faqs') || 'FAQs') + ' | ' + t('brand')} description={t('meta.faqs.desc') || 'Frequently asked questions about Hamro Chiya Pasal.'} url={url} image={og} locale={ogLocale} localizedUrlStrategy="prefix" />
+      <StructuredData
+        json={{
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: t('brand'), item: `${origin}/${locale}/` },
+            { '@type': 'ListItem', position: 2, name: t('nav.faqs') || 'FAQs', item: `${origin}/${locale}/faqs` },
+          ],
+        }}
+      />
       <main className="max-w-3xl mx-auto px-4 py-10">
         <Breadcrumbs items={[{ label: t('brand'), href: `/${locale}/` }, { label: t('nav.faqs') || 'FAQs', href: `/${locale}/faqs` }]} />
         <motion.h1 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="text-3xl font-bold mb-4">{t('nav.faqs') || 'FAQs'}</motion.h1>

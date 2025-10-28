@@ -50,8 +50,18 @@ export default function Meta({ title, description, url, image, locale, alternate
 
     if (description) ensureMeta('meta[name="description"]', 'content', description)
     if (url) {
-      ensureMeta('meta[property="og:url"]', 'content', url)
-      ensureMeta('link[rel="canonical"]', 'href', url)
+      // Normalize to root host (strip leading www.) for canonical consistency
+      let canonicalUrl = url
+      try {
+        const u = new URL(url)
+        const rootHost = u.host.replace(/^www\./, '')
+        u.host = rootHost
+        canonicalUrl = u.toString()
+      } catch {
+        // ignore parsing issues and fall back to provided url
+      }
+      ensureMeta('meta[property="og:url"]', 'content', canonicalUrl)
+      ensureMeta('link[rel="canonical"]', 'href', canonicalUrl)
       // Defaults
       ensureMeta('meta[property="og:type"]', 'content', 'website')
       try {
@@ -68,7 +78,7 @@ export default function Meta({ title, description, url, image, locale, alternate
         if (alternates['x-default']) ensureHreflang('x-default', alternates['x-default'])
       } else if (localizedUrlStrategy === 'prefix') {
         try {
-          const u = new URL(url)
+          const u = new URL(canonicalUrl)
           const origin = `${u.protocol}//${u.host}`
           const rest = u.pathname.replace(/^\/(ne|en)(?=\/|$)/, '').replace(/^\/?/, '/')
           const neUrl = `${origin}/ne${rest}`
@@ -79,12 +89,12 @@ export default function Meta({ title, description, url, image, locale, alternate
           ensureHreflang('x-default', xDefault)
         } catch {
           // Fallback gracefully to same-path if URL parsing fails
-          ensureHreflang('ne', url)
-          ensureHreflang('en', url)
+          ensureHreflang('ne', canonicalUrl)
+          ensureHreflang('en', canonicalUrl)
         }
       } else {
-        ensureHreflang('ne', url)
-        ensureHreflang('en', url)
+        ensureHreflang('ne', canonicalUrl)
+        ensureHreflang('en', canonicalUrl)
       }
     }
     if (title) {

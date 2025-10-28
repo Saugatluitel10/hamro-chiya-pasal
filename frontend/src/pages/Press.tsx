@@ -2,6 +2,7 @@ import Meta from '../components/Meta'
 import Breadcrumbs from '../components/Breadcrumbs'
 import { useI18n } from '../i18n/I18nProvider'
 import { motion } from 'framer-motion'
+import StructuredData from '../components/StructuredData'
 
 export default function Press() {
   const { t, locale } = useI18n()
@@ -19,6 +20,16 @@ export default function Press() {
   return (
     <>
       <Meta title={(t('nav.press') || 'Press') + ' | ' + t('brand')} description={t('meta.press.desc') || 'Mentions and features from the press.'} url={url} image={og} locale={ogLocale} localizedUrlStrategy="prefix" />
+      <StructuredData
+        json={{
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: t('brand'), item: `${origin}/${locale}/` },
+            { '@type': 'ListItem', position: 2, name: t('nav.press') || 'Press', item: `${origin}/${locale}/press` },
+          ],
+        }}
+      />
       <main className="max-w-6xl mx-auto px-4 py-10">
         <Breadcrumbs items={[{ label: t('brand'), href: `/${locale}/` }, { label: t('nav.press') || 'Press', href: `/${locale}/press` }]} />
         <motion.h1 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="text-3xl font-bold mb-4">{t('nav.press') || 'Press'}</motion.h1>

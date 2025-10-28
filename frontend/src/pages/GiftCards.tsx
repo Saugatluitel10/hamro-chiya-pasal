@@ -4,6 +4,7 @@ import { useI18n } from '../i18n/I18nProvider'
 import { motion } from 'framer-motion'
 import Card, { CardContent, CardHeader, CardTitle } from '../components/ui/Card'
 import Button from '../components/ui/Button'
+import StructuredData from '../components/StructuredData'
 
 export default function GiftCards() {
   const { t, locale } = useI18n()
@@ -15,6 +16,16 @@ export default function GiftCards() {
   return (
     <>
       <Meta title={(t('nav.giftcards') || 'Gift Cards') + ' | ' + t('brand')} description={t('meta.giftcards.desc') || 'Share the taste of authentic Nepali tea with digital gift cards.'} url={url} image={og} locale={ogLocale} localizedUrlStrategy="prefix" />
+      <StructuredData
+        json={{
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: t('brand'), item: `${origin}/${locale}/` },
+            { '@type': 'ListItem', position: 2, name: t('nav.giftcards') || 'Gift Cards', item: `${origin}/${locale}/gift-cards` },
+          ],
+        }}
+      />
       <main className="max-w-6xl mx-auto px-4 py-10">
         <Breadcrumbs items={[{ label: t('brand'), href: `/${locale}/` }, { label: t('nav.giftcards') || 'Gift Cards', href: `/${locale}/gift-cards` }]} />
         <motion.h1 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="text-3xl font-bold mb-4">{t('nav.giftcards') || 'Gift Cards'}</motion.h1>

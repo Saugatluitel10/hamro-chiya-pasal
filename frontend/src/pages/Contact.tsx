@@ -15,6 +15,7 @@ import Select from '../components/ui/Select'
 import Textarea from '../components/ui/Textarea'
 import Button from '../components/ui/Button'
 import { FormField, HelpText } from '../components/ui/FormField'
+import StructuredData from '../components/StructuredData'
 
 type MessageType = 'inquiry' | 'feedback' | 'catering'
 type PreferredContact = 'email' | 'phone' | 'whatsapp'
@@ -71,14 +72,24 @@ export default function Contact() {
 
   return (
     <>
-    <Meta title={t('meta.contact.title')} description={t('meta.contact.desc')} url={url} image={og} locale={ogLocale} localizedUrlStrategy="prefix" />
-    <main className="max-w-6xl mx-auto px-4 py-10">
-      <Breadcrumbs
-        items={[
-          { label: t('brand'), href: `/${locale}/` },
-          { label: t('nav.contact'), href: `/${locale}/contact` },
-        ]}
+      <Meta title={(t('nav.contact') || 'Contact')} description={t('meta.contact.desc')} url={url} image={og} locale={ogLocale} localizedUrlStrategy="prefix" />
+      <StructuredData
+        json={{
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: t('brand'), item: `${origin}/${locale}/` },
+            { '@type': 'ListItem', position: 2, name: t('nav.contact') || 'Contact', item: `${origin}/${locale}/contact` },
+          ],
+        }}
       />
+      <main className="max-w-6xl mx-auto px-4 py-10">
+        <Breadcrumbs
+          items={[
+            { label: t('brand'), href: `/${locale}/` },
+            { label: t('nav.contact'), href: `/${locale}/contact` },
+          ]}
+        />
       {/* Subtle cultural banner */}
       <div className="relative h-8 mb-1">
         <div className="absolute inset-0">

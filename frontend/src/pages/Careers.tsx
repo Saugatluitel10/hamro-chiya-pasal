@@ -7,6 +7,7 @@ import Label from '../components/ui/Label'
 import Input from '../components/ui/Input'
 import Textarea from '../components/ui/Textarea'
 import Button from '../components/ui/Button'
+import StructuredData from '../components/StructuredData'
 
 export default function Careers() {
   const { t, locale } = useI18n()
@@ -18,6 +19,16 @@ export default function Careers() {
   return (
     <>
       <Meta title={(t('nav.careers') || 'Careers') + ' | ' + t('brand')} description={t('meta.careers.desc') || 'Work with us at Hamro Chiya Pasal.'} url={url} image={og} locale={ogLocale} localizedUrlStrategy="prefix" />
+      <StructuredData
+        json={{
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: t('brand'), item: `${origin}/${locale}/` },
+            { '@type': 'ListItem', position: 2, name: t('nav.careers') || 'Careers', item: `${origin}/${locale}/careers` },
+          ],
+        }}
+      />
       <main className="max-w-3xl mx-auto px-4 py-10">
         <Breadcrumbs items={[{ label: t('brand'), href: `/${locale}/` }, { label: t('nav.careers') || 'Careers', href: `/${locale}/careers` }]} />
         <motion.h1 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="text-3xl font-bold mb-2">{t('nav.careers') || 'Careers'}</motion.h1>
