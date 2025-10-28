@@ -32,11 +32,29 @@ import PolicyShipping from './pages/PolicyShipping'
 import PolicyReturns from './pages/PolicyReturns'
 import PolicyTerms from './pages/PolicyTerms'
 import PolicyPrivacy from './pages/PolicyPrivacy'
+import StructuredData from './components/StructuredData'
 
 function App() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
+
+      {/* Site-wide Organization structured data */}
+      {typeof window !== 'undefined' && (
+        <StructuredData
+          json={{
+            '@context': 'https://schema.org',
+            '@type': 'Organization',
+            name: 'Hamro Chiya Pasal',
+            url: window.location.origin,
+            logo: `${window.location.origin}/og/og-default.svg`,
+            sameAs: [
+              'https://www.instagram.com/hamro.chiya.pasal',
+              'https://www.facebook.com/HamroChiyaPasal',
+            ],
+          }}
+        />
+      )}
 
       <Routes>
         {/* Redirect base and legacy unprefixed paths to preferred locale */}

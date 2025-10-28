@@ -4,6 +4,7 @@ import { useI18n } from '../i18n/I18nProvider'
 import { motion } from 'framer-motion'
 import Card, { CardContent, CardHeader, CardTitle } from '../components/ui/Card'
 import Button from '../components/ui/Button'
+import StructuredData from '../components/StructuredData'
 
 function LocationCard({ name, addr, hours, map }: { name: string; addr: string; hours: string; map: string }) {
   return (
@@ -37,6 +38,45 @@ export default function Visit() {
   return (
     <>
       <Meta title={(t('nav.visit') || 'Visit') + ' | ' + t('brand')} description={t('meta.visit.desc') || 'Find our cafés, hours, and directions.'} url={url} image={og} locale={ogLocale} localizedUrlStrategy="prefix" />
+      <StructuredData
+        json={{
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: t('brand'), item: `${origin}/${locale}/` },
+            { '@type': 'ListItem', position: 2, name: t('nav.visit') || 'Visit', item: `${origin}/${locale}/visit` },
+          ],
+        }}
+      />
+      <StructuredData
+        json={{
+          '@context': 'https://schema.org',
+          '@type': 'LocalBusiness',
+          name: 'Hamro Chiya Pasal',
+          url,
+          image: og,
+          address: {
+            '@type': 'PostalAddress',
+            streetAddress: 'Thamel Marg',
+            addressLocality: 'Kathmandu',
+            postalCode: '44600',
+            addressCountry: 'NP',
+          },
+          areaServed: ['Kathmandu', 'Lalitpur'],
+          sameAs: [
+            'https://www.instagram.com/hamro.chiya.pasal',
+            'https://www.facebook.com/HamroChiyaPasal',
+          ],
+          hasMap: 'https://maps.app.goo.gl/your-map-link-here',
+          department: locations.map((l) => ({
+            '@type': 'LocalBusiness',
+            name: l.name,
+            address: { '@type': 'PostalAddress', streetAddress: l.addr, addressCountry: 'NP' },
+            openingHours: l.hours,
+            hasMap: l.map,
+          })),
+        }}
+      />
       <main className="max-w-6xl mx-auto px-4 py-10">
         <Breadcrumbs items={[{ label: t('brand'), href: `/${locale}/` }, { label: t('nav.visit') || 'Visit', href: `/${locale}/visit` }]} />
 
