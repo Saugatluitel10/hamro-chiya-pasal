@@ -234,6 +234,17 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Story (English locale, minimalist centered) */}
+      {locale === 'en' && (
+        <section className="max-w-3xl mx-auto px-4 py-12 text-center">
+          <h2 className="text-3xl font-bold tracking-tight mb-2">Our Story</h2>
+          <p className="text-gray-700 mb-4">
+            Rooted in Nepali tea culture and crafted with care. We serve everyday rituals with the finest leaves, warm hospitality, and a calm, airy space.
+          </p>
+          <Link to={`/${locale}/about`} className="btn-secondary">Read more</Link>
+        </section>
+      )}
+
       {/* Phase 1: Simplified 4-up grid for key sections */}
       <section className="max-w-6xl mx-auto px-4 py-8">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -317,22 +328,34 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Visit strip (concise banner) */}
+      <section className={`px-4 ${locale === 'en' ? 'py-10' : 'py-6'}`}>
+        <div className="max-w-5xl mx-auto rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-5 py-5 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <div className="text-sm text-gray-500">{t('home.location.city') || 'Thamel, Kathmandu'}</div>
+            <div className="text-xl font-semibold">{t('home.hours.title') || 'Hours'}</div>
+            <div className="text-sm text-gray-700 dark:text-gray-300">{t('home.hours.summary') || 'Mon–Sun: 7am – 8pm'}</div>
+          </div>
+          <Link to={`/${locale}/visit`} className="btn-secondary text-sm">{t('home.visit.cta') || 'Plan your visit'}</Link>
+        </div>
+      </section>
+
       {/* Featured teas */}
       <section className="max-w-6xl mx-auto px-4 py-14">
         <div className="mb-6 flex items-end justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-bold flex items-center gap-2">
+            <h2 className={`${locale === 'en' ? 'text-3xl' : 'text-2xl'} font-bold flex items-center gap-2`}>
               <IconTeaLeaf className="text-[--color-secondary]" />
               <span>{t('home.featured.title')}</span>
             </h2>
-            <PatternBorder className="text-[--color-accent] my-2" />
+            {locale !== 'en' && <PatternBorder className="text-[--color-accent] my-2" />}
             <p className="text-gray-600 dark:text-gray-300">{t('home.featured.subtitle')}</p>
           </div>
-          <Link to={`/${locale}/menu`} className="text-[--color-primary] dark:text-[--color-accent] font-medium hover:underline">
+          <Link to={`/${locale}/menu`} className={`${locale === 'en' ? 'text-[--color-primary] hover:underline underline-offset-4' : 'text-[--color-primary] dark:text-[--color-accent] font-medium hover:underline'}`}>
             {t('home.featured.link')}
           </Link>
         </div>
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className={`grid sm:grid-cols-2 md:grid-cols-3 ${locale === 'en' ? 'gap-5' : 'gap-4'}`}>
           {featured.map((t) => (
             <TeaCard key={t.titleNepali} {...t} />
           ))}
@@ -341,11 +364,29 @@ export default function Home() {
 
       {/* Newsletter signup */}
       <section className="max-w-6xl mx-auto px-4 pb-6">
-        <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-6 bg-[--color-surface] dark:bg-gray-900">
+        <div className={`rounded-lg border border-gray-200 dark:border-gray-800 ${locale === 'en' ? 'p-8 bg-white text-center' : 'p-6 bg-[--color-surface] dark:bg-gray-900'}`}>
           <h2 className="text-2xl font-bold">{t('newsletter.title')}</h2>
-          <p className="text-gray-600 dark:text-gray-300 mt-1">{t('newsletter.subtitle')}</p>
-          <div className="mt-3">
+          <p className={`mt-1 ${locale === 'en' ? 'text-gray-600' : 'text-gray-600 dark:text-gray-300'}`}>{t('newsletter.subtitle')}</p>
+          <div className={`mt-4 ${locale === 'en' ? 'max-w-md mx-auto' : ''}`}>
             <NewsletterForm />
+          </div>
+        </div>
+      </section>
+
+      {/* Press logos strip */}
+      <section className="max-w-6xl mx-auto px-4 pb-12">
+        <div className="rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4">
+          <div className="text-xs uppercase tracking-wide text-gray-500 mb-3 text-center">{t('home.press.title') || 'As seen in'}</div>
+          <div className="grid grid-cols-2 md:grid-cols-5 items-center gap-4 opacity-80">
+            {[
+              { name: 'Kathmandu Post' },
+              { name: 'The Record' },
+              { name: 'Himal Southasian' },
+              { name: 'Republica' },
+              { name: 'Nepali Times' },
+            ].map((p) => (
+              <div key={p.name} className="text-center text-sm text-gray-700 dark:text-gray-300">{p.name}</div>
+            ))}
           </div>
         </div>
       </section>

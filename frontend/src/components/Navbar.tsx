@@ -6,7 +6,7 @@ import { useCart } from '../hooks/useCart'
 import Input from './ui/Input'
 import Button from './ui/Button'
 
-const base = 'text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-[--color-primary] dark:hover:text-[--color-accent] rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2 ring-offset-white dark:focus-visible:ring-offset-gray-900'
+const baseCommon = 'text-sm font-medium text-gray-700 dark:text-gray-200 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2 ring-offset-white dark:focus-visible:ring-offset-gray-900'
 const active = 'text-[--color-primary] dark:text-[--color-accent]'
 
 export default function Navbar() {
@@ -21,6 +21,12 @@ export default function Navbar() {
   const suggestRef = useRef<HTMLDivElement | null>(null)
   const env = (import.meta as unknown as { env?: { VITE_API_BASE_URL?: string } }).env
   const apiBase = env?.VITE_API_BASE_URL ?? 'http://localhost:5000'
+  const base = useMemo(() => {
+    if (locale === 'en') {
+      return baseCommon + ' hover:text-[--color-primary] hover:underline underline-offset-4 decoration-gray-300'
+    }
+    return baseCommon + ' hover:text-[--color-primary] dark:hover:text-[--color-accent]'
+  }, [locale])
   // Load menu titles once for suggestions
   useEffect(() => {
     let cancelled = false
@@ -67,13 +73,13 @@ export default function Navbar() {
     navigate(`/${l}${rest}`, { replace: true })
   }
   return (
-    <header className="sticky top-0 z-10 backdrop-blur supports-[backdrop-filter]:bg-white/60 bg-white/90 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-800">
-      <nav className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
+    <header className={`sticky top-0 z-10 backdrop-blur supports-[backdrop-filter]:bg-white/60 bg-white/90 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-800`}>
+      <nav className={`max-w-6xl mx-auto px-4 ${locale === 'en' ? 'h-16' : 'h-14'} flex items-center justify-between`}>
         <NavLink to={`${prefix}/`} className="font-semibold text-[--color-primary] dark:text-[--color-accent] rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2 ring-offset-white dark:focus-visible:ring-offset-gray-900">
           {t('brand')}
         </NavLink>
         {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-5">
+        <div className={`hidden md:flex items-center ${locale === 'en' ? 'gap-6' : 'gap-5'}`}>
           <form
             onSubmit={(e) => {
               e.preventDefault()

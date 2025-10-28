@@ -7,9 +7,9 @@ export default function Footer() {
   const year = new Date().getFullYear()
   const prefix = `/${locale}`
   return (
-    <footer className="mt-auto py-10 text-sm text-gray-700 dark:text-gray-300 footer-texture border-t border-gray-200 dark:border-gray-800">
+    <footer className={`mt-auto text-sm text-gray-700 dark:text-gray-300 border-t ${locale === 'en' ? 'bg-white py-12 border-gray-200' : 'footer-texture py-10 border-gray-200 dark:border-gray-800'}`}>
       <div className="max-w-6xl mx-auto px-4">
-        <div className="mb-6 rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-[--color-surface] dark:bg-gray-900">
+        <div className={`mb-6 rounded-lg border border-gray-200 dark:border-gray-800 ${locale === 'en' ? 'p-6 bg-white' : 'p-4 bg-[--color-surface] dark:bg-gray-900'}`}>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             <div>
               <div className="font-semibold text-[--color-accent]">{t('newsletter.title') || 'Subscribe for updates'}</div>
@@ -20,9 +20,9 @@ export default function Footer() {
             </div>
           </div>
         </div>
-        <div className="grid md:grid-cols-4 gap-6">
-          <div>
-            <div className="font-semibold text-[--color-accent] mb-2">{t('brand')}</div>
+        <div className={`grid md:grid-cols-4 gap-6 ${locale === 'en' ? 'items-start' : ''}`}>
+          <div className={`${locale === 'en' ? 'md:col-span-1' : ''}`}>
+            <div className={`font-semibold ${locale === 'en' ? 'mb-3' : 'text-[--color-accent] mb-2'}`}>{t('brand')}</div>
             <p className="text-gray-600 dark:text-gray-400">Friendly, clear, professional. Authentic Nepali tea, brewed right.</p>
           </div>
           <div>
@@ -44,7 +44,7 @@ export default function Footer() {
               <li><Link to={`${prefix}/policy/privacy`} className="hover:underline">Privacy Policy</Link></li>
             </ul>
           </div>
-          <div>
+          <div className={`${locale === 'en' ? '' : ''}`}>
             <div className="font-semibold mb-2">Contact</div>
             <ul className="space-y-1">
               <li>Email: <a href="mailto:support@hamrochiya.com" className="hover:underline">support@hamrochiya.com</a></li>
@@ -64,7 +64,7 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      <div className="max-w-6xl mx-auto px-4 mt-6 text-center text-gray-600 dark:text-gray-400">
+      <div className={`max-w-6xl mx-auto px-4 ${locale === 'en' ? 'mt-10' : 'mt-6'} text-center text-gray-600 dark:text-gray-400`}>
         &copy; {year} {t('brand')} • {t('footer.location')}
       </div>
     </footer>

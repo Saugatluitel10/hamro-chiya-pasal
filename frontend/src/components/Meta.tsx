@@ -52,6 +52,15 @@ export default function Meta({ title, description, url, image, locale, alternate
     if (url) {
       ensureMeta('meta[property="og:url"]', 'content', url)
       ensureMeta('link[rel="canonical"]', 'href', url)
+      // Defaults
+      ensureMeta('meta[property="og:type"]', 'content', 'website')
+      try {
+        const u = new URL(url)
+        const host = u.host.replace(/^www\./, '')
+        ensureMeta('meta[property="og:site_name"]', 'content', host)
+      } catch {
+        // ignore
+      }
       // Provide per-route hreflang alternates
       if (alternates && (alternates.ne || alternates.en || alternates['x-default'])) {
         if (alternates.ne) ensureHreflang('ne', alternates.ne)
@@ -89,6 +98,9 @@ export default function Meta({ title, description, url, image, locale, alternate
     if (image) {
       ensureMeta('meta[property="og:image"]', 'content', image)
       ensureMeta('meta[name="twitter:image"]', 'content', image)
+      ensureMeta('meta[name="twitter:card"]', 'content', 'summary_large_image')
+    } else {
+      ensureMeta('meta[name="twitter:card"]', 'content', 'summary')
     }
     if (locale) {
       ensureMeta('meta[property="og:locale"]', 'content', locale)

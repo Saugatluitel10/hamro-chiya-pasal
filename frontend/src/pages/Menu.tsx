@@ -397,37 +397,32 @@ export default function Menu() {
         ),
       }}
     />
-    <main className="max-w-6xl mx-auto px-4 py-10 lg:grid lg:grid-cols-12 lg:gap-8">
+    <main className={`max-w-6xl mx-auto px-4 ${locale === 'en' ? 'py-12' : 'py-8'}`}>
       {/* Header */}
-      <header className="mb-6 lg:mb-8 lg:col-span-12">
-        <Breadcrumbs
-          items={[
-            { label: t('brand'), href: `/${locale}/` },
-            { label: t('nav.menu'), href: `/${locale}/menu` },
-          ]}
-        />
-        <h1 className="text-3xl font-bold tracking-tight">{t('menu.title')}</h1>
-        <p className="text-gray-600 dark:text-gray-300 mt-1">{t('menu.subtitle')}</p>
+      <header className={`${locale === 'en' ? 'mb-8' : 'mb-6'} lg:mb-8 lg:col-span-12`}>
+        <Breadcrumbs items={[{ label: t('brand'), href: `/${locale}/` }, { label: t('nav.menu'), href: `/${locale}/menu` }]} />
+        <h1 className={`${locale === 'en' ? 'text-4xl' : 'text-3xl'} font-bold tracking-tight`}>{t('nav.menu')}</h1>
+        <p className={`text-sm text-gray-600 dark:text-gray-400 ${locale === 'en' ? 'mt-1.5' : ''}`}>{t('menu.subtitle')}</p>
         <div className="mt-3 text-xs text-gray-500">
           <span className="mr-2">{t('menu.legend')}</span>
           <span className="mr-2">{t('menu.legend.brew')}</span>
           <span>{t('menu.legend.seasonal')}</span>
         </div>
-        {loading && (
-          <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="rounded-xl border border-gray-200 dark:border-gray-800 p-3">
-                <SkeletonBlock className="h-40 w-full mb-3" />
-                <SkeletonText lines={2} />
-              </div>
-            ))}
-          </div>
-        )}
-        {error && (
-          <div className="mt-3 text-sm rounded-md px-3 py-2 bg-rose-50 text-rose-700 dark:bg-rose-900/20 dark:text-rose-200">
-            {error}
-          </div>
-        )}
+      {loading && (
+        <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="rounded-xl border border-gray-200 dark:border-gray-800 p-3">
+              <SkeletonBlock className="h-40 w-full mb-3" />
+              <SkeletonText lines={2} />
+            </div>
+          ))}
+        </div>
+      )}
+      {error && (
+        <div className="mt-3 text-sm rounded-md px-3 py-2 bg-rose-50 text-rose-700 dark:bg-rose-900/20 dark:text-rose-200">
+          {error}
+        </div>
+      )}
 
         {/* Search and filters */}
         <div className="mt-4 grid md:grid-cols-4 gap-3">
@@ -511,7 +506,7 @@ export default function Menu() {
       </header>
 
       {/* Desktop: sticky side rail */}
-      <aside className="hidden lg:block lg:col-span-3 self-start sticky top-24">
+      <aside className={`hidden lg:block lg:col-span-3 self-start sticky top-24 ${locale === 'en' ? '' : ''}`}>
         <nav className="space-y-1">
           {categories.map((cat) => (
             <a
@@ -523,10 +518,10 @@ export default function Menu() {
                 el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
               }}
               className={
-                'block rounded-md px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2 ring-offset-white dark:focus-visible:ring-offset-gray-900 ' +
+                `block rounded-md px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2 ring-offset-white dark:focus-visible:ring-offset-gray-900 ` +
                 (activeKey === cat.key
-                  ? 'bg-[--color-surface] text-[--color-primary] dark:text-[--color-accent] border border-[--color-primary]/30'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/60')
+                  ? `${locale === 'en' ? 'bg-gray-100 text-[--color-text] border border-gray-200' : 'bg-[--color-surface] text-[--color-primary] dark:text-[--color-accent] border border-[--color-primary]/30'}`
+                  : `${locale === 'en' ? 'text-gray-700 hover:bg-gray-50' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/60'}`)
               }
             >
               <div className="font-medium">{cat.titleNepali}</div>
@@ -539,9 +534,9 @@ export default function Menu() {
       {/* Content */}
       <div className="lg:col-span-9">
         {categories.map((cat) => (
-          <section key={cat.key} id={sectionId(cat.key)} className="mb-10 scroll-mt-24">
-            <div className="mb-4">
-              <h2 className="text-2xl font-semibold">{cat.titleNepali}</h2>
+          <section key={cat.key} id={sectionId(cat.key)} className={`${locale === 'en' ? 'mb-12' : 'mb-10'} scroll-mt-24`}>
+            <div className={`${locale === 'en' ? 'mb-6' : 'mb-4'}`}>
+              <h2 className={`${locale === 'en' ? 'text-3xl' : 'text-2xl'} font-semibold`}>{cat.titleNepali}</h2>
               <p className="text-sm text-gray-600 dark:text-gray-400">{cat.titleEnglish}</p>
             </div>
             <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">

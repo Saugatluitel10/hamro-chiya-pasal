@@ -75,12 +75,14 @@ export default function TeaCard({
       viewport={{ once: true, margin: '-50px' }}
       transition={{ duration: 0.25 }}
       className={
-        'group overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800 bg-[--color-surface] dark:bg-gray-900 shadow hover:shadow-md transition-shadow ' +
+        (locale === 'en'
+          ? 'group overflow-hidden rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition-colors '
+          : 'group overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800 bg-[--color-surface] dark:bg-gray-900 shadow hover:shadow-md transition-shadow ') +
         (available ? '' : 'opacity-90')
       }
     >
       {imageUrl && (
-        <div className="relative h-40 w-full overflow-hidden">
+        <div className={`relative ${locale === 'en' ? 'h-48' : 'h-40'} w-full overflow-hidden`}>
           <picture>
             <source
               type="image/avif"
