@@ -40,7 +40,14 @@ export default function About() {
   const currentCaption = current ? t(`gallery.items.${current.id}.caption`) : ''
   return (
     <>
-    <Meta title={t('meta.about.title')} description={t('meta.about.desc')} url={url} image={og} locale={ogLocale} localizedUrlStrategy="prefix" />
+    <Meta
+      title={t('meta.about.title')}
+      description={t('meta.about.desc') || 'Our story — Nepali tea traditions, regions, and the team behind Hamro Chiya Pasal.'}
+      url={url}
+      image={og}
+      locale={ogLocale}
+      localizedUrlStrategy="prefix"
+    />
     <StructuredData
       json={{
         '@context': 'https://schema.org',

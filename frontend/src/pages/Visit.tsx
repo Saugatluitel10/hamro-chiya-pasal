@@ -37,7 +37,14 @@ export default function Visit() {
 
   return (
     <>
-      <Meta title={(t('nav.visit') || 'Visit') + ' | ' + t('brand')} description={t('meta.visit.desc') || 'Find our cafés, hours, and directions.'} url={url} image={og} locale={ogLocale} localizedUrlStrategy="prefix" />
+      <Meta
+        title={(t('nav.visit') || 'Visit') + ' | ' + t('brand')}
+        description={t('meta.visit.desc') || 'Find our cafés, hours, and directions in the Kathmandu Valley.'}
+        url={url}
+        image={og}
+        locale={ogLocale}
+        localizedUrlStrategy="prefix"
+      />
       <StructuredData
         json={{
           '@context': 'https://schema.org',

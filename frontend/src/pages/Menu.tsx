@@ -361,7 +361,14 @@ export default function Menu() {
 
   return (
     <>
-    <Meta title={t('meta.menu.title')} description={t('meta.menu.desc')} url={url} image={og} locale={ogLocale} localizedUrlStrategy="prefix" />
+    <Meta
+      title={t('meta.menu.title')}
+      description={t('meta.menu.desc') || 'Our Nepali tea menu — classics and seasonal brews.'}
+      url={url}
+      image={og}
+      locale={ogLocale}
+      localizedUrlStrategy="prefix"
+    />
     <StructuredData
       json={{
         '@context': 'https://schema.org',
