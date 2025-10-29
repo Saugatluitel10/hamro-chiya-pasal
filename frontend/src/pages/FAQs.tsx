@@ -19,7 +19,14 @@ export default function FAQs() {
 
   return (
     <>
-      <Meta title={(t('nav.faqs') || 'FAQs') + ' | ' + t('brand')} description={t('meta.faqs.desc') || 'Frequently asked questions about Hamro Chiya Pasal.'} url={url} image={og} locale={ogLocale} localizedUrlStrategy="prefix" />
+      <Meta
+        title={(t('nav.faqs') || 'FAQs') + ' | ' + t('brand')}
+        description={t('meta.faqs.desc') || 'FAQs — answers about our Nepali tea, locations, and ordering.'}
+        url={url}
+        image={og}
+        locale={ogLocale}
+        localizedUrlStrategy="prefix"
+      />
       <StructuredData
         json={{
           '@context': 'https://schema.org',

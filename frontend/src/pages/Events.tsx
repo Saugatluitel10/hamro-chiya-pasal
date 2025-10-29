@@ -18,7 +18,14 @@ export default function Events() {
 
   return (
     <>
-      <Meta title={(t('nav.events') || 'Events & Catering') + ' | ' + t('brand')} description={t('meta.events.desc') || 'Host your event with authentic Nepali tea and light bites.'} url={url} image={og} locale={ogLocale} localizedUrlStrategy="prefix" />
+      <Meta
+        title={(t('nav.events') || 'Events & Catering') + ' | ' + t('brand')}
+        description={t('meta.events.desc') || 'Events & catering with authentic Nepali tea, snacks, and warm hospitality.'}
+        url={url}
+        image={og}
+        locale={ogLocale}
+        localizedUrlStrategy="prefix"
+      />
       <StructuredData
         json={{
           '@context': 'https://schema.org',

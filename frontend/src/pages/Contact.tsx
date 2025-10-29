@@ -72,7 +72,14 @@ export default function Contact() {
 
   return (
     <>
-      <Meta title={(t('nav.contact') || 'Contact')} description={t('meta.contact.desc')} url={url} image={og} locale={ogLocale} localizedUrlStrategy="prefix" />
+      <Meta
+        title={(t('nav.contact') || 'Contact')}
+        description={t('meta.contact.desc') || 'Contact Hamro Chiya Pasal — questions, feedback, or catering inquiries.'}
+        url={url}
+        image={og}
+        locale={ogLocale}
+        localizedUrlStrategy="prefix"
+      />
       <StructuredData
         json={{
           '@context': 'https://schema.org',

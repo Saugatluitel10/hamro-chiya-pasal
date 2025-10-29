@@ -18,7 +18,14 @@ export default function Careers() {
 
   return (
     <>
-      <Meta title={(t('nav.careers') || 'Careers') + ' | ' + t('brand')} description={t('meta.careers.desc') || 'Work with us at Hamro Chiya Pasal.'} url={url} image={og} locale={ogLocale} localizedUrlStrategy="prefix" />
+      <Meta
+        title={(t('nav.careers') || 'Careers') + ' | ' + t('brand')}
+        description={t('meta.careers.desc') || 'Careers at Hamro Chiya Pasal — join us to serve authentic Nepali tea.'}
+        url={url}
+        image={og}
+        locale={ogLocale}
+        localizedUrlStrategy="prefix"
+      />
       <StructuredData
         json={{
           '@context': 'https://schema.org',

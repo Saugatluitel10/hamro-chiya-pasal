@@ -19,7 +19,14 @@ export default function Press() {
 
   return (
     <>
-      <Meta title={(t('nav.press') || 'Press') + ' | ' + t('brand')} description={t('meta.press.desc') || 'Mentions and features from the press.'} url={url} image={og} locale={ogLocale} localizedUrlStrategy="prefix" />
+      <Meta
+        title={(t('nav.press') || 'Press') + ' | ' + t('brand')}
+        description={t('meta.press.desc') || 'Press mentions and features about Hamro Chiya Pasal.'}
+        url={url}
+        image={og}
+        locale={ogLocale}
+        localizedUrlStrategy="prefix"
+      />
       <StructuredData
         json={{
           '@context': 'https://schema.org',

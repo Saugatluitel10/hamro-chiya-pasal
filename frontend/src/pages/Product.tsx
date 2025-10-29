@@ -20,7 +20,14 @@ export default function Product() {
 
   return (
     <>
-      <Meta title={`${title} | ${t('brand')}`} description={t('meta.product.desc')} url={url} image={og} locale={ogLocale} localizedUrlStrategy="prefix" />
+      <Meta
+        title={`${title} | ${t('brand')}`}
+        description={t('meta.product.desc') || `${title} — authentic Nepali tea from Hamro Chiya Pasal. Order online.`}
+        url={url}
+        image={og}
+        locale={ogLocale}
+        localizedUrlStrategy="prefix"
+      />
       <main className="max-w-6xl mx-auto px-4 py-10">
         <Breadcrumbs
           items={[

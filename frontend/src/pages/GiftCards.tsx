@@ -15,7 +15,14 @@ export default function GiftCards() {
 
   return (
     <>
-      <Meta title={(t('nav.giftcards') || 'Gift Cards') + ' | ' + t('brand')} description={t('meta.giftcards.desc') || 'Share the taste of authentic Nepali tea with digital gift cards.'} url={url} image={og} locale={ogLocale} localizedUrlStrategy="prefix" />
+      <Meta
+        title={(t('nav.giftcards') || 'Gift Cards') + ' | ' + t('brand')}
+        description={t('meta.giftcards.desc') || 'Digital gift cards for Nepali tea — email delivery, easy to redeem.'}
+        url={url}
+        image={og}
+        locale={ogLocale}
+        localizedUrlStrategy="prefix"
+      />
       <StructuredData
         json={{
           '@context': 'https://schema.org',

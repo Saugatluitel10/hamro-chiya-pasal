@@ -104,7 +104,7 @@ export default function Home() {
     <>
       <Meta
         title={t('meta.home.title')}
-        description={t('meta.home.desc')}
+        description={t('meta.home.desc') || 'Hamro Chiya Pasal — authentic Nepali tea. A minimalist cafe experience in English; cultural warmth in Nepali.'}
         url={url}
         image={og}
         locale={ogLocale}
