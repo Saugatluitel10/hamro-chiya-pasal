@@ -104,9 +104,7 @@ export default function BlogList() {
           />
           <h1 className="text-3xl font-bold tracking-tight">{t('blog.title')}</h1>
           <p className="text-gray-600 dark:text-gray-300 mt-1">{t('blog.subtitle')}</p>
-          <a href={`${apiBase}/api/blog/rss`} className="text-sm text-emerald-700 dark:text-emerald-400 hover:underline">
-            {t('blog.rss')}
-          </a>
+          <a href={`${apiBase}/api/blog/rss`} className="text-sm text-[--color-primary] dark:text-[--color-accent] hover:underline">{t('blog.rss')}</a>
         </header>
 
         {loading && (

@@ -40,7 +40,14 @@ export default function About() {
   const currentCaption = current ? t(`gallery.items.${current.id}.caption`) : ''
   return (
     <>
-    <Meta title={t('meta.about.title')} description={t('meta.about.desc')} url={url} image={og} locale={ogLocale} localizedUrlStrategy="prefix" />
+    <Meta
+      title={t('meta.about.title')}
+      description={t('meta.about.desc') || 'Our story — Nepali tea traditions, regions, and the team behind Hamro Chiya Pasal.'}
+      url={url}
+      image={og}
+      locale={ogLocale}
+      localizedUrlStrategy="prefix"
+    />
     <StructuredData
       json={{
         '@context': 'https://schema.org',
@@ -238,7 +245,7 @@ export default function About() {
             <div className="text-lg font-semibold">{t('gallery.cta.title')}</div>
             <p className="text-sm text-gray-600 dark:text-gray-300">{t('gallery.cta.desc')}</p>
           </div>
-          <Link to={`/${locale}/gallery`} className="inline-flex items-center justify-center rounded-md bg-emerald-600 text-white px-3 py-2 text-sm hover:bg-emerald-700">
+          <Link to={`/${locale}/gallery`} className="inline-flex items-center justify-center rounded-md bg-[--color-primary] text-white px-3 py-2 text-sm hover:bg-[#6f1616]">
             {t('gallery.cta.button')}
           </Link>
         </div>

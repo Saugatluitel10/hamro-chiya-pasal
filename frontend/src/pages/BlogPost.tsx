@@ -130,9 +130,9 @@ export default function BlogPost() {
             {/* Sharing */}
             <div className="mt-6 flex items-center gap-3 text-sm">
               <span className="text-gray-600 dark:text-gray-300">{t('blog.share')}</span>
-              <a className="text-emerald-700 dark:text-emerald-400 hover:underline" href={`https://twitter.com/intent/tweet?url=${shareUrl}&text=${shareText}`} target="_blank" rel="noreferrer">{t('blog.share.twitter')}</a>
-              <a className="text-emerald-700 dark:text-emerald-400 hover:underline" href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`} target="_blank" rel="noreferrer">{t('blog.share.facebook')}</a>
-              <a className="text-emerald-700 dark:text-emerald-400 hover:underline" href={`https://api.whatsapp.com/send?text=${shareText}%20${shareUrl}`} target="_blank" rel="noreferrer">{t('blog.share.whatsapp')}</a>
+              <a className="text-[--color-primary] dark:text-[--color-accent] hover:underline" href={`https://twitter.com/intent/tweet?url=${shareUrl}&text=${shareText}`} target="_blank" rel="noreferrer">{t('blog.share.twitter')}</a>
+              <a className="text-[--color-primary] dark:text-[--color-accent] hover:underline" href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`} target="_blank" rel="noreferrer">{t('blog.share.facebook')}</a>
+              <a className="text-[--color-primary] dark:text-[--color-accent] hover:underline" href={`https://api.whatsapp.com/send?text=${shareText}%20${shareUrl}`} target="_blank" rel="noreferrer">{t('blog.share.whatsapp')}</a>
             </div>
 
             {/* Related posts */}

@@ -15,15 +15,46 @@ import KitchenBoard from './pages/KitchenBoard'
 import OrderSuccess from './pages/OrderSuccess'
 import Checkout from './pages/Checkout'
 import Gallery from './pages/Gallery'
+import Product from './pages/Product'
+import Visit from './pages/Visit'
+import Press from './pages/Press'
+import Careers from './pages/Careers'
+import Events from './pages/Events'
+import GiftCards from './pages/GiftCards'
+import FAQs from './pages/FAQs'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ToastContainer from './components/Toast'
+import Analytics from './components/Analytics'
+import ConsentBanner from './components/ConsentBanner'
 import { useI18n } from './i18n/I18nProvider'
+import PolicyShipping from './pages/PolicyShipping'
+import PolicyReturns from './pages/PolicyReturns'
+import PolicyTerms from './pages/PolicyTerms'
+import PolicyPrivacy from './pages/PolicyPrivacy'
+import StructuredData from './components/StructuredData'
 
 function App() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
+
+      {/* Site-wide Organization structured data */}
+      {typeof window !== 'undefined' && (
+        <StructuredData
+          json={{
+            '@context': 'https://schema.org',
+            '@type': 'Organization',
+            name: 'Hamro Chiya Pasal',
+            url: window.location.origin,
+            logo: `${window.location.origin}/og/og-default.svg`,
+            sameAs: [
+              'https://www.instagram.com/hamro.chiya.pasal',
+              'https://www.facebook.com/HamroChiyaPasal',
+            ],
+          }}
+        />
+      )}
 
       <Routes>
         {/* Redirect base and legacy unprefixed paths to preferred locale */}
@@ -37,8 +68,19 @@ function App() {
           <Route index element={<Home />} />
           <Route path="menu" element={<Menu />} />
           <Route path="checkout" element={<Checkout />} />
+          <Route path="product/:slug" element={<Product />} />
           <Route path="about" element={<About />} />
+          <Route path="visit" element={<Visit />} />
+          <Route path="press" element={<Press />} />
+          <Route path="events" element={<Events />} />
+          <Route path="gift-cards" element={<GiftCards />} />
+          <Route path="faqs" element={<FAQs />} />
+          <Route path="careers" element={<Careers />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="policy/shipping" element={<PolicyShipping />} />
+          <Route path="policy/returns" element={<PolicyReturns />} />
+          <Route path="policy/terms" element={<PolicyTerms />} />
+          <Route path="policy/privacy" element={<PolicyPrivacy />} />
           <Route path="blog" element={<BlogList />} />
           <Route path="blog/:slug" element={<BlogPost />} />
           <Route path="gallery" element={<Gallery />} />
@@ -53,8 +95,19 @@ function App() {
           <Route index element={<Home />} />
           <Route path="menu" element={<Menu />} />
           <Route path="checkout" element={<Checkout />} />
+          <Route path="product/:slug" element={<Product />} />
           <Route path="about" element={<About />} />
+          <Route path="visit" element={<Visit />} />
+          <Route path="events" element={<Events />} />
+          <Route path="press" element={<Press />} />
+          <Route path="gift-cards" element={<GiftCards />} />
+          <Route path="faqs" element={<FAQs />} />
+          <Route path="careers" element={<Careers />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="policy/shipping" element={<PolicyShipping />} />
+          <Route path="policy/returns" element={<PolicyReturns />} />
+          <Route path="policy/terms" element={<PolicyTerms />} />
+          <Route path="policy/privacy" element={<PolicyPrivacy />} />
           <Route path="blog" element={<BlogList />} />
           <Route path="blog/:slug" element={<BlogPost />} />
           <Route path="gallery" element={<Gallery />} />
@@ -72,6 +125,8 @@ function App() {
 
       <Footer />
       <ToastContainer />
+      <ConsentBanner />
+      <Analytics />
     </div>
   )
 }
@@ -107,6 +162,16 @@ function LocaleLayoutFixed({ locale }: { locale: 'ne' | 'en' }) {
   // Sync the i18n context with the URL segment
   useEffect(() => {
     setLocale(locale)
+    try {
+      const root = document.documentElement
+      const add = locale === 'ne' ? 'locale-ne' : 'locale-en'
+      const remove = locale === 'ne' ? 'locale-en' : 'locale-ne'
+      root.classList.add(add)
+      root.classList.remove(remove)
+      return () => { root.classList.remove(add) }
+    } catch {
+      // ignore if document unavailable
+    }
   }, [locale, setLocale])
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>

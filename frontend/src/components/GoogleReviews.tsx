@@ -51,7 +51,7 @@ export default function GoogleReviews() {
           {t('reviews.google.title')} — {data.rating ?? '—'}★ ({data.total})
         </div>
         <a
-          className="text-emerald-700 dark:text-emerald-400 text-sm hover:underline"
+          className="text-[--color-primary] dark:text-[--color-accent] text-sm hover:underline"
           href="https://www.google.com/maps"
           target="_blank"
           rel="noreferrer"

@@ -1,6 +1,10 @@
 import { useState } from 'react'
 import { useI18n } from '../i18n/I18nProvider'
 import { getCampaignData } from '../utils/campaign'
+import Label from './ui/Label'
+import Input from './ui/Input'
+import Button from './ui/Button'
+import { FormField } from './ui/FormField'
 
 export default function UGCForm() {
   const { t } = useI18n()
@@ -37,20 +41,29 @@ export default function UGCForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-2">
-      <div className="grid sm:grid-cols-2 gap-2">
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder={t('ugc.name')} className="border rounded px-3 py-2 bg-[--color-surface] dark:bg-gray-900 border-gray-200 dark:border-gray-800" />
-        <input value={handle} onChange={(e) => setHandle(e.target.value)} placeholder={t('ugc.handle')} className="border rounded px-3 py-2 bg-[--color-surface] dark:bg-gray-900 border-gray-200 dark:border-gray-800" />
+    <form onSubmit={onSubmit} className="space-y-3">
+      <div className="grid sm:grid-cols-2 gap-3">
+        <FormField>
+          <Label htmlFor="ugc-name">{t('ugc.name')}</Label>
+          <Input id="ugc-name" value={name} onChange={(e) => setName(e.target.value)} />
+        </FormField>
+        <FormField>
+          <Label htmlFor="ugc-handle">{t('ugc.handle')}</Label>
+          <Input id="ugc-handle" value={handle} onChange={(e) => setHandle(e.target.value)} />
+        </FormField>
       </div>
-      <input value={postUrl} onChange={(e) => setPostUrl(e.target.value)} placeholder={t('ugc.postUrl')} className="w-full border rounded px-3 py-2 bg-[--color-surface] dark:bg-gray-900 border-gray-200 dark:border-gray-800" />
+      <FormField>
+        <Label htmlFor="ugc-post">{t('ugc.postUrl')}</Label>
+        <Input id="ugc-post" value={postUrl} onChange={(e) => setPostUrl(e.target.value)} />
+      </FormField>
       <label className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300">
         <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
         {t('ugc.consent')}
       </label>
       <div className="flex gap-2 items-center">
-        <button type="submit" disabled={status==='loading'} className="inline-flex items-center justify-center rounded-md bg-emerald-600 text-white px-3 py-2 text-sm hover:bg-emerald-700 disabled:opacity-60">
+        <Button type="submit" size="sm" disabled={status==='loading'}>
           {status==='loading' ? t('common.loading') : t('ugc.submit')}
-        </button>
+        </Button>
         <span className="text-xs text-gray-600 dark:text-gray-400">{t('ugc.note')}</span>
       </div>
     </form>

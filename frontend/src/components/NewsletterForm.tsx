@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useI18n } from '../i18n/I18nProvider'
 import { getCampaignData } from '../utils/campaign'
+import Input from './ui/Input'
+import Button from './ui/Button'
 
 export default function NewsletterForm() {
   const { t } = useI18n()
@@ -49,25 +51,21 @@ export default function NewsletterForm() {
   return (
     <div>
       <form onSubmit={onSubmit} className="flex flex-col sm:flex-row gap-2">
-        <input
+        <Input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder={t('newsletter.placeholder.email')}
-          className="flex-1 border rounded px-3 py-2 bg-[--color-surface] dark:bg-gray-900 border-gray-200 dark:border-gray-800"
+          className="flex-1"
           required
         />
-        <button
-          type="submit"
-          disabled={status === 'loading'}
-          className="inline-flex items-center justify-center rounded-md bg-[--color-primary] text-white px-4 py-2 font-medium hover:bg-[#6f1616] disabled:opacity-60"
-        >
+        <Button type="submit" disabled={status === 'loading'}>
           {status === 'loading'
             ? t('common.loading')
             : mode === 'subscribe'
             ? t('newsletter.submit')
             : t('newsletter.unsubscribe.submit')}
-        </button>
+        </Button>
       </form>
       <div className="mt-2 flex items-center justify-end">
         <button

@@ -50,8 +50,27 @@ export default function Meta({ title, description, url, image, locale, alternate
 
     if (description) ensureMeta('meta[name="description"]', 'content', description)
     if (url) {
-      ensureMeta('meta[property="og:url"]', 'content', url)
-      ensureMeta('link[rel="canonical"]', 'href', url)
+      // Normalize to root host (strip leading www.) for canonical consistency
+      let canonicalUrl = url
+      try {
+        const u = new URL(url)
+        const rootHost = u.host.replace(/^www\./, '')
+        u.host = rootHost
+        canonicalUrl = u.toString()
+      } catch {
+        // ignore parsing issues and fall back to provided url
+      }
+      ensureMeta('meta[property="og:url"]', 'content', canonicalUrl)
+      ensureMeta('link[rel="canonical"]', 'href', canonicalUrl)
+      // Defaults
+      ensureMeta('meta[property="og:type"]', 'content', 'website')
+      try {
+        const u = new URL(url)
+        const host = u.host.replace(/^www\./, '')
+        ensureMeta('meta[property="og:site_name"]', 'content', host)
+      } catch {
+        // ignore
+      }
       // Provide per-route hreflang alternates
       if (alternates && (alternates.ne || alternates.en || alternates['x-default'])) {
         if (alternates.ne) ensureHreflang('ne', alternates.ne)
@@ -59,7 +78,7 @@ export default function Meta({ title, description, url, image, locale, alternate
         if (alternates['x-default']) ensureHreflang('x-default', alternates['x-default'])
       } else if (localizedUrlStrategy === 'prefix') {
         try {
-          const u = new URL(url)
+          const u = new URL(canonicalUrl)
           const origin = `${u.protocol}//${u.host}`
           const rest = u.pathname.replace(/^\/(ne|en)(?=\/|$)/, '').replace(/^\/?/, '/')
           const neUrl = `${origin}/ne${rest}`
@@ -70,12 +89,12 @@ export default function Meta({ title, description, url, image, locale, alternate
           ensureHreflang('x-default', xDefault)
         } catch {
           // Fallback gracefully to same-path if URL parsing fails
-          ensureHreflang('ne', url)
-          ensureHreflang('en', url)
+          ensureHreflang('ne', canonicalUrl)
+          ensureHreflang('en', canonicalUrl)
         }
       } else {
-        ensureHreflang('ne', url)
-        ensureHreflang('en', url)
+        ensureHreflang('ne', canonicalUrl)
+        ensureHreflang('en', canonicalUrl)
       }
     }
     if (title) {
@@ -89,6 +108,9 @@ export default function Meta({ title, description, url, image, locale, alternate
     if (image) {
       ensureMeta('meta[property="og:image"]', 'content', image)
       ensureMeta('meta[name="twitter:image"]', 'content', image)
+      ensureMeta('meta[name="twitter:card"]', 'content', 'summary_large_image')
+    } else {
+      ensureMeta('meta[name="twitter:card"]', 'content', 'summary')
     }
     if (locale) {
       ensureMeta('meta[property="og:locale"]', 'content', locale)

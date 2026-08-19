@@ -11,8 +11,7 @@ import PrayerFlags from '../components/PrayerFlags'
 import StructuredData from '../components/StructuredData'
 import NewsletterForm from '../components/NewsletterForm'
 import Lightbox from '../components/Lightbox'
-import InstagramFeed from '../components/InstagramFeed'
-import UGCForm from '../components/UGCForm'
+// Instagram/UGC hidden for launch
 import GoogleReviews from '../components/GoogleReviews'
 
 function Counter({ to, duration = 1.2 }: { to: number; duration?: number }) {
@@ -105,7 +104,7 @@ export default function Home() {
     <>
       <Meta
         title={t('meta.home.title')}
-        description={t('meta.home.desc')}
+        description={t('meta.home.desc') || 'Hamro Chiya Pasal — authentic Nepali tea. A minimalist cafe experience in English; cultural warmth in Nepali.'}
         url={url}
         image={og}
         locale={ogLocale}
@@ -150,51 +149,69 @@ export default function Home() {
       />
       <main className="bg-gradient-to-br from-[--color-surface] to-white dark:from-gray-900 dark:to-gray-950">
       {/* Hero with background image */}
-      <section className="relative">
-        <div
-          className="absolute inset-0 -z-10 bg-center bg-cover"
-          style={{
-            backgroundImage:
-              "linear-gradient(to bottom, rgba(139, 29, 29, 0.35), rgba(139, 29, 29, 0.6)), url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop')",
-          }}
-        />
-        {/* Prayer flags overlay at the top */}
-        <div className="absolute inset-x-0 top-0 z-0 pointer-events-none">
-          <PrayerFlags className="opacity-90" height={70} />
+      <section className={`relative ${locale === 'en' ? 'min-h-[60vh]' : 'min-h-[35vh] md:min-h-[50vh]'}`}>
+        {/* Hero image with responsive sources */}
+        <div className="absolute inset-0 -z-20 overflow-hidden">
+          <picture>
+            <source
+              type="image/avif"
+              srcSet="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&auto=format&fit=crop&fm=avif&w=800 800w, https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&auto=format&fit=crop&fm=avif&w=1200 1200w, https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&auto=format&fit=crop&fm=avif&w=1600 1600w"
+              sizes="(min-width: 1024px) 100vw, 100vw"
+            />
+            <source
+              type="image/webp"
+              srcSet="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&auto=format&fit=crop&fm=webp&w=800 800w, https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&auto=format&fit=crop&fm=webp&w=1200 1200w, https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&auto=format&fit=crop&fm=webp&w=1600 1600w"
+              sizes="(min-width: 1024px) 100vw, 100vw"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&auto=format&fit=crop&w=1600"
+              alt="Tea being poured into cups with warm morning light"
+              className="w-full h-full object-cover"
+              loading="eager"
+              decoding="async"
+              width={1600}
+              height={800}
+            />
+          </picture>
+          {/* Cream overlay for legibility */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,248,240,0.92),rgba(255,248,240,0.7))]" />
         </div>
-        {/* Mountain silhouette overlay (above bg, behind content) */}
-        <div className="absolute inset-x-0 bottom-0 z-0 pointer-events-none">
-          <MountainSilhouette className="text-white/30 dark:text-white/20" />
-        </div>
+        {/* Cultural overlays only for Nepali locale */}
+        {locale === 'ne' && (
+          <>
+            <div className="absolute inset-x-0 top-0 z-0 pointer-events-none">
+              <PrayerFlags className="opacity-90" height={70} />
+            </div>
+            <div className="absolute inset-x-0 bottom-0 z-0 pointer-events-none">
+              <MountainSilhouette className="text-white/30 dark:text-white/20" />
+            </div>
+          </>
+        )}
 
-        <div className="max-w-6xl mx-auto px-4 py-20 md:py-28 grid md:grid-cols-2 gap-8 items-center text-white relative z-10">
+        <div className={`max-w-6xl mx-auto px-4 ${locale === 'en' ? 'py-20' : 'py-10 md:py-16'} grid md:grid-cols-2 gap-8 items-center text-[--color-text] relative z-10 ${locale === 'en' ? 'md:grid-cols-1 text-center' : ''}`}>
           <motion.div initial={prefersReduced ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={prefersReduced ? { duration: 0 } : { duration: 0.5 }}>
-            <p className="text-[--color-surface] font-semibold mb-2">{t('home.hero.tagline')}</p>
-            <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-2 flex items-center gap-2">
-              <IconTeaLeaf className="text-[--color-accent]" />
+            <p className="text-[--color-accent] font-semibold mb-2">{t('home.hero.tagline')}</p>
+            <h1 className={`text-4xl sm:text-5xl font-bold tracking-tight mb-2 ${locale === 'en' ? '' : 'flex items-center gap-2'}`}>
+              {locale !== 'en' && <IconTeaLeaf className="text-[--color-accent]" />}
               <span>{t('home.hero.title')}</span>
             </h1>
             <PatternBorder className="text-[--color-accent] mb-4" />
-            <p className="text-white/90 mb-6 max-w-prose">{t('home.hero.subtitle')}</p>
-            <div className="flex items-center gap-3">
-              <Link
-                to={`/${locale}/menu`}
-                className="inline-flex items-center justify-center rounded-md bg-white/90 text-[--color-primary] px-4 py-2 font-medium hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2"
-              >
+            <p className="text-[--color-text] mb-6 max-w-prose">{t('home.hero.subtitle')}</p>
+            <div className={`flex items-center gap-3 ${locale === 'en' ? 'justify-center' : ''}`}>
+              <Link to={`/${locale}/menu`} className="btn-primary">
                 {t('home.cta.menu')}
               </Link>
-              <Link
-                to={`/${locale}/contact`}
-                className="inline-flex items-center justify-center rounded-md border border-white/70 px-4 py-2 font-medium hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2"
-              >
+              <Link to={`/${locale}/contact`} className="btn-secondary">
                 {t('home.cta.contact')}
               </Link>
             </div>
-            <div className="mt-6 flex flex-wrap items-center gap-2 text-sm text-white/90">
-              <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-1">🏔️ {t('home.chips.himalaya')}</span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-1">🍃 {t('home.chips.ilam')}</span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-1">🇳🇵 {t('home.chips.authentic')}</span>
-            </div>
+            {locale === 'ne' && (
+              <div className="mt-6 flex flex-wrap items-center gap-2 text-sm text-white/90">
+                <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-1">🏔️ {t('home.chips.himalaya')}</span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-1">🍃 {t('home.chips.ilam')}</span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-1">🇳🇵 {t('home.chips.authentic')}</span>
+              </div>
+            )}
             {/* Hero mini carousel */}
             <div className="relative mt-5">
               <div ref={trackRef} className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2" style={{ scrollbarWidth: 'none' }}>
@@ -217,14 +234,55 @@ export default function Home() {
         </div>
       </section>
 
-      {/* UGC Submission */}
-      <section className="max-w-6xl mx-auto px-4 pb-10">
+      {/* Story (English locale, minimalist centered) */}
+      {locale === 'en' && (
+        <section className="max-w-3xl mx-auto px-4 py-12 text-center">
+          <h2 className="text-3xl font-bold tracking-tight mb-2">Our Story</h2>
+          <p className="text-gray-700 mb-4">
+            Rooted in Nepali tea culture and crafted with care. We serve everyday rituals with the finest leaves, warm hospitality, and a calm, airy space.
+          </p>
+          <Link to={`/${locale}/about`} className="btn-secondary">Read more</Link>
+        </section>
+      )}
+
+      {/* Phase 1: Simplified 4-up grid for key sections */}
+      <section className="max-w-6xl mx-auto px-4 py-8">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Featured Products */}
+          <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-[--color-surface] dark:bg-gray-900">
+            <h3 className="font-semibold mb-2">{t('home.featured.title') || 'Featured Products'}</h3>
+            <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">{t('home.featured.desc') || 'Taste our most loved teas picked by our customers.'}</p>
+            <Link to={`/${locale}/menu`} className="btn-secondary text-xs">{t('home.featured.cta') || 'Explore teas'}</Link>
+          </div>
+          {/* Our Story */}
+          <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-[--color-surface] dark:bg-gray-900">
+            <h3 className="font-semibold mb-2">{t('home.story.title') || 'Our Story'}</h3>
+            <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">{t('home.story.desc') || 'Rooted in Nepali tradition, brewed for today.'}</p>
+            <Link to={`/${locale}/about`} className="btn-secondary text-xs">{t('home.story.cta') || 'Read more'}</Link>
+          </div>
+          {/* Testimonials */}
+          <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-[--color-surface] dark:bg-gray-900">
+            <h3 className="font-semibold mb-2">{t('home.testimonials.title') || 'What customers say'}</h3>
+            <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">{t('home.testimonials.desc') || 'Trusted by tea lovers across Nepal.'}</p>
+            <a href="#testimonials" className="btn-secondary text-xs">{t('home.testimonials.cta') || 'Read reviews'}</a>
+          </div>
+          {/* Newsletter / Contact */}
+          <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-[--color-surface] dark:bg-gray-900">
+            <h3 className="font-semibold mb-2">{t('newsletter.title') || 'Subscribe for updates'}</h3>
+            <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">{t('newsletter.subtitle') || 'Get news, offers, and stories from Hamro Chiya Pasal.'}</p>
+            <NewsletterForm />
+          </div>
+        </div>
+      </section>
+
+      {/* UGC Submission (hidden for launch, will enable in later phase) */}
+      {/* <section className="max-w-6xl mx-auto px-4 pb-10">
         <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-6 bg-[--color-surface] dark:bg-gray-900">
           <h2 className="text-2xl font-bold">{t('ugc.title')}</h2>
           <p className="text-gray-600 dark:text-gray-300 mb-3">{t('ugc.desc')}</p>
           <UGCForm />
         </div>
-      </section>
+      </section> */}
 
       {/* Gallery */}
       <section className="max-w-6xl mx-auto px-4 pb-10">
@@ -270,22 +328,34 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Visit strip (concise banner) */}
+      <section className={`px-4 ${locale === 'en' ? 'py-10' : 'py-6'}`}>
+        <div className="max-w-5xl mx-auto rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-5 py-5 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <div className="text-sm text-gray-500">{t('home.location.city') || 'Thamel, Kathmandu'}</div>
+            <div className="text-xl font-semibold">{t('home.hours.title') || 'Hours'}</div>
+            <div className="text-sm text-gray-700 dark:text-gray-300">{t('home.hours.summary') || 'Mon–Sun: 7am – 8pm'}</div>
+          </div>
+          <Link to={`/${locale}/visit`} className="btn-secondary text-sm">{t('home.visit.cta') || 'Plan your visit'}</Link>
+        </div>
+      </section>
+
       {/* Featured teas */}
       <section className="max-w-6xl mx-auto px-4 py-14">
         <div className="mb-6 flex items-end justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-bold flex items-center gap-2">
+            <h2 className={`${locale === 'en' ? 'text-3xl' : 'text-2xl'} font-bold flex items-center gap-2`}>
               <IconTeaLeaf className="text-[--color-secondary]" />
               <span>{t('home.featured.title')}</span>
             </h2>
-            <PatternBorder className="text-[--color-accent] my-2" />
+            {locale !== 'en' && <PatternBorder className="text-[--color-accent] my-2" />}
             <p className="text-gray-600 dark:text-gray-300">{t('home.featured.subtitle')}</p>
           </div>
-          <Link to={`/${locale}/menu`} className="text-[--color-primary] dark:text-[--color-accent] font-medium hover:underline">
+          <Link to={`/${locale}/menu`} className={`${locale === 'en' ? 'text-[--color-primary] hover:underline underline-offset-4' : 'text-[--color-primary] dark:text-[--color-accent] font-medium hover:underline'}`}>
             {t('home.featured.link')}
           </Link>
         </div>
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className={`grid sm:grid-cols-2 md:grid-cols-3 ${locale === 'en' ? 'gap-5' : 'gap-4'}`}>
           {featured.map((t) => (
             <TeaCard key={t.titleNepali} {...t} />
           ))}
@@ -294,11 +364,29 @@ export default function Home() {
 
       {/* Newsletter signup */}
       <section className="max-w-6xl mx-auto px-4 pb-6">
-        <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-6 bg-[--color-surface] dark:bg-gray-900">
+        <div className={`rounded-lg border border-gray-200 dark:border-gray-800 ${locale === 'en' ? 'p-8 bg-white text-center' : 'p-6 bg-[--color-surface] dark:bg-gray-900'}`}>
           <h2 className="text-2xl font-bold">{t('newsletter.title')}</h2>
-          <p className="text-gray-600 dark:text-gray-300 mt-1">{t('newsletter.subtitle')}</p>
-          <div className="mt-3">
+          <p className={`mt-1 ${locale === 'en' ? 'text-gray-600' : 'text-gray-600 dark:text-gray-300'}`}>{t('newsletter.subtitle')}</p>
+          <div className={`mt-4 ${locale === 'en' ? 'max-w-md mx-auto' : ''}`}>
             <NewsletterForm />
+          </div>
+        </div>
+      </section>
+
+      {/* Press logos strip */}
+      <section className="max-w-6xl mx-auto px-4 pb-12">
+        <div className="rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4">
+          <div className="text-xs uppercase tracking-wide text-gray-500 mb-3 text-center">{t('home.press.title') || 'As seen in'}</div>
+          <div className="grid grid-cols-2 md:grid-cols-5 items-center gap-4 opacity-80">
+            {[
+              { name: 'Kathmandu Post' },
+              { name: 'The Record' },
+              { name: 'Himal Southasian' },
+              { name: 'Republica' },
+              { name: 'Nepali Times' },
+            ].map((p) => (
+              <div key={p.name} className="text-center text-sm text-gray-700 dark:text-gray-300">{p.name}</div>
+            ))}
           </div>
         </div>
       </section>
@@ -352,14 +440,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Instagram Feed */}
-      <section className="max-w-6xl mx-auto px-4 pb-10">
+      {/* Instagram Feed (hidden for launch) */}
+      {/* <section className="max-w-6xl mx-auto px-4 pb-10">
         <div className="mb-3">
           <h2 className="text-2xl font-bold">{t('home.instagram.title')}</h2>
           <p className="text-gray-600 dark:text-gray-300">{t('home.instagram.desc')}</p>
         </div>
         <InstagramFeed limit={8} />
-      </section>
+      </section> */}
 
       {/* Social Proof */}
       <section className="max-w-6xl mx-auto px-4 pb-14">

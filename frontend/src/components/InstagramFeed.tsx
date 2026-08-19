@@ -37,7 +37,7 @@ export default function InstagramFeed({ limit = 8 }: { limit?: number }) {
     return (
       <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4">
         <div className="text-sm text-gray-600 dark:text-gray-300 mb-2">{t('instagram.fallback')}</div>
-        <a href="https://www.instagram.com/hamro.chiya.pasal" target="_blank" rel="noreferrer" className="text-emerald-700 dark:text-emerald-400 hover:underline">{t('instagram.viewOn')}</a>
+        <a href="https://www.instagram.com/hamro.chiya.pasal" target="_blank" rel="noreferrer" className="text-[--color-primary] dark:text-[--color-accent] hover:underline">{t('instagram.viewOn')}</a>
       </div>
     )
   }
